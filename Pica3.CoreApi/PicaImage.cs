@@ -16,6 +16,6 @@ public class PicaImage
     public string FileServer { get; set; }
 
     [JsonIgnore]
-    public string Url => $"{FileServer}/static/{Path}";
+    public string Url => FileServer.Contains("static") ? FileServer + Path : $"{FileServer}/static/{Path}";
 
 }

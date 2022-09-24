@@ -1,0 +1,142 @@
+﻿<Page x:Class="Pica3.Pages.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Pica3.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:pc="using:Pica3.Controls"
+      x:DefaultBindMode="OneWay"
+      mc:Ignorable="d">
+
+    <Grid>
+
+        <NavigationView Name="c_NavigationView"
+                        BackRequested="c_NavigationView_BackRequested"
+                        DisplayModeChanged="c_NavigationView_DisplayModeChanged"
+                        IsBackEnabled="{x:Bind c_Frame.CanGoBack}"
+                        ItemInvoked="c_NavigationView_ItemInvoked"
+                        OpenPaneLength="260"
+                        PaneClosing="c_NavigationView_PaneClosing"
+                        PaneOpening="c_NavigationView_PaneOpening">
+            <NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{ThemeResource LayerOnAcrylicFillColorDefault}" />
+            </NavigationView.Resources>
+
+            <NavigationView.PaneCustomContent>
+                <Grid Margin="0,8,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="c_Border_AccountImage"
+                            Grid.Column="0"
+                            Width="44"
+                            Height="44"
+                            Margin="16,0,0,0"
+                            CornerRadius="44"
+                            Tapped="c_Border_AccountImage_Tapped">
+                        <pc:CachedImage PlaceholderSource="https://lsp-cdn.scighost.com/pica/placeholder_avatar.png"
+                                        PlaceholderStretch="Uniform"
+                                        Source="{x:Bind UserProfile.Avatar.Url, FallbackValue=https://lsp-cdn.scighost.com/pica/placeholder_avatar.png}" />
+                    </Border>
+                    <TextBlock Grid.Column="1"
+                               Width="140"
+                               Margin="16,0,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Visibility="{x:Bind UserProfile, Converter={StaticResource ObjectToVisibilityConverter}}">
+                        <Run Text="{x:Bind UserProfile.Name}" />
+                        <LineBreak />
+                        <Run FontSize="12"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             Text="Lv." />
+                        <Run FontSize="12"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             Text="{x:Bind UserProfile.Level}" />
+                        <Run FontSize="12"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             Text=" " />
+                        <Run FontSize="12"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             Text="{x:Bind UserProfile.Title}" />
+                    </TextBlock>
+                    <TextBlock Grid.Column="1"
+                               Width="140"
+                               Margin="16,0,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Text="未登录"
+                               Visibility="{x:Bind IsLogin, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                    <Button Grid.Column="2"
+                            Width="28"
+                            Margin="0,0,16,0"
+                            Padding="0"
+                            VerticalAlignment="Stretch"
+                            Content="&#xE76C;"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="RightEdgeAlignedTop">
+                                <MenuFlyoutItem Command="{x:Bind RefreshUserProfileCommand}"
+                                                Icon="Refresh"
+                                                Text="刷新信息" />
+                                <MenuFlyoutItem Click="{x:Bind Logout}"
+                                                Icon="Undo"
+                                                Text="退出登录" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+            </NavigationView.PaneCustomContent>
+
+
+            <NavigationView.MenuItems>
+                <NavigationViewItemSeparator />
+                <NavigationViewItem x:Name="c_NavigationViewItem_Home"
+                                    Content="主页"
+                                    Icon="Home"
+                                    Tag="HomePage" />
+                <NavigationViewItem Content="分类"
+                                    Icon="ViewAll"
+                                    Tag="CategoryPage" />
+                <NavigationViewItem Content="排行榜" Tag="RankPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xECAD;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+            </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems />
+
+            <Frame Name="c_Frame" NavigationFailed="c_Frame_NavigationFailed" />
+
+        </NavigationView>
+
+
+
+
+        <!--  Title Bar  -->
+        <Border x:Name="AppTitleBar"
+                Height="48"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top">
+
+            <StackPanel x:Name="AppTitle"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="16">
+                <StackPanel.TranslationTransition>
+                    <Vector3Transition />
+                </StackPanel.TranslationTransition>
+                <TextBlock VerticalAlignment="Center"
+                           FontSize="14"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="哔咔 3" />
+            </StackPanel>
+        </Border>
+
+
+    </Grid>
+</Page>

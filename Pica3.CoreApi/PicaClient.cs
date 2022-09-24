@@ -3,6 +3,7 @@ using Pica3.CoreApi.App;
 using Pica3.CoreApi.Comic;
 using Pica3.CoreApi.Comment;
 using Pica3.CoreApi.Game;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
@@ -44,10 +45,13 @@ public class PicaClient
     private static string TimeStamp => DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
 
-
     private string authorization;
 
     private HttpClient _httpClient;
+
+
+    #endregion
+
 
     /// <summary>
     /// 图片质量，默认原图
@@ -55,8 +59,10 @@ public class PicaClient
     public ImageQuality ImageQuality { get; set; } = ImageQuality.Original;
 
 
-
-    #endregion
+    /// <summary>
+    /// 已登录
+    /// </summary>
+    public bool IsLogin => !string.IsNullOrWhiteSpace(authorization);
 
 
     /// <summary>
@@ -88,8 +94,14 @@ public class PicaClient
 
     private void CreateHttpClient(IWebProxy? proxy = null)
     {
-        _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All, Proxy = proxy });
+        _httpClient = new HttpClient(new HttpClientHandler
+        {
+            AutomaticDecompression = DecompressionMethods.All,
+            Proxy = proxy,
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+        });
         _httpClient.BaseAddress = new Uri(BaseUrl);
+        _httpClient.Timeout = TimeSpan.FromSeconds(5);
         _httpClient.DefaultRequestHeaders.Add("api-key", ApiKey);
         _httpClient.DefaultRequestHeaders.Add("accept", Accept);
         _httpClient.DefaultRequestHeaders.Add("app-channel", AppChannel);
@@ -127,8 +139,8 @@ public class PicaClient
         var response = await _httpClient.SendAsync(request);
 #if DEBUG
         var str = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(request.RequestUri);
-        Console.WriteLine(str);
+        Debug.WriteLine(request.RequestUri);
+        Debug.WriteLine(str);
         var wrapper = JsonSerializer.Deserialize<ResponseBase<T>>(str);
 #else
         var obj = await response.Content.ReadFromJsonAsync<ResponseBase<T>>();
@@ -168,8 +180,8 @@ public class PicaClient
         var response = await _httpClient.SendAsync(request);
 #if DEBUG
         var str = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(request.RequestUri);
-        Console.WriteLine(str);
+        Debug.WriteLine(request.RequestUri);
+        Debug.WriteLine(str);
         var wrapper = JsonSerializer.Deserialize<ResponseBase<JsonNode>>(str);
 #else
         var wrapper = await response.Content.ReadFromJsonAsync<ResponseBase<JsonNode>>();
@@ -320,6 +332,15 @@ public class PicaClient
         {
             return false;
         }
+    }
+
+
+    /// <summary>
+    /// 注销，即删除认证
+    /// </summary>
+    public void Logout()
+    {
+        authorization = null!;
     }
 
 
@@ -589,12 +610,12 @@ public class PicaClient
     /// <summary>
     /// 看了这本的人也在看
     /// </summary>
-    /// <param name="commicId">漫画 id</param>
+    /// <param name="comicId">漫画 id</param>
     /// <returns></returns>
-    public async Task<List<ComicProfile>> GetRecommendComicsAsync(string commicId)
+    public async Task<List<ComicProfile>> GetRecommendComicsAsync(string comicId)
     {
 
-        var request = new HttpRequestMessage(HttpMethod.Get, $"comics/{commicId}/recommendation");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"comics/{comicId}/recommendation");
         return await CommonSendAsync<List<ComicProfile>>(request, "comics");
     }
 

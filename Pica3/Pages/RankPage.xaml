@@ -1,0 +1,212 @@
+﻿<Page x:Class="Pica3.Pages.RankPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:animation="using:CommunityToolkit.WinUI.UI.Animations"
+      xmlns:behavoir="using:CommunityToolkit.WinUI.UI.Behaviors"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:interaction="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+      xmlns:local="using:Pica3.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:pc="using:Pica3.Controls"
+      xmlns:pcc="using:Pica3.CoreApi.Comic"
+      xmlns:ui="using:CommunityToolkit.WinUI.UI"
+      x:DefaultBindMode="OneWay"
+      NavigationCacheMode="Enabled"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <!--  排行榜漫画卡片  -->
+        <DataTemplate x:Key="RankComicProfileCard" x:DataType="pcc:RankComic">
+            <Grid Height="200"
+                  Margin="0,0,4,4"
+                  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="1"
+                  CornerRadius="8">
+                <!--  左右布局  -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <!--  左侧是图片  -->
+                <Border Width="150"
+                        Height="200"
+                        ui:UIElementExtensions.ClipToBounds="True"
+                        CornerRadius="8">
+                    <pc:CachedImage x:Name="c_Image_ComicCover"
+                                    Width="150"
+                                    Height="200"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                    Source="{x:Bind Cover.Url}"
+                                    Stretch="UniformToFill">
+                        <animation:Explicit.Animations>
+                            <animation:AnimationSet x:Name="ImagePointerEnteredAnimation">
+                                <animation:ScaleAnimation EasingMode="EaseOut"
+                                                          EasingType="Circle"
+                                                          To="1.1"
+                                                          Duration="0:0:1" />
+                            </animation:AnimationSet>
+                            <animation:AnimationSet x:Name="ImagePointerExitedAnimation">
+                                <animation:ScaleAnimation EasingMode="EaseOut"
+                                                          EasingType="Circle"
+                                                          To="1"
+                                                          Duration="0:0:1" />
+                            </animation:AnimationSet>
+                        </animation:Explicit.Animations>
+                    </pc:CachedImage>
+                </Border>
+                <!--  右侧是信息  -->
+                <StackPanel Grid.Column="1"
+                            Margin="12,4,8,4"
+                            Spacing="4">
+                    <!--  标题  -->
+                    <TextBlock HorizontalAlignment="Left"
+                               FontWeight="Bold"
+                               IsTextSelectionEnabled="True"
+                               MaxLines="2"
+                               Text="{x:Bind Title}"
+                               TextTrimming="WordEllipsis"
+                               TextWrapping="Wrap" />
+                    <!--  作者  -->
+                    <TextBlock HorizontalAlignment="Left"
+                               IsTextSelectionEnabled="True"
+                               Text="{x:Bind Author}" />
+                    <!--  章节页数  -->
+                    <StackPanel Margin="0,4,0,0"
+                                Orientation="Horizontal"
+                                Spacing="4">
+                        <FontIcon FontSize="12"
+                                  Glyph="&#xE160;"
+                                  ToolTipService.ToolTip="章节/页数" />
+                        <TextBlock FontSize="12">
+                            <Run Text="{x:Bind EpisodeCount}" /><Run Text="E" />
+                            <Run Text="/" />
+                            <Run Text="{x:Bind PagesCount}" /><Run Text="P" />
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                Spacing="4">
+                        <!--  阅读数  -->
+                        <FontIcon FontSize="12"
+                                  Glyph="&#xE18B;"
+                                  ToolTipService.ToolTip="阅读" />
+                        <TextBlock FontSize="12" Text="{x:Bind TotalViews}" />
+                        <!--  点赞数  -->
+                        <FontIcon Margin="8,0,0,0"
+                                  FontSize="12"
+                                  Glyph="&#xE19F;"
+                                  ToolTipService.ToolTip="点赞" />
+                        <TextBlock FontSize="12" Text="{x:Bind TotalLikes}" />
+                        <!--  绅士指数  -->
+                        <FontIcon Margin="8,0,0,0"
+                                  FontSize="12"
+                                  Glyph="&#xECAD;"
+                                  ToolTipService.ToolTip="绅士指数" />
+                        <TextBlock FontSize="12" Text="{x:Bind LeaderboardCount}" />
+                    </StackPanel>
+                    <!--  标签  -->
+                    <ItemsRepeater Margin="0,4,0,0" ItemsSource="{x:Bind Categories}">
+                        <ItemsRepeater.Layout>
+                            <cc:WrapLayout HorizontalSpacing="4" Orientation="Horizontal" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <TextBlock FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Text="{x:Bind}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </StackPanel>
+                <!--  动画  -->
+                <interactivity:Interaction.Behaviors>
+                    <interaction:EventTriggerBehavior EventName="PointerEntered">
+                        <behavoir:StartAnimationAction Animation="{Binding ElementName=ImagePointerEnteredAnimation}" />
+                        <!--<behavoir:StartAnimationAction Animation="{Binding ElementName=GridPointerEnteredAnimation}" />-->
+                    </interaction:EventTriggerBehavior>
+                    <interaction:EventTriggerBehavior EventName="PointerExited">
+                        <behavoir:StartAnimationAction Animation="{Binding ElementName=ImagePointerExitedAnimation}" />
+                        <!--<behavoir:StartAnimationAction Animation="{Binding ElementName=GridPointerExitedAnimation}" />-->
+                    </interaction:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+                <!--<animation:Explicit.Animations>
+                    <animation:AnimationSet x:Name="GridPointerEnteredAnimation">
+                        <animation:OffsetAnimation EasingMode="EaseOut"
+                                                   EasingType="Circle"
+                                                   To="0,-4,0"
+                                                   Duration="0:0:0.6" />
+                    </animation:AnimationSet>
+                    <animation:AnimationSet x:Name="GridPointerExitedAnimation">
+                        <animation:OffsetAnimation EasingMode="EaseOut"
+                                                   EasingType="Circle"
+                                                   To="0"
+                                                   Duration="0:0:0.6" />
+                    </animation:AnimationSet>
+                </animation:Explicit.Animations>-->
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid Padding="48,0,48,0" CornerRadius="4,0,0,4">
+            <TextBlock HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Text="排行榜" />
+            <Pivot x:Name="c_Pivot_RankType"
+                   Margin="100,12,0,0"
+                   SelectionChanged="c_Pivot_RankType_SelectionChanged">
+                <Pivot.Resources>
+                    <Thickness x:Key="PivotItemMargin">0,12,0,0</Thickness>
+                    <Style BasedOn="{StaticResource DefaultPivotHeaderItemStyle}" TargetType="PivotHeaderItem">
+                        <Setter Property="FontSize" Value="20" />
+                        <Setter Property="Height" Value="36" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                    </Style>
+                </Pivot.Resources>
+                <PivotItem Header="日榜" />
+                <PivotItem Header="周榜" />
+                <PivotItem Header="月榜" />
+            </Pivot>
+        </Grid>
+
+
+        <cc:AdaptiveGridView x:Name="c_GridView_RankList"
+                             Grid.Row="1"
+                             Padding="48,0,36,0"
+                             DesiredWidth="440"
+                             IsItemClickEnabled="True"
+                             ItemClick="c_GridView_RankList_ItemClick"
+                             ItemTemplate="{StaticResource RankComicProfileCard}"
+                             ItemsSource="{x:Bind SelectedRanks}"
+                             Loaded="c_GridView_RankList_Loaded"
+                             SelectionMode="None">
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="GridViewItem">
+                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </GridView.ItemContainerStyle>
+        </cc:AdaptiveGridView>
+
+
+
+
+    </Grid>
+</Page>

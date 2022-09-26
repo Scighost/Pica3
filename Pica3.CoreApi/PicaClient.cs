@@ -238,7 +238,7 @@ public class PicaClient
             Debug.WriteLine(node);
             if (node?["addresses"] is JsonArray array)
             {
-                ipList = array.Select(x => x!.ToString()).Prepend("68.183.234.72").ToList();
+                ipList = array.Select(x => x!.ToString()).ToList();
             }
         }
         if (ipList?.Any() ?? false)

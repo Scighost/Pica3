@@ -75,7 +75,7 @@ public sealed partial class ComicDetailPage : Page
             Focus(FocusState.Programmatic);
             if (Uri.TryCreate(animateCover, UriKind.RelativeOrAbsolute, out var uri))
             {
-                var file = await ImageCache.Instance.GetFileFromCacheAsync(uri);
+                var file = await PicaFileCache.Instance.GetFileFromCacheAsync(uri);
                 if (file != null)
                 {
                     c_Image_ComicCover.PlaceholderSource = new BitmapImage(new Uri(file.Path));

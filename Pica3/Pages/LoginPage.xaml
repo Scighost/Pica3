@@ -105,6 +105,7 @@
                                 <TextBlock FontSize="20" Text="设置 HTTP 代理" />
                                 <TextBox x:Name="c_TextBox_Proxy" PlaceholderText="IP : Port" />
                                 <TextBlock FontSize="20" Text="API 分流" />
+                                <ComboBox x:Name="c_ComboBox_ApiIPAddress" HorizontalAlignment="Stretch" />
                                 <Button x:Name="c_Button_ProxyConfirm"
                                         Click="{x:Bind SetWebProxy}"
                                         Content="确定" />

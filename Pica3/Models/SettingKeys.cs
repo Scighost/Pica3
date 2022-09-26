@@ -49,6 +49,11 @@ internal static class SettingKeys
     public const string NavigationViewPaneClose = nameof(NavigationViewPaneClose);
 
 
+    /// <summary>
+    /// 分流 IP
+    /// </summary>
+    public const string OverrideApiAddress = nameof(OverrideApiAddress);
+
 
 
 }

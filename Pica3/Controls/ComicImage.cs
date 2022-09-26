@@ -12,8 +12,6 @@ internal class ComicImage : ImageEx
 
 
 
-
-
     public string ImageOrder
     {
         get { return (string)GetValue(ImageOrderProperty); }
@@ -46,16 +44,16 @@ internal class ComicImage : ImageEx
             {
                 return new BitmapImage(imageUri);
             }
-            var image = await ImageCache.Instance.GetFromCacheAsync(imageUri, false, token);
+            var file = await PicaFileCache.Instance.GetFromCacheAsync(imageUri, false, token);
             if (token.IsCancellationRequested)
             {
                 throw new TaskCanceledException("Image source has changed.");
             }
-            if (image is null)
+            if (file is null)
             {
                 throw new FileNotFoundException(imageUri.ToString());
             }
-            return image;
+            return new BitmapImage(new Uri(file.Path));
         }
         catch (TaskCanceledException)
         {
@@ -63,7 +61,7 @@ internal class ComicImage : ImageEx
         }
         catch (Exception)
         {
-            await ImageCache.Instance.RemoveAsync(new[] { imageUri });
+            await PicaFileCache.Instance.RemoveAsync(new[] { imageUri });
             throw;
         }
     }

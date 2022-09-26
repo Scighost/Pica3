@@ -149,21 +149,6 @@ public sealed partial class LoginPage : Page
                 NotificationProvider.Warning("未知错误", 1500);
             }
         }
-        //catch (PicaApiException ex)
-        //{
-        //    Logger.Error(ex);
-        //    NotificationProvider.Error(ex);
-        //}
-        //catch (HttpRequestException ex)
-        //{
-        //    Logger.Error(ex);
-        //    NotificationProvider.Warning("网络错误", 1500);
-        //}
-        //catch (TaskCanceledException ex)
-        //{
-        //    Logger.Error(ex);
-        //    NotificationProvider.Warning("连接超时", 1500);
-        //}
         catch (Exception ex)
         {
             ex.HandlePicaException();
@@ -226,11 +211,28 @@ public sealed partial class LoginPage : Page
     /// <summary>
     /// 打开代理界面
     /// </summary>
-    private void ShowProxySettingFlyout()
+    private async void ShowProxySettingFlyout()
     {
         c_TextBlock_ProxyError.Text = "";
-        c_TextBox_Proxy.Text = AppSetting.GetValue<string>(SettingKeys.WebProxy, "");
+        c_TextBox_Proxy.Text = AppSetting.GetValue(SettingKeys.WebProxy, "");
         FlyoutBase.ShowAttachedFlyout(c_Button_SetProxy);
+        try
+        {
+            if (IPAddress.TryParse(AppSetting.GetValue(SettingKeys.OverrideApiAddress, ""), out var ip))
+            {
+                c_ComboBox_ApiIPAddress.SelectedItem = ip.ToString();
+            }
+            else
+            {
+                c_ComboBox_ApiIPAddress.SelectedItem = "默认";
+            }
+            var ips = await picaClient.GetIpListAsync();
+            c_ComboBox_ApiIPAddress.ItemsSource = ips.Prepend("默认").ToList();
+        }
+        catch (Exception ex)
+        {
+            ex.HandlePicaException();
+        }
     }
 
 
@@ -242,19 +244,24 @@ public sealed partial class LoginPage : Page
         try
         {
             var proxyText = c_TextBox_Proxy.Text;
+            Uri? uri = null;
+            if (IPAddress.TryParse(c_ComboBox_ApiIPAddress.SelectedItem as string, out var address))
+            {
+                uri = new Uri("http://" + address);
+                AppSetting.SetValue(SettingKeys.OverrideApiAddress, address.ToString());
+            }
             if (string.IsNullOrWhiteSpace(proxyText))
             {
-                ServiceProvider.ChangeProxy(null);
+                ServiceProvider.ChangeProxyAndBaseAddress(null, uri);
                 AppSetting.SetValue(SettingKeys.WebProxy, "");
-                c_TextBlock_ProxyError.Text = "已清除代理设置";
             }
             else
             {
                 var proxy = new WebProxy(proxyText);
-                ServiceProvider.ChangeProxy(proxy);
+                ServiceProvider.ChangeProxyAndBaseAddress(proxy, uri);
                 AppSetting.SetValue(SettingKeys.WebProxy, proxyText);
-                c_TextBlock_ProxyError.Text = "已设置代理";
             }
+            c_TextBlock_ProxyError.Text = "设置成功";
         }
         catch (UriFormatException ex)
         {

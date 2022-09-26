@@ -84,17 +84,17 @@ internal static class ServiceProvider
     /// 修改代理设置
     /// </summary>
     /// <param name="proxy"></param>
-    public static void ChangeProxy(IWebProxy? proxy = null)
+    public static void ChangeProxyAndBaseAddress(IWebProxy? proxy = null, Uri? address = null)
     {
         var client = GetService<PicaClient>();
-        client?.ChangeProxyAndBaseAddress(proxy);
+        client?.ChangeProxyAndBaseAddress(proxy, address);
         _httpClient = new HttpClient(new HttpClientHandler
         {
             Proxy = proxy,
             AutomaticDecompression = DecompressionMethods.All,
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
         });
-        CachedImage.Initialize();
+        PicaFileCache.Instance.ChangeProxyAndBaseAddress(proxy, address);
     }
 
 

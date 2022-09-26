@@ -13,12 +13,17 @@
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<UseWinUI>true</UseWinUI>
-		<PackageType>None</PackageType>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<WindowsPackageType>None</WindowsPackageType>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Pages\ComicDetailPage.xaml" />
+	  <None Remove="Controls\ComicViewer.xaml" />
+	  <None Remove="Pages\StartPage.xaml" />
+	  <None Remove="Themes\ComicProfileCardDateTemplate.xaml" />
+	  <None Remove="Themes\ContainerStyle.xaml" />
 	</ItemGroup>
+
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
@@ -31,7 +36,7 @@
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0-rc.1.22426.7" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.1.22426.10" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25206-preview" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
 		<PackageReference Include="Scighost.WinUILib" Version="0.1.0-beta8" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.8" />
@@ -42,10 +47,29 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Pages\ComicDetailPage.xaml">
+	  <Page Update="Controls\ComicViewer.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Pages\StartPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Themes\ContainerStyle.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Themes\ComicProfileCardDateTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
 
 
 </Project>

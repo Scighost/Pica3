@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Pica3 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Pica3 (Unpackaged)": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

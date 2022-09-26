@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Pica3.Controls;
 using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
-using Microsoft.UI.Xaml.Media.Animation;
-using CommunityToolkit.Mvvm.Input;
+using Scighost.WinUILib.Cache;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +28,7 @@ public sealed partial class ComicDetailPage : Page
 
     private string comicId;
 
+    private string? animateCover;
 
     public ComicDetailPage()
     {
@@ -51,7 +44,7 @@ public sealed partial class ComicDetailPage : Page
         if (e.Parameter is ComicProfile comic)
         {
             comicId = comic.Id;
-            c_Image_ComicCover.Source = comic.Cover?.Url;
+            animateCover = comic.Cover?.Url;
             c_TextBlock_Title.Text = comic.Title;
             c_TextBlock_Author.Text = comic.Author;
             c_ItemsRepeater_Categories.ItemsSource = comic.Categories;
@@ -61,10 +54,6 @@ public sealed partial class ComicDetailPage : Page
         }
         var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverAnimation");
         ani?.TryStart(c_Image_ComicCover);
-        if (e.NavigationMode == NavigationMode.Back && e.SourcePageType == GetType())
-        {
-            c_Pivot_Section.SelectedIndex = 2;
-        }
     }
 
 
@@ -82,6 +71,11 @@ public sealed partial class ComicDetailPage : Page
     {
         try
         {
+            Focus(FocusState.Programmatic);
+            if (Uri.TryCreate(animateCover, UriKind.RelativeOrAbsolute, out var uri))
+            {
+                c_Image_ComicCover.PlaceholderSource = (await ImageCache.Instance.GetFromCacheAsync(uri))!;
+            }
             if (ComicDetailInfo?.Id != comicId)
             {
                 ComicDetailInfo = await picaClient.GetComicDetailAsync(comicId);
@@ -105,6 +99,9 @@ public sealed partial class ComicDetailPage : Page
             NotificationProvider.Error(ex);
         }
     }
+
+
+   
 
 
 
@@ -314,6 +311,29 @@ public sealed partial class ComicDetailPage : Page
 
 
 
+    /// <summary>
+    /// 开始阅读
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void c_Button_ComicEpisode_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button button && button.Tag is ComicEpisodeProfile episode)
+            {
+                MainWindow.Current.SetFullWindowContent(new ComicViewer(comicDetailInfo, episode.Order), true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
+
     #endregion
 
 
@@ -359,6 +379,11 @@ public sealed partial class ComicDetailPage : Page
 
 
     #endregion
+
+
+
+
+
 
 
     #region 推荐
@@ -409,6 +434,8 @@ public sealed partial class ComicDetailPage : Page
     }
 
 
+
     #endregion
+
 
 }

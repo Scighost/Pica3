@@ -2,25 +2,10 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
-using Pica3.Helpers;
-using Pica3.Models;
 using Pica3.Pages;
-using Scighost.WinUILib.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Vanara.PInvoke;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -164,10 +149,15 @@ public sealed partial class MainWindow : Window
     /// 设置覆盖于窗口上的内容
     /// </summary>
     /// <param name="content"></param>
-    public void SetFullWindowContent(Control content)
+    /// <param name="collapsed">隐藏底部内容</param>
+    public void SetFullWindowContent(Control content, bool collapsed = false)
     {
         FullWindowContent.Visibility = Visibility.Visible;
         FullWindowContent.Content = content;
+        if (collapsed)
+        {
+            RootFrame.Visibility = Visibility.Collapsed;
+        }
     }
 
 
@@ -179,6 +169,8 @@ public sealed partial class MainWindow : Window
     {
         FullWindowContent.Content = null;
         FullWindowContent.Visibility = Visibility.Collapsed;
+        RootFrame.Visibility = Visibility.Visible;
+        RootFrame.Focus(FocusState.Programmatic);
     }
 
 

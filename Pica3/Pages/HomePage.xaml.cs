@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media.Animation;
 using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
 
@@ -72,10 +62,50 @@ public sealed partial class HomePage : Page
 
 
 
+    private ComicProfile? lastClickedComic = null;
 
 
 
+    private async void c_GridView_Recommend_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is GridView gridView && lastClickedComic != null && gridView.ContainerFromItem(lastClickedComic) != null)
+            {
+                gridView.ScrollIntoView(lastClickedComic);
+                gridView.UpdateLayout();
+                var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverBackAnimation");
+                if (ani != null)
+                {
+                    ani.Configuration = new BasicConnectedAnimationConfiguration();
+                    await gridView.TryStartConnectedAnimationAsync(ani, lastClickedComic, "c_Image_ComicCover");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
 
+
+    private void c_GridView_Recommend_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        try
+        {
+            if (sender is GridView gridView && e.ClickedItem is ComicProfile comic)
+            {
+                lastClickedComic = comic;
+                var ani = gridView.PrepareConnectedAnimation("ComicCoverAnimation", comic, "c_Image_ComicCover");
+                ani.Configuration = new BasicConnectedAnimationConfiguration();
+                MainPage.Current.Navigate(typeof(ComicDetailPage), comic, new SuppressNavigationTransitionInfo());
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
 
 
 }

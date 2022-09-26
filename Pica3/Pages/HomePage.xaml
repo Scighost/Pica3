@@ -28,7 +28,6 @@
                        FontSize="24"
                        FontWeight="Bold"
                        Text="主页" />
-
         </Grid>
 
 
@@ -53,14 +52,29 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock FontSize="20" Text="{x:Bind Title}" />
-                                <ItemsRepeater Grid.Row="1" ItemsSource="{x:Bind Comics}">
-                                    <ItemsRepeater.Layout>
-                                        <UniformGridLayout MinColumnSpacing="12" Orientation="Horizontal" />
-                                    </ItemsRepeater.Layout>
-                                    <ItemsRepeater.ItemTemplate>
+                                <GridView x:Name="c_GridView_Recommend"
+                                          Grid.Row="1"
+                                          IsItemClickEnabled="True"
+                                          ItemClick="c_GridView_Recommend_ItemClick"
+                                          ItemsSource="{x:Bind Comics}"
+                                          Loaded="c_GridView_Recommend_Loaded"
+                                          SelectionMode="None">
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="GridViewItem">
+                                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
                                         <DataTemplate x:DataType="pcc:ComicProfile">
-                                            <Grid Width="160"
+                                            <Grid Width="180"
                                                   Height="240"
+                                                  Margin="0,0,12,12"
                                                   CornerRadius="4">
                                                 <Grid.Resources>
                                                     <CircleEase x:Key="CircleEase" EasingMode="EaseOut" />
@@ -79,8 +93,13 @@
                                                                          Duration="0:0:0.5" />
                                                     </Storyboard>
                                                 </Grid.Resources>
-                                                <pc:CachedImage VerticalAlignment="Top"
+                                                <pc:CachedImage x:Name="c_Image_ComicCover"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
                                                                 ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                                                PlaceholderSource="https://lsp-cdn.scighost.com/pica/icon_unknown_error.png"
+                                                                PlaceholderStretch="Uniform"
+                                                                RetryOnLoaded="True"
                                                                 Source="{x:Bind Cover.Url}"
                                                                 Stretch="UniformToFill">
                                                     <animations:Explicit.Animations>
@@ -103,27 +122,10 @@
                                                         Opacity="0"
                                                         RequestedTheme="Dark">
                                                     <TextBlock Margin="4"
-                                                               HorizontalAlignment="Left"
+                                                               HorizontalAlignment="Center"
                                                                VerticalAlignment="Bottom"
-                                                               TextWrapping="Wrap">
-                                                        <Run Text="{x:Bind Title}" />
-                                                        <LineBreak />
-                                                        <Run FontSize="12" Text="{x:Bind Author}" />
-                                                    </TextBlock>
-                                                    <!--<animations:Explicit.Animations>
-                                                        <animations:AnimationSet x:Name="BorderPointerEnteredAnimation">
-                                                            <animations:OpacityAnimation EasingMode="EaseOut"
-                                                                                         EasingType="Circle"
-                                                                                         To="1"
-                                                                                         Duration="0:0:1.5" />
-                                                        </animations:AnimationSet>
-                                                        <animations:AnimationSet x:Name="BorderPointerExitedAnimation">
-                                                            <animations:OpacityAnimation EasingMode="EaseOut"
-                                                                                         EasingType="Circle"
-                                                                                         To="0"
-                                                                                         Duration="0:0:1.5" />
-                                                        </animations:AnimationSet>
-                                                    </animations:Explicit.Animations>-->
+                                                               Text="{x:Bind Title}"
+                                                               TextWrapping="Wrap" />
                                                 </Border>
                                                 <activity:Interaction.Behaviors>
                                                     <actions:EventTriggerBehavior EventName="PointerEntered">
@@ -137,8 +139,8 @@
                                                 </activity:Interaction.Behaviors>
                                             </Grid>
                                         </DataTemplate>
-                                    </ItemsRepeater.ItemTemplate>
-                                </ItemsRepeater>
+                                    </GridView.ItemTemplate>
+                                </GridView>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

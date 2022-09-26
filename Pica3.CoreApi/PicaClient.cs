@@ -19,6 +19,7 @@ public class PicaClient
 
     #region Private Property
 
+    private const string InitUrl = "http://68.183.234.72/init";
 
     private const string BaseUrl = "https://picaapi.picacomic.com/";
 
@@ -44,10 +45,15 @@ public class PicaClient
 
     private static string TimeStamp => DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
+    private Uri baseAddress;
+
+    private IWebProxy? proxy;
 
     private string authorization;
 
     private HttpClient _httpClient;
+
+    private List<string> ipList;
 
 
     #endregion
@@ -76,9 +82,9 @@ public class PicaClient
     /// 忘记密码，先获取账号安全问题 <see cref="GetAccountSecurityQuestionAsync(string)"/>，然后重置密码 <see cref="ResetPasswordAsync(string, int, string)"/>。
     /// <para />
     /// Api 请求失败，即非网络问题下返回值 code != 200 时，抛出异常 <see cref="PicaApiException"/>。</remarks>
-    public PicaClient(IWebProxy? proxy = null)
+    public PicaClient(IWebProxy? proxy = null, Uri? address = null)
     {
-        CreateHttpClient(proxy);
+        CreateHttpClient();
     }
 
 
@@ -86,13 +92,22 @@ public class PicaClient
     /// 更改代理
     /// </summary>
     /// <param name="proxy"></param>
-    public void ChangeProxy(IWebProxy? proxy = null)
+    public void ChangeProxyAndBaseAddress(IWebProxy? proxy = null, Uri? address = null)
     {
-        CreateHttpClient(proxy);
+        if (address is null)
+        {
+            baseAddress = new Uri(BaseUrl);
+        }
+        else
+        {
+            baseAddress = address;
+        }
+        this.proxy = proxy;
+        CreateHttpClient();
     }
 
 
-    private void CreateHttpClient(IWebProxy? proxy = null)
+    private void CreateHttpClient()
     {
         _httpClient = new HttpClient(new HttpClientHandler
         {
@@ -100,7 +115,7 @@ public class PicaClient
             Proxy = proxy,
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true
         });
-        _httpClient.BaseAddress = new Uri(BaseUrl);
+        _httpClient.BaseAddress = baseAddress;
         _httpClient.Timeout = TimeSpan.FromSeconds(5);
         _httpClient.DefaultRequestHeaders.Add("api-key", ApiKey);
         _httpClient.DefaultRequestHeaders.Add("accept", Accept);
@@ -111,6 +126,7 @@ public class PicaClient
         _httpClient.DefaultRequestHeaders.Add("app-platform", AppPlatform);
         _httpClient.DefaultRequestHeaders.Add("app-uuid", AppUuid);
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+        _httpClient.DefaultRequestHeaders.Add("Host", "picaapi.picacomic.com");
     }
 
 
@@ -143,7 +159,7 @@ public class PicaClient
         Debug.WriteLine(str);
         var wrapper = JsonSerializer.Deserialize<ResponseBase<T>>(str);
 #else
-        var obj = await response.Content.ReadFromJsonAsync<ResponseBase<T>>();
+        var wrapper = await response.Content.ReadFromJsonAsync<ResponseBase<T>>();
 #endif
         if (wrapper is null)
         {
@@ -240,6 +256,31 @@ public class PicaClient
 
 
     #region App
+
+
+    /// <summary>
+    /// 获取分流 IP
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<string>> GetIpListAsync()
+    {
+        if (ipList is null)
+        {
+            var node = await _httpClient.GetFromJsonAsync<JsonNode>(InitUrl);
+            if (node?["addresses"] is JsonArray array)
+            {
+                ipList = array.Select(x => x!.ToString()).Prepend("68.183.234.72").ToList();
+            }
+        }
+        if (ipList?.Any() ?? false)
+        {
+            return ipList;
+        }
+        else
+        {
+            throw new PicaApiException(InitUrl, "Cannot get ip list.");
+        }
+    }
 
 
 
@@ -434,18 +475,38 @@ public class PicaClient
     }
 
 
+    /// <summary>
+    /// 修改个人头像
+    /// </summary>
+    /// <param name="bytes">图片文件字节数组</param>
+    /// <param name="format">文件格式，仅支持 jpg 和 png</param>
+    /// <returns>无返回值</returns>
+    /// <exception cref="NotSupportedException"></exception>
+    public async Task ChangeUserAvatarAsync(byte[] bytes, string format)
+    {
+        format = format?.ToString() switch
+        {
+            "jpg" => "jpeg",
+            "jpeg" => "jpeg",
+            "png" => "png",
+            _ => throw new NotSupportedException($"Format '{format}' is not supported.")
+        };
+        var avatar = $"data:image/{format};base64,{Convert.ToBase64String(bytes)}";
+        var request = new HttpRequestMessage(HttpMethod.Put, "users/avatar")
+        {
+            Content = JsonContent.Create(new { avatar }),
+        };
+        await CommonSendAsync<JsonNode>(request);
+    }
+
+
 
     /// <summary>
     /// 打哔咔
     /// </summary>
-    /// <returns>已打哔咔/无需打哔咔</returns>
+    /// <returns>已打哔咔/之前已打过哔咔</returns>
     public async Task<bool> PunchAsync()
     {
-        var profile = await GetUserProfileAsync();
-        if (profile.IsPunched)
-        {
-            return false;
-        }
         var request = new HttpRequestMessage(HttpMethod.Post, "users/punch-in");
         var res = await CommonSendAsync<JsonNode>(request, "res");
         return res["status"]?.ToString() switch

@@ -1,0 +1,203 @@
+﻿<UserControl x:Class="Pica3.Controls.ComicViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Pica3.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pc="using:Pica3.Controls"
+             x:DefaultBindMode="OneWay"
+             ProcessKeyboardAccelerators="UserControl_ProcessKeyboardAccelerators"
+             mc:Ignorable="d">
+
+
+    <UserControl.Resources>
+        <ScalarTransition x:Key="OpacityTransition" />
+        <AcrylicBrush x:Key="ComicViewerAcrylicBrush"
+                      FallbackColor="{ThemeResource ControlOnImageFillColorDefault}"
+                      TintColor="{ThemeResource ControlOnImageFillColorDefault}"
+                      TintOpacity="0.4" />
+    </UserControl.Resources>
+
+
+
+    <UserControl.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
+    </UserControl.Transitions>
+
+
+
+
+    <Grid>
+
+
+        <!--  背景图  -->
+        <pc:CachedImage HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="{x:Bind InitComic.Cover.Url}"
+                        Stretch="UniformToFill" />
+
+
+        <!--  亚克力背景  -->
+        <Rectangle HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
+                   Fill="{ThemeResource ComicViewerAcrylicBrush}" />
+
+
+
+
+
+
+
+        <!--  上下滚动  -->
+        <ListView x:Name="c_ListView_Comics"
+                  ItemContainerStyle="{StaticResource SimpleListViewItemStyle}"
+                  ItemsSource="{x:Bind ComicImageList}"
+                  SelectionMode="None"
+                  Tapped="c_ListView_Comics_Tapped">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="pc:IndexComicImage">
+                    <pc:ComicImage Height="800"
+                                   MaxWidth="1000"
+                                   EnableLazyLoading="True"
+                                   FontSize="36"
+                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                   ImageOrder="{x:Bind Index}"
+                                   RetryOnLoaded="True"
+                                   Source="{x:Bind Url}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+
+
+        <!--  进度指示  -->
+        <Border Margin="0,0,16,0"
+                Padding="24,4,24,4"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource ComicViewerAcrylicBrush}"
+                Canvas.ZIndex="100"
+                CornerRadius="8,8,0,0">
+            <TextBlock FontSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}">
+                <Run Text="{x:Bind CurrentPage}" />
+                <Run Text="/" />
+                <Run Text="{x:Bind TotalPage}" />
+            </TextBlock>
+        </Border>
+
+
+
+        <!--  操作区  -->
+
+
+        <!--  漫画信息卡片  -->
+        <Grid x:Name="c_Grid_ComicInfoCard"
+              Width="300"
+              Height="480"
+              Margin="0,0,60,60"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Bottom"
+              Background="{ThemeResource ComicViewerAcrylicBrush}"
+              CornerRadius="8"
+              IsHitTestVisible="{x:Bind OperationAreaHitTest}"
+              Opacity="{x:Bind OperationAreaOpacity}"
+              OpacityTransition="{StaticResource OpacityTransition}"
+              Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="300" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <pc:CachedImage HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{x:Bind InitComic.Cover.Url}"
+                            Stretch="UniformToFill" />
+            <StackPanel Grid.Row="1" Margin="24">
+                <TextBlock FontSize="16"
+                           MaxLines="2"
+                           Text="{x:Bind InitComic.Title}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+
+
+
+        <!--  顶栏  -->
+        <Grid Height="120"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Top"
+              Background="{ThemeResource ComicViewerAcrylicBrush}"
+              IsHitTestVisible="{x:Bind OperationAreaHitTest}"
+              Opacity="{x:Bind OperationAreaOpacity}"
+              OpacityTransition="{StaticResource OpacityTransition}" />
+
+
+        <!--  底栏  -->
+        <Grid Height="60"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Bottom"
+              Background="{ThemeResource ComicViewerAcrylicBrush}"
+              IsHitTestVisible="{x:Bind OperationAreaHitTest}"
+              Opacity="{x:Bind OperationAreaOpacity}"
+              OpacityTransition="{StaticResource OpacityTransition}"
+              Visibility="Collapsed">
+            <Grid MaxWidth="600"
+                  Margin="120,0,120,0"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Center"
+                  ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           FontSize="16"
+                           Text="{x:Bind CurrentPage}" />
+                <Slider x:Name="c_Slider_CurrentPage"
+                        Grid.Column="1"
+                        IsTabStop="False"
+                        Maximum="{x:Bind TotalPage}"
+                        Value="{x:Bind CurrentPage}" />
+                <TextBlock Grid.Column="2"
+                           VerticalAlignment="Center"
+                           FontSize="16"
+                           Text="{x:Bind TotalPage}" />
+            </Grid>
+        </Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+        <!--  返回按键  -->
+        <Button Width="48"
+                Height="48"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{x:Bind CloseComicViewerCommand}"
+                Content="&#xE112;"
+                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
+
+
+
+
+
+
+
+    </Grid>
+
+
+</UserControl>

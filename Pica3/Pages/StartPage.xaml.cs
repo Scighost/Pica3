@@ -1,8 +1,20 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,75 +25,86 @@ namespace Pica3.Pages;
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
 [INotifyPropertyChanged]
-public sealed partial class RankPage : Page
+public sealed partial class StartPage : Page
 {
 
 
     private readonly PicaClient picaClient;
 
 
-    public RankPage()
+
+    public StartPage()
     {
         this.InitializeComponent();
         picaClient = ServiceProvider.GetService<PicaClient>()!;
-        Loaded += RankPage_Loaded;
+        Loaded += StartPage_Loaded;
     }
 
-
-
-    private async void RankPage_Loaded(object sender, RoutedEventArgs e)
+    private void StartPage_Loaded(object sender, RoutedEventArgs e)
     {
-        try
+        if (StarComics is null)
         {
-            if (picaClient.IsLogin)
-            {
-                DayRanks ??= await picaClient.GetRankComicsAsync(RankType.H24);
-                WeekRanks ??= await picaClient.GetRankComicsAsync(RankType.D7);
-                MonthRanks ??= await picaClient.GetRankComicsAsync(RankType.D30);
-                SelectedRanks ??= DayRanks;
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
+            ChangePage();
         }
     }
 
 
-
     [ObservableProperty]
-    private List<RankComic> dayRanks;
-
-
-    [ObservableProperty]
-    public List<RankComic> weekRanks;
+    private int sortTypeIndex;
 
 
     [ObservableProperty]
-    private List<RankComic> monthRanks;
+    private int totalPage = 1;
+
 
 
     [ObservableProperty]
-    private List<RankComic> selectedRanks;
+    private int currentPage = 1;
+
+
+    [ObservableProperty]
+    private List<ComicProfile> starComics;
 
 
     private ComicProfile? lastClickedComic = null;
 
 
-    private void c_Pivot_RankType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    partial void OnSortTypeIndexChanged(int value)
     {
-        SelectedRanks = c_Pivot_RankType.SelectedIndex switch
-        {
-            0 => DayRanks,
-            1 => WeekRanks,
-            2 => MonthRanks,
-            _ => SelectedRanks,
-        };
+        ChangePage();
     }
 
+    partial void OnCurrentPageChanged(int value)
+    {
+        ChangePage();
+    }
 
-    private async void c_GridView_RankList_Loaded(object sender, RoutedEventArgs e)
+    private int randomId;
+
+    private async void ChangePage()
+    {
+        try
+        {
+            if (picaClient.IsLogin)
+            {
+                var id = Random.Shared.Next();
+                randomId = id;
+                var pageResult = await picaClient.GetFavouriteAsync((SortType)SortTypeIndex + 1, CurrentPage);
+                if (randomId == id)
+                {
+                    TotalPage = pageResult.Pages;
+                    CurrentPage = pageResult.Page;
+                    StarComics = pageResult.TList;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.HandlePicaException();
+        }
+    }
+
+    private async void c_GridView_Comics_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
@@ -103,8 +126,7 @@ public sealed partial class RankPage : Page
         }
     }
 
-
-    private void c_GridView_RankList_ItemClick(object sender, ItemClickEventArgs e)
+    private void c_GridView_Comics_ItemClick(object sender, ItemClickEventArgs e)
     {
         try
         {
@@ -114,6 +136,7 @@ public sealed partial class RankPage : Page
                 var ani = gridView.PrepareConnectedAnimation("ComicCoverAnimation", comic, "c_Image_ComicCover");
                 ani.Configuration = new BasicConnectedAnimationConfiguration();
                 MainPage.Current.Navigate(typeof(ComicDetailPage), comic, new SuppressNavigationTransitionInfo());
+                //MainPage.Current.Navigate(typeof(ComicDetailPage), comic, new DrillInNavigationTransitionInfo());
             }
         }
         catch (Exception ex)
@@ -121,6 +144,4 @@ public sealed partial class RankPage : Page
             Logger.Error(ex);
         }
     }
-
-
 }

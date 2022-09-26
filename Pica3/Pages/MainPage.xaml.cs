@@ -1,20 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Pica3.CoreApi;
 using Pica3.CoreApi.Account;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -51,6 +42,23 @@ public sealed partial class MainPage : Page
         Loaded += MainPage_Loaded;
     }
 
+
+
+    /// <summary>
+    /// Esc 键，后退
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void Page_ProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+    {
+        if (args.Key == Windows.System.VirtualKey.Escape && args.Modifiers == Windows.System.VirtualKeyModifiers.None)
+        {
+            MainPage.Current.GoBack();
+        }
+    }
+
+
+
     private async void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
         if (AppSetting.TryGetValue<bool>(SettingKeys.NavigationViewPaneClose, out var isClosed))
@@ -62,6 +70,10 @@ public sealed partial class MainPage : Page
             if (picaClient.IsLogin)
             {
                 UserProfile = await picaClient.GetUserProfileAsync();
+                if (!UserProfile.IsPunched && await picaClient.PunchAsync())
+                {
+                    NotificationProvider.Success("已打哔咔");
+                }
             }
         }
         catch (Exception ex)
@@ -73,11 +85,19 @@ public sealed partial class MainPage : Page
 
 
 
+
+
+    /// <summary>
+    /// 用户信息
+    /// </summary>
     [ObservableProperty]
     private UserProfile userProfile;
 
 
-
+    /// <summary>
+    /// 刷新用户信息
+    /// </summary>
+    /// <returns></returns>
     [RelayCommand]
     private async Task RefreshUserProfileAsync()
     {
@@ -95,7 +115,9 @@ public sealed partial class MainPage : Page
     }
 
 
-
+    /// <summary>
+    /// 退出登录
+    /// </summary>
     private void Logout()
     {
         picaClient.Logout();
@@ -168,11 +190,7 @@ public sealed partial class MainPage : Page
 
     private void c_NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
     {
-        if (c_Frame.CanGoBack)
-        {
-            c_Frame.GoBack();
-            c_NavigationView.SelectedItem = null;
-        }
+        GoBack();
     }
 
 
@@ -248,19 +266,26 @@ public sealed partial class MainPage : Page
     }
 
 
+
+    public void GoBack()
+    {
+        if (c_Frame.CanGoBack)
+        {
+            c_Frame.GoBack();
+            c_NavigationView.SelectedItem = null;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
     #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
 }

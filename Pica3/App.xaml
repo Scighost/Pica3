@@ -1,8 +1,10 @@
 ﻿<Application x:Class="Pica3.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="using:Pica3.Converters"
              xmlns:local="using:Pica3"
              xmlns:pc="using:Pica3.Controls"
+             xmlns:pt="using:Pica3.Themes"
              xmlns:swc="using:Scighost.WinUILib.Converters">
     <Application.Resources>
         <ResourceDictionary>
@@ -10,8 +12,10 @@
 
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="Themes\CachedImageStyle.xaml" />
+                <ResourceDictionary Source="Themes\ContainerStyle.xaml" />
                 <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
 
+                <pt:ComicProfileCardDateTemplate />
 
 
                 <!--  Other merged dictionaries here  -->
@@ -30,7 +34,7 @@
             <swc:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
             <swc:BoolToVisibilityReversedConverter x:Key="BoolToVisibilityReversedConverter" />
 
-
+            <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
 
 
         </ResourceDictionary>

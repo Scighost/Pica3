@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml;
-using Pica3.Models;
 using Scighost.WinUILib.Helpers;
 
 namespace Pica3.Helpers;

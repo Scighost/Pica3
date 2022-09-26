@@ -6,6 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:pc="using:Pica3.Controls"
       x:DefaultBindMode="OneWay"
+      ProcessKeyboardAccelerators="Page_ProcessKeyboardAccelerators"
       mc:Ignorable="d">
 
     <Grid>
@@ -21,6 +22,7 @@
             <NavigationView.Resources>
                 <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{ThemeResource LayerOnAcrylicFillColorDefault}" />
             </NavigationView.Resources>
+
 
             <NavigationView.PaneCustomContent>
                 <Grid Margin="0,8,0,8">
@@ -105,6 +107,22 @@
                         <FontIcon Glyph="&#xECAD;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="个人中心"
+                                    Icon="Contact"
+                                    Tag="UserProfilePage"
+                                    Visibility="Collapsed" />
+
+                <NavigationViewItemSeparator />
+
+                <NavigationViewItem Content="收藏"
+                                    Icon="OutlineStar"
+                                    Tag="StartPage" />
+                <NavigationViewItem Content="评论"
+                                    Icon="Comment"
+                                    Tag="" />
+                <NavigationViewItem Content="历史记录"
+                                    Icon="Clock"
+                                    Tag="" />
 
             </NavigationView.MenuItems>
 

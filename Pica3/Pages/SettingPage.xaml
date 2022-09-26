@@ -120,37 +120,40 @@
 
 
 
-                    <!--  数据  -->
+                    <!--  文件  -->
                     <TextBlock Margin="0,20,0,8"
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="数据" />
+                               Text="文件" />
 
 
 
-                    <!--  数据文件  -->
-                    <Expander Name="_Expander_Data"
-                              HorizontalAlignment="Stretch"
-                              HorizontalContentAlignment="Stretch">
+                    <!--  数据  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <Grid>
                                 <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
                                     <FontIcon FontSize="20" Glyph="&#xE74C;" />
                                     <TextBlock Margin="20,0,0,0">
-                                        <Run Text="数据文件" />
+                                        <Run Text="数据" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="未设置时数据保存在应用文件夹下" />
+                                             Text="收藏漫画、历史记录等内容" />
                                     </TextBlock>
                                 </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{x:Bind OpenFolderCommand}"
+                                        CommandParameter="{x:Bind DataFolder}"
+                                        Content="打开文件夹" />
                             </Grid>
                         </Expander.Header>
                         <Expander.Content>
                             <StackPanel Margin="0,-16,44,-16">
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock IsTextSelectionEnabled="True">
-                                        <Run Text="个人数据" />
+                                        <Run Text="数据位置" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -158,12 +161,40 @@
                                     </TextBlock>
                                     <Button HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Click="{x:Bind ChangeDataFolderAsync}"
+                                            Command="{x:Bind ChangeDataFolderCommand}"
                                             Content="修改路径" />
                                 </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+
+
+
+                    <!--  缓存  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon FontSize="20" Glyph="&#xE81E;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="缓存" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind CacheSize}" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{x:Bind ClearCacheCommand}"
+                                        Content="清理缓存" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock IsTextSelectionEnabled="True">
-                                        <Run Text="缓存" />
+                                        <Run Text="缓存位置" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -171,12 +202,40 @@
                                     </TextBlock>
                                     <Button HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Click="{x:Bind ChangeCacheFolderAsync}"
+                                            Command="{x:Bind ChangeCacheFolderCommand}"
                                             Content="修改路径" />
                                 </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+
+
+                    <!--  下载  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon FontSize="20" Glyph="&#xE118;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="下载" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="下载漫画时保存的位置" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{x:Bind OpenFolderCommand}"
+                                        CommandParameter="{x:Bind DownloadFolder}"
+                                        Content="打开文件夹" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock IsTextSelectionEnabled="True">
-                                        <Run Text="下载" />
+                                        <Run Text="下载位置" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -184,7 +243,7 @@
                                     </TextBlock>
                                     <Button HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Click="{x:Bind ChangeDownloadFolderAsync}"
+                                            Command="{x:Bind ChangeDownloadFolderCommand}"
                                             Content="修改路径" />
                                 </Grid>
                             </StackPanel>
@@ -196,11 +255,11 @@
                     <!--  应用日志  -->
                     <pc:SettingCard>
                         <pc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE81E;" />
+                            <FontIcon FontSize="20" Glyph="&#xF0E3;" />
                         </pc:SettingCard.Icon>
                         <pc:SettingCard.Content>
                             <TextBlock VerticalAlignment="Center">
-                                <Run Text="应用日志" />
+                                <Run Text="日志" />
                                 <LineBreak />
                                 <Run FontSize="12"
                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -210,7 +269,8 @@
                         <pc:SettingCard.Selector>
                             <Button HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Click="{x:Bind OpenLogFolderAsync}"
+                                    Command="{x:Bind OpenFolderCommand}"
+                                    CommandParameter="{x:Bind LogFolder}"
                                     Content="打开文件夹" />
                         </pc:SettingCard.Selector>
                     </pc:SettingCard>

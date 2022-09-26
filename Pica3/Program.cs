@@ -24,5 +24,7 @@ public static class Program
             global::System.Threading.SynchronizationContext.SetSynchronizationContext(context);
             new App();
         });
+
+        Logger.CloseAndFlush();
     }
 }

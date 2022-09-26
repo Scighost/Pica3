@@ -1,20 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Services.Maps;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 
@@ -29,9 +16,21 @@ namespace Pica3.Pages;
 [INotifyPropertyChanged]
 public sealed partial class SettingPage : Page
 {
+
+
+
+
     public SettingPage()
     {
         this.InitializeComponent();
+        Loaded += SettingPage_Loaded;
+    }
+
+
+
+    private async void SettingPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        await GetCacheSizeAsync();
     }
 
 
@@ -146,6 +145,41 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 缓存大小
+    /// </summary>
+    [ObservableProperty]
+    private string cacheSize;
+
+
+
+
+    /// <summary>
+    /// 日志文件夹
+    /// </summary>
+    public string LogFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Pica3\\Log");
+
+
+    /// <summary>
+    /// 打开文件夹
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task OpenFolderAsync(string folder)
+    {
+        if (!Directory.Exists(folder))
+        {
+            Directory.CreateDirectory(folder);
+        }
+        await Launcher.LaunchFolderPathAsync(folder);
+    }
+
+
+    /// <summary>
+    /// 修改数据文件夹
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
     private async Task ChangeDataFolderAsync()
     {
         try
@@ -168,6 +202,12 @@ public sealed partial class SettingPage : Page
     }
 
 
+
+    /// <summary>
+    /// 修改缓存文件夹
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
     private async Task ChangeCacheFolderAsync()
     {
         try
@@ -190,6 +230,72 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 获取缓存大小
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetCacheSizeAsync()
+    {
+        try
+        {
+            if (Directory.Exists(CacheFolder))
+            {
+                long totalSize = 0;
+                await Task.Run(() =>
+                {
+                    var files = new DirectoryInfo(CacheFolder).GetFiles("*", SearchOption.AllDirectories);
+                    totalSize = files.Sum(x => x.Length);
+                });
+                CacheSize = $"{((double)totalSize) / (1 << 20):F2} MB";
+            }
+            else
+            {
+                CacheSize = "0 MB";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            CacheSize = "无法计算";
+        }
+    }
+
+
+    /// <summary>
+    /// 清理缓存
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task ClearCacheAsync()
+    {
+        try
+        {
+            var folder = await StorageFolder.GetFolderFromPathAsync(CacheFolder);
+            if (folder is null)
+            {
+                Directory.CreateDirectory(CacheFolder);
+            }
+            else
+            {
+                await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                Directory.CreateDirectory(CacheFolder);
+                CacheSize = "0 MB";
+                NotificationProvider.Success("清理完成");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
+    /// <summary>
+    /// 修改下载文件夹
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
     private async Task ChangeDownloadFolderAsync()
     {
         try
@@ -213,20 +319,9 @@ public sealed partial class SettingPage : Page
 
 
 
-    /// <summary>
-    /// 日志文件夹
-    /// </summary>
-    public string LogFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Pica3\\Log");
 
 
-    private async Task OpenLogFolderAsync()
-    {
-        if (!Directory.Exists(LogFolder))
-        {
-            Directory.CreateDirectory(LogFolder);
-        }
-        await Launcher.LaunchFolderPathAsync(LogFolder);
-    }
+
 
 
 

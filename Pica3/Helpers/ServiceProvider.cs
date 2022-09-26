@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Pica3.Controls;
 using Pica3.CoreApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pica3.Helpers;
 
@@ -17,6 +13,22 @@ internal static class ServiceProvider
     private static Microsoft.Extensions.DependencyInjection.ServiceProvider _serviceProvider;
 
     private static bool _isInitialized;
+
+
+    private static HttpClient _httpClient;
+
+    public static HttpClient HttpClient
+    {
+        get
+        {
+            if (_httpClient is null)
+            {
+                InitializeHttpClient();
+            }
+            return _httpClient!;
+        }
+    }
+
 
 
     private static void Initialize()
@@ -34,25 +46,57 @@ internal static class ServiceProvider
     {
         if (IPEndPoint.TryParse(AppSetting.GetValue<string>(SettingKeys.WebProxy)!, out var address))
         {
-            sc.AddSingleton(new PicaClient(new WebProxy(address.ToString())));
-            sc.AddSingleton(new HttpClient(new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.All,
-                Proxy = new WebProxy(address.ToString()),
-                ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
-            }));
-
+            sc.AddSingleton(new PicaClient(proxy: new WebProxy(address.ToString())));
         }
         else
         {
             sc.AddSingleton(new PicaClient());
-            sc.AddSingleton(new HttpClient(new HttpClientHandler
+        }
+    }
+
+
+
+    private static void InitializeHttpClient()
+    {
+        if (IPEndPoint.TryParse(AppSetting.GetValue<string>(SettingKeys.WebProxy)!, out var address))
+        {
+            _httpClient = new HttpClient(new HttpClientHandler
+            {
+                Proxy = new WebProxy(address.ToString()),
+                AutomaticDecompression = DecompressionMethods.All,
+                ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
+            });
+
+        }
+        else
+        {
+            _httpClient = new HttpClient(new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.All,
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
-            }));
+            });
         }
     }
+
+
+
+    /// <summary>
+    /// 修改代理设置
+    /// </summary>
+    /// <param name="proxy"></param>
+    public static void ChangeProxy(IWebProxy? proxy = null)
+    {
+        var client = GetService<PicaClient>();
+        client?.ChangeProxy(proxy);
+        _httpClient = new HttpClient(new HttpClientHandler
+        {
+            Proxy = proxy,
+            AutomaticDecompression = DecompressionMethods.All,
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
+        });
+        CachedImage.Initialize();
+    }
+
 
 
 

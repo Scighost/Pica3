@@ -20,7 +20,7 @@ internal static class AesHelper
 
     public static byte[] Encrypt(string plainText)
     {
-        
+
         byte[] encrypted;
 
         // Create an Aes object

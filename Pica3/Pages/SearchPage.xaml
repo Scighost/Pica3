@@ -5,6 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:Pica3.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:pc="using:Pica3.Controls"
+      xmlns:pcc="using:Pica3.CoreApi.Comic"
       x:DefaultBindMode="OneWay"
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
@@ -103,10 +105,15 @@
                              IsItemClickEnabled="True"
                              ItemClick="c_GridView_Comics_ItemClick"
                              ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
-                             ItemTemplate="{StaticResource ComicProfileCard}"
                              ItemsSource="{x:Bind ComicList}"
                              Loaded="c_GridView_Comics_Loaded"
-                             SelectionMode="None" />
+                             SelectionMode="None">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="pcc:ComicProfile">
+                    <pc:ComicProfileCard ComicProfile="{x:Bind}" />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </cc:AdaptiveGridView>
 
 
 

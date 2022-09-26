@@ -4,6 +4,7 @@
              xmlns:converters="using:Pica3.Converters"
              xmlns:local="using:Pica3"
              xmlns:pc="using:Pica3.Controls"
+             xmlns:pcc="using:Pica3.CoreApi.Comic"
              xmlns:pt="using:Pica3.Themes"
              xmlns:swc="using:Scighost.WinUILib.Converters">
     <Application.Resources>
@@ -14,8 +15,6 @@
                 <ResourceDictionary Source="Themes\CachedImageStyle.xaml" />
                 <ResourceDictionary Source="Themes\ContainerStyle.xaml" />
                 <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
-
-                <pt:ComicProfileCardDateTemplate />
 
 
                 <!--  Other merged dictionaries here  -->
@@ -36,6 +35,10 @@
             <swc:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
             <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+
+
+
+
 
 
         </ResourceDictionary>

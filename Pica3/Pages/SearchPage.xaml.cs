@@ -35,6 +35,8 @@ public sealed partial class SearchPage : Page
     private readonly PicaClient picaClient;
 
 
+    private bool doNotRefresh;
+
 
     public SearchPage()
     {
@@ -48,6 +50,7 @@ public sealed partial class SearchPage : Page
     {
         try
         {
+            doNotRefresh = true;
             if (e.NavigationMode == NavigationMode.Back)
             {
                 if (pageCaches.TryPop(out var cache))
@@ -75,6 +78,10 @@ public sealed partial class SearchPage : Page
         catch (Exception ex)
         {
             Logger.Error(ex);
+        }
+        finally
+        {
+            doNotRefresh = false;
         }
     }
 
@@ -178,6 +185,10 @@ public sealed partial class SearchPage : Page
 
     private async void SearchAsync()
     {
+        if (doNotRefresh)
+        {
+            return;
+        }
         try
         {
             if (picaClient.IsLogin)

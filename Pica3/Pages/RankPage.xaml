@@ -54,10 +54,15 @@
                              IsItemClickEnabled="True"
                              ItemClick="c_GridView_RankList_ItemClick"
                              ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
-                             ItemTemplate="{StaticResource RankComicProfileCard}"
                              ItemsSource="{x:Bind SelectedRanks}"
                              Loaded="c_GridView_RankList_Loaded"
-                             SelectionMode="None" />
+                             SelectionMode="None">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="pcc:RankComic">
+                    <pc:ComicProfileCard ComicProfile="{x:Bind}" />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </cc:AdaptiveGridView>
 
 
 

@@ -86,14 +86,6 @@
                                                  Visibility="{x:Bind ComicDetailInfo.ChineseTeam, FallbackValue=Collapsed, Converter={StaticResource StringToVisibilityConverter}}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <!--  阅读数  -->
-                                <FontIcon Glyph="&#xE18B;" ToolTipService.ToolTip="阅读" />
-                                <TextBlock x:Name="c_TextBlock_Views" Text="{x:Bind ComicDetailInfo.ViewsCount}" />
-                                <!--  点赞数  -->
-                                <FontIcon Margin="8,0,0,0"
-                                          Glyph="&#xE19F;"
-                                          ToolTipService.ToolTip="点赞" />
-                                <TextBlock x:Name="c_TextBlock_Likes" Text="{x:Bind ComicDetailInfo.LikesCount}" />
                                 <!--  章节页数  -->
                                 <FontIcon Margin="8,0,0,0"
                                           Glyph="&#xE160;"
@@ -103,6 +95,16 @@
                                     <Run Text="/" />
                                     <Run Text="{x:Bind ComicDetailInfo.PagesCount}" /><Run Text="P" />
                                 </TextBlock>
+                                <!--  阅读数  -->
+                                <FontIcon Margin="8,0,0,0"
+                                          Glyph="&#xE18B;"
+                                          ToolTipService.ToolTip="阅读" />
+                                <TextBlock x:Name="c_TextBlock_Views" Text="{x:Bind ComicDetailInfo.ViewsCount}" />
+                                <!--  点赞数  -->
+                                <FontIcon Margin="8,0,0,0"
+                                          Glyph="&#xE19F;"
+                                          ToolTipService.ToolTip="点赞" />
+                                <TextBlock x:Name="c_TextBlock_Likes" Text="{x:Bind ComicDetailInfo.LikesCount}" />
                                 <!--  更新时间  -->
                                 <FontIcon Margin="8,0,0,0"
                                           Glyph="&#xE121;"
@@ -323,10 +325,15 @@
                                              IsItemClickEnabled="True"
                                              ItemClick="c_GridView_RecommendComics_ItemClick"
                                              ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
-                                             ItemTemplate="{StaticResource ComicProfileCard}"
                                              ItemsSource="{x:Bind RecommendComics}"
                                              Loaded="c_GridView_RecommendComics_Loaded"
-                                             SelectionMode="None" />
+                                             SelectionMode="None">
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="pcc:ComicProfile">
+                                    <pc:ComicProfileCard ComicProfile="{x:Bind}" />
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </cc:AdaptiveGridView>
                     </PivotItem>
 
 

@@ -19,6 +19,7 @@
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Controls\ComicProfileCard.xaml" />
 	  <None Remove="Pages\SearchPage.xaml" />
 	</ItemGroup>
 
@@ -45,6 +46,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Controls\ComicProfileCard.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <None Update="logo.ico">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

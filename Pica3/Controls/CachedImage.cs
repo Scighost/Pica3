@@ -1,11 +1,7 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
+﻿using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Pica3.CoreApi;
 using Scighost.WinUILib.Cache;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using Windows.Storage;
 
@@ -25,7 +21,7 @@ internal class CachedImage : ImageEx
 
     public CachedImage()
     {
-        
+
     }
 
 
@@ -71,9 +67,9 @@ internal class CachedImage : ImageEx
         {
             throw;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await ImageCache.Instance.RemoveAsync(new[] { imageUri });
+            //await ImageCache.Instance.RemoveAsync(new[] { imageUri });
             throw;
         }
     }

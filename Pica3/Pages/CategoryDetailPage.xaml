@@ -1,4 +1,4 @@
-﻿<Page x:Class="Pica3.Pages.StartPage"
+﻿<Page x:Class="Pica3.Pages.CategoryDetailPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
@@ -15,12 +15,14 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+
+
         <Grid Padding="48,0,48,0" CornerRadius="4,0,0,4">
             <TextBlock HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        FontSize="24"
                        FontWeight="Bold"
-                       Text="收藏" />
+                       Text="{x:Bind CategoryName}" />
             <StackPanel HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Orientation="Horizontal"
@@ -36,8 +38,11 @@
                 <ComboBox Width="120"
                           Margin="16,0,0,0"
                           SelectedIndex="{x:Bind SortTypeIndex, Mode=TwoWay}">
+                    <ComboBoxItem Content="默认" />
                     <ComboBoxItem Content="最新" />
                     <ComboBoxItem Content="最旧" />
+                    <ComboBoxItem Content="点赞最多" />
+                    <ComboBoxItem Content="阅读最多" />
                 </ComboBox>
             </StackPanel>
         </Grid>
@@ -52,10 +57,9 @@
                              ItemClick="c_GridView_Comics_ItemClick"
                              ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
                              ItemTemplate="{StaticResource ComicProfileCard}"
-                             ItemsSource="{x:Bind StarComics}"
+                             ItemsSource="{x:Bind ComicList}"
                              Loaded="c_GridView_Comics_Loaded"
                              SelectionMode="None" />
-
 
 
 

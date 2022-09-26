@@ -12,16 +12,14 @@
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<WindowsPackageType>None</WindowsPackageType>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Controls\ComicViewer.xaml" />
-	  <None Remove="Pages\StartPage.xaml" />
-	  <None Remove="Themes\ComicProfileCardDateTemplate.xaml" />
-	  <None Remove="Themes\ContainerStyle.xaml" />
+	  <None Remove="Pages\SearchPage.xaml" />
 	</ItemGroup>
 
 
@@ -33,8 +31,8 @@
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Core" Version="7.1.2" />
 		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="Mapster" Version="7.3.0" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0-rc.1.22426.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.1.22426.10" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
 		<PackageReference Include="Scighost.WinUILib" Version="0.1.0-beta8" />
@@ -47,29 +45,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Controls\ComicViewer.xaml">
+	  <None Update="logo.ico">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <Page Update="Pages\SearchPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Page Update="Pages\StartPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Update="Themes\ContainerStyle.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Update="Themes\ComicProfileCardDateTemplate.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
+	
 
 
 </Project>

@@ -83,11 +83,20 @@ internal static class Logger
         }
         try
         {
-            var stack = new StackFrame(1);
-            var callerName = $"{stack.GetMethod()?.DeclaringType?.FullName}.{callerMemberName}";
+            StackFrame stack;
+            if (callerMemberName == "HandlePicaException")
+            {
+                stack = new StackFrame(2);
+            }
+            else
+            {
+                stack = new StackFrame(1);
+            }
+            var method = stack.GetMethod();
+            var callerName = $"{method?.DeclaringType?.FullName}.{method?.Name}";
             using (LogContext.PushProperty("CallerName", callerName))
             {
-                Log.Error(ex, message);
+                Log.Error(ex, message ?? "--->");
             }
         }
         catch { }

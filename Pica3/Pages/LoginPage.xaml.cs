@@ -149,25 +149,24 @@ public sealed partial class LoginPage : Page
                 NotificationProvider.Warning("未知错误", 1500);
             }
         }
-        catch (PicaApiException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Warning("网络错误", 1500);
-        }
-        catch (TaskCanceledException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Warning("连接超时", 1500);
-        }
+        //catch (PicaApiException ex)
+        //{
+        //    Logger.Error(ex);
+        //    NotificationProvider.Error(ex);
+        //}
+        //catch (HttpRequestException ex)
+        //{
+        //    Logger.Error(ex);
+        //    NotificationProvider.Warning("网络错误", 1500);
+        //}
+        //catch (TaskCanceledException ex)
+        //{
+        //    Logger.Error(ex);
+        //    NotificationProvider.Warning("连接超时", 1500);
+        //}
         catch (Exception ex)
         {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
+            ex.HandlePicaException();
         }
         finally
         {

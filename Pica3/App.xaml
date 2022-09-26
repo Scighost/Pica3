@@ -33,6 +33,7 @@
 
             <swc:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
             <swc:BoolToVisibilityReversedConverter x:Key="BoolToVisibilityReversedConverter" />
+            <swc:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
             <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
 

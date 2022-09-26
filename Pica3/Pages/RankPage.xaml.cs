@@ -85,15 +85,19 @@ public sealed partial class RankPage : Page
     {
         try
         {
-            if (lastClickedComic != null && sender is GridView gridView)
+            var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverBackAnimation");
+            if (ani != null)
             {
-                gridView.ScrollIntoView(lastClickedComic);
-                gridView.UpdateLayout();
-                var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverBackAnimation");
-                if (ani != null)
+                if (lastClickedComic != null && (SelectedRanks?.Contains(lastClickedComic) ?? false) && sender is GridView gridView)
                 {
+                    gridView.ScrollIntoView(lastClickedComic);
+                    gridView.UpdateLayout();
                     ani.Configuration = new BasicConnectedAnimationConfiguration();
                     await gridView.TryStartConnectedAnimationAsync(ani, lastClickedComic, "c_Image_ComicCover");
+                }
+                else
+                {
+                    ani.Cancel();
                 }
             }
         }

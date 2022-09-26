@@ -84,7 +84,7 @@ public class PicaClient
     /// Api 请求失败，即非网络问题下返回值 code != 200 时，抛出异常 <see cref="PicaApiException"/>。</remarks>
     public PicaClient(IWebProxy? proxy = null, Uri? address = null)
     {
-        CreateHttpClient();
+        ChangeProxyAndBaseAddress(proxy, address);
     }
 
 
@@ -116,7 +116,7 @@ public class PicaClient
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true
         });
         _httpClient.BaseAddress = baseAddress;
-        _httpClient.Timeout = TimeSpan.FromSeconds(5);
+        _httpClient.Timeout = TimeSpan.FromSeconds(10);
         _httpClient.DefaultRequestHeaders.Add("api-key", ApiKey);
         _httpClient.DefaultRequestHeaders.Add("accept", Accept);
         _httpClient.DefaultRequestHeaders.Add("app-channel", AppChannel);
@@ -180,52 +180,19 @@ public class PicaClient
 
     private async Task<T> CommonSendAsync<T>(HttpRequestMessage request, string objPropertyName, bool allowReturnNull = false)
     {
-        if (!string.IsNullOrWhiteSpace(authorization))
+        var data = await CommonSendAsync<JsonNode>(request);
+        var obj = JsonSerializer.Deserialize<T>(data?[objPropertyName]);
+        if (obj != null)
         {
-            request.Headers.Add("authorization", authorization);
-        }
-        if (request.Content?.Headers.ContentType != null)
-        {
-            // 惊呆了，小写不行，必须用大写
-            request.Content.Headers.ContentType.CharSet = "UTF-8";
-        }
-        request.Headers.Add("time", TimeStamp);
-        request.Headers.Add("signature", GetSignature(request));
-        request.Headers.Add("image-quality", ImageQuality.ToString().ToLower());
-
-        var response = await _httpClient.SendAsync(request);
-#if DEBUG
-        var str = await response.Content.ReadAsStringAsync();
-        Debug.WriteLine(request.RequestUri);
-        Debug.WriteLine(str);
-        var wrapper = JsonSerializer.Deserialize<ResponseBase<JsonNode>>(str);
-#else
-        var wrapper = await response.Content.ReadFromJsonAsync<ResponseBase<JsonNode>>();
-#endif
-        if (wrapper is null)
-        {
-            response.EnsureSuccessStatusCode();
-            throw new PicaApiException(request.RequestUri?.ToString(), "Response data is null.");
-        }
-        if (wrapper.Success)
-        {
-            var obj = JsonSerializer.Deserialize<T>(wrapper.Data?[objPropertyName]);
-            if (obj != null)
-            {
-                return obj;
-            }
-            else
-            {
-                if (allowReturnNull)
-                {
-                    return obj!;
-                }
-                throw new PicaApiException(request.RequestUri?.ToString(), "Response data is null.");
-            }
+            return obj;
         }
         else
         {
-            throw new PicaApiException(request.RequestUri?.ToString(), wrapper.Message, wrapper.Error, wrapper.Detail);
+            if (allowReturnNull)
+            {
+                return obj!;
+            }
+            throw new PicaApiException(request.RequestUri?.ToString(), "Response data is null.");
         }
     }
 
@@ -266,7 +233,9 @@ public class PicaClient
     {
         if (ipList is null)
         {
+            Debug.WriteLine(InitUrl);
             var node = await _httpClient.GetFromJsonAsync<JsonNode>(InitUrl);
+            Debug.WriteLine(node);
             if (node?["addresses"] is JsonArray array)
             {
                 ipList = array.Select(x => x!.ToString()).Prepend("68.183.234.72").ToList();

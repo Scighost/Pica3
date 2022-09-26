@@ -72,9 +72,18 @@
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon Glyph="&#xE125;" />
                                 <!--  作者  -->
-                                <TextBlock x:Name="c_TextBlock_Author" Text="{x:Bind ComicDetailInfo.Author}" />
+                                <HyperlinkButton x:Name="c_HyperlinkButton_Author"
+                                                 Padding="4,2,4,2"
+                                                 Click="OpenSearchPage"
+                                                 Content="{x:Bind ComicDetailInfo.Author}"
+                                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                                 <!--  团队  -->
-                                <TextBlock x:Name="c_TextBlock_Team" Text="{x:Bind ComicDetailInfo.ChineseTeam}" />
+                                <HyperlinkButton x:Name="c_TextBlock_Team"
+                                                 Padding="4,2,4,2"
+                                                 Click="OpenSearchPage"
+                                                 Content="{x:Bind ComicDetailInfo.ChineseTeam}"
+                                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                                 Visibility="{x:Bind ComicDetailInfo.ChineseTeam, FallbackValue=Collapsed, Converter={StaticResource StringToVisibilityConverter}}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <!--  阅读数  -->
@@ -118,9 +127,10 @@
                                     </ItemsRepeater.Layout>
                                     <ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="x:String">
-                                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       IsTextSelectionEnabled="True"
-                                                       Text="{x:Bind}" />
+                                            <HyperlinkButton Padding="4,2,4,2"
+                                                             Click="OpenCategoryDetailPage"
+                                                             Content="{x:Bind}"
+                                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                         </DataTemplate>
                                     </ItemsRepeater.ItemTemplate>
                                 </ItemsRepeater>
@@ -143,9 +153,10 @@
                                     </ItemsRepeater.Layout>
                                     <ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="x:String">
-                                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       IsTextSelectionEnabled="True"
-                                                       Text="{x:Bind}" />
+                                            <HyperlinkButton Padding="4,2,4,2"
+                                                             Click="OpenSearchPage"
+                                                             Content="{x:Bind}"
+                                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                         </DataTemplate>
                                     </ItemsRepeater.ItemTemplate>
                                 </ItemsRepeater>

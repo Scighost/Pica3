@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Pica3.CoreApi;
 using Pica3.CoreApi.App;
 
@@ -38,7 +39,8 @@ public sealed partial class CategoryPage : Page
             {
                 if (Categories is null)
                 {
-                    Categories = await picaClient.GetHomeCategoriesAsync();
+                    var c = await picaClient.GetHomeCategoriesAsync();
+                    Categories = c.Where(x => !x.IsWeb).ToList();
                 }
             }
         }
@@ -58,8 +60,20 @@ public sealed partial class CategoryPage : Page
 
 
 
-
-
+    private void c_GridView_Categories_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        try
+        {
+            if (e.ClickedItem is HomeCategory category && !category.IsWeb)
+            {
+                MainPage.Current.Navigate(typeof(CategoryDetailPage), category.Title, new DrillInNavigationTransitionInfo());
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
 
 
 }

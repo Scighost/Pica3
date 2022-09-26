@@ -25,28 +25,100 @@ namespace Pica3.Pages;
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
 [INotifyPropertyChanged]
-public sealed partial class StartPage : Page
+public sealed partial class CategoryDetailPage : Page
 {
+
+    private static readonly Stack<PageCache> pageCaches = new();
+
+
+    private record PageCache(string CategoryName, int SortTypeIndex, int TotalPage, int CurrentPage, List<ComicProfile>? ComicList, ComicProfile? LastClickedComic);
+
+
+    private bool dotNotRefresh;
 
 
     private readonly PicaClient picaClient;
 
 
+    [ObservableProperty]
+    private string categoryName;
 
-    public StartPage()
+
+
+
+    public CategoryDetailPage()
     {
         this.InitializeComponent();
         picaClient = ServiceProvider.GetService<PicaClient>()!;
-        Loaded += StartPage_Loaded;
+        Loaded += CategoryDetailPage_Loaded;
     }
 
-    private void StartPage_Loaded(object sender, RoutedEventArgs e)
+
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        if (StarComics is null)
+        try
+        {
+            dotNotRefresh = true;
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                if (pageCaches.TryPop(out var cache))
+                {
+                    CategoryName = cache.CategoryName;
+                    SortTypeIndex = cache.SortTypeIndex;
+                    TotalPage = cache.TotalPage;
+                    CurrentPage = cache.CurrentPage;
+                    ComicList = cache.ComicList;
+                    lastClickedComic = cache.LastClickedComic;
+                }
+            }
+            else
+            {
+                if (e.Parameter is string str && str != CategoryName)
+                {
+                    CategoryName = str;
+                    TotalPage = 1;
+                    CurrentPage = 1;
+                    ComicList = null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        finally
+        {
+            dotNotRefresh = false;
+        }
+    }
+
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        try
+        {
+            if (e.NavigationMode != NavigationMode.Back)
+            {
+                pageCaches.Push(new PageCache(CategoryName, SortTypeIndex, TotalPage, CurrentPage, ComicList, lastClickedComic));
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
+    private void CategoryDetailPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (ComicList is null)
         {
             ChangePageAsync();
         }
     }
+
 
 
     [ObservableProperty]
@@ -63,10 +135,11 @@ public sealed partial class StartPage : Page
 
 
     [ObservableProperty]
-    private List<ComicProfile> starComics;
+    private List<ComicProfile>? comicList;
 
 
     private ComicProfile? lastClickedComic = null;
+
 
 
     partial void OnSortTypeIndexChanged(int value)
@@ -82,22 +155,28 @@ public sealed partial class StartPage : Page
         }
     }
 
+
+
     private int randomId;
 
     private async void ChangePageAsync()
     {
+        if (dotNotRefresh)
+        {
+            return;
+        }
         try
         {
             if (picaClient.IsLogin)
             {
                 var id = Random.Shared.Next();
                 randomId = id;
-                var pageResult = await picaClient.GetFavouriteAsync((SortType)SortTypeIndex + 1, CurrentPage);
+                var pageResult = await picaClient.CategorySearchAsync(CategoryName, CurrentPage, (SortType)SortTypeIndex);
                 if (randomId == id)
                 {
                     TotalPage = pageResult.Pages;
                     CurrentPage = pageResult.Page;
-                    StarComics = pageResult.TList;
+                    ComicList = pageResult.TList;
                 }
             }
         }
@@ -111,15 +190,19 @@ public sealed partial class StartPage : Page
     {
         try
         {
-            if (lastClickedComic != null && sender is GridView gridView)
+            var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverBackAnimation");
+            if (ani != null)
             {
-                gridView.ScrollIntoView(lastClickedComic);
-                gridView.UpdateLayout();
-                var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverBackAnimation");
-                if (ani != null)
+                if (lastClickedComic != null && (ComicList?.Contains(lastClickedComic) ?? false) && sender is GridView gridView)
                 {
+                    gridView.ScrollIntoView(lastClickedComic);
+                    gridView.UpdateLayout();
                     ani.Configuration = new BasicConnectedAnimationConfiguration();
                     await gridView.TryStartConnectedAnimationAsync(ani, lastClickedComic, "c_Image_ComicCover");
+                }
+                else
+                {
+                    ani.Cancel();
                 }
             }
         }
@@ -146,4 +229,10 @@ public sealed partial class StartPage : Page
             Logger.Error(ex);
         }
     }
+
+
+
+
+
+
 }

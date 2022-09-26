@@ -99,6 +99,9 @@
                                     Content="主页"
                                     Icon="Home"
                                     Tag="HomePage" />
+                <NavigationViewItem Content="搜索"
+                                    Icon="Find"
+                                    Tag="SearchPage" />
                 <NavigationViewItem Content="分类"
                                     Icon="ViewAll"
                                     Tag="CategoryPage" />

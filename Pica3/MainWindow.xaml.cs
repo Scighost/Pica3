@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Pica3.Pages;
+using System.IO;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.Graphics;
@@ -68,6 +69,8 @@ public sealed partial class MainWindow : Window
         HWND = WindowNative.GetWindowHandle(this);
         windowId = Win32Interop.GetWindowIdFromWindow(HWND);
         appWindow = AppWindow.GetFromWindowId(windowId);
+        appWindow.Title = "哔咔 3";
+        appWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "logo.ico"));
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(WindowTitleBar);

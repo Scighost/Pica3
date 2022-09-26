@@ -31,20 +31,19 @@
 
 
 
-        <GridView Grid.Row="1"
-                  Padding="48,0,48,0"
+        <GridView x:Name="c_GridView_Categories"
+                  Grid.Row="1"
+                  Padding="48,12,36,12"
+                  IsItemClickEnabled="True"
+                  ItemClick="c_GridView_Categories_ItemClick"
+                  ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
                   ItemsSource="{x:Bind Categories}"
                   SelectionMode="None">
-            <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="pca:HomeCategory">
                     <Grid Width="100"
                           Height="120"
-                          Margin="0,0,8,8"
+                          Margin="0,0,12,12"
                           Background="Transparent">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="100" />

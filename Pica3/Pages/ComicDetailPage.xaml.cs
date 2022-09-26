@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Pica3.Controls;
 using Pica3.CoreApi;
@@ -46,7 +47,7 @@ public sealed partial class ComicDetailPage : Page
             comicId = comic.Id;
             animateCover = comic.Cover?.Url;
             c_TextBlock_Title.Text = comic.Title;
-            c_TextBlock_Author.Text = comic.Author;
+            c_HyperlinkButton_Author.Content = comic.Author;
             c_ItemsRepeater_Categories.ItemsSource = comic.Categories;
             c_TextBlock_Views.Text = comic.TotalViews.ToString();
             c_TextBlock_Likes.Text = comic.TotalLikes.ToString();
@@ -74,7 +75,11 @@ public sealed partial class ComicDetailPage : Page
             Focus(FocusState.Programmatic);
             if (Uri.TryCreate(animateCover, UriKind.RelativeOrAbsolute, out var uri))
             {
-                c_Image_ComicCover.PlaceholderSource = (await ImageCache.Instance.GetFromCacheAsync(uri))!;
+                var file = await ImageCache.Instance.GetFileFromCacheAsync(uri);
+                if (file != null)
+                {
+                    c_Image_ComicCover.PlaceholderSource = new BitmapImage(new Uri(file.Path));
+                }
             }
             if (ComicDetailInfo?.Id != comicId)
             {
@@ -101,7 +106,7 @@ public sealed partial class ComicDetailPage : Page
     }
 
 
-   
+
 
 
 
@@ -123,6 +128,44 @@ public sealed partial class ComicDetailPage : Page
     /// </summary>
     [ObservableProperty]
     private List<ComicProfile> recommendComics;
+
+
+
+
+    private void OpenSearchPage(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is HyperlinkButton button && button.Content is string keyword)
+            {
+                MainPage.Current.Navigate(typeof(SearchPage), keyword, new DrillInNavigationTransitionInfo());
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
+    private void OpenCategoryDetailPage(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is HyperlinkButton button && button.Content is string category)
+            {
+                MainPage.Current.Navigate(typeof(CategoryDetailPage), category, new DrillInNavigationTransitionInfo());
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
 
 
 
@@ -385,7 +428,6 @@ public sealed partial class ComicDetailPage : Page
 
 
 
-
     #region 推荐
 
 
@@ -432,6 +474,7 @@ public sealed partial class ComicDetailPage : Page
             Logger.Error(ex);
         }
     }
+
 
 
 

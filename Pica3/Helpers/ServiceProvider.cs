@@ -87,7 +87,7 @@ internal static class ServiceProvider
     public static void ChangeProxy(IWebProxy? proxy = null)
     {
         var client = GetService<PicaClient>();
-        client?.ChangeProxy(proxy);
+        client?.ChangeProxyAndBaseAddress(proxy);
         _httpClient = new HttpClient(new HttpClientHandler
         {
             Proxy = proxy,

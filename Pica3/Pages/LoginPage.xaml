@@ -23,11 +23,14 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
+        <!--  主页内容  -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <!--  哔咔 3  -->
             <TextBlock Margin="0,0,0,40"
                        HorizontalAlignment="Center"
                        FontSize="20"
                        Text="哔咔 3" />
+            <!--  账号  -->
             <StackPanel HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="16">
@@ -39,6 +42,7 @@
                           ItemsSource="{x:Bind Accounts}"
                           SelectionChanged="{x:Bind ChangeAccount}" />
             </StackPanel>
+            <!--  密码  -->
             <StackPanel Margin="0,8,0,0"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
@@ -46,6 +50,7 @@
                 <TextBlock VerticalAlignment="Center" Text="密码" />
                 <PasswordBox x:Name="c_PasswordBox_Password" Width="240" />
             </StackPanel>
+            <!--  记住密码 自动登录  -->
             <Grid Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -59,6 +64,7 @@
                           Click="{x:Bind AutoLoginChecked}"
                           Content="自动登录" />
             </Grid>
+            <!--  登录按键  -->
             <Button x:Name="c_Button_Login"
                     Margin="0,16,0,0"
                     HorizontalAlignment="Stretch"
@@ -70,6 +76,7 @@
                         HorizontalAlignment="Center"
                         Orientation="Horizontal"
                         Spacing="4">
+                <!--  注册账号  -->
                 <HyperlinkButton x:Name="c_Button_Register"
                                  Padding="4,2,4,2"
                                  Click="{x:Bind OpenRegisterTeachingTip}"
@@ -77,6 +84,7 @@
                                  FontSize="12"
                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 <AppBarSeparator Padding="2" />
+                <!--  忘记密码  -->
                 <HyperlinkButton x:Name="c_Button_ForgotPassword"
                                  Padding="4,2,4,2"
                                  Click="{x:Bind OpenForgotPasswordTeachingTip}"
@@ -84,10 +92,11 @@
                                  FontSize="12"
                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 <AppBarSeparator Padding="2" />
+                <!--  网络设置  -->
                 <HyperlinkButton x:Name="c_Button_SetProxy"
                                  Padding="4,2,4,2"
                                  Click="{x:Bind ShowProxySettingFlyout}"
-                                 Content="设置代理"
+                                 Content="网络设置"
                                  FontSize="12"
                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                     <FlyoutBase.AttachedFlyout>
@@ -95,6 +104,7 @@
                             <StackPanel Width="200" Spacing="16">
                                 <TextBlock FontSize="20" Text="设置 HTTP 代理" />
                                 <TextBox x:Name="c_TextBox_Proxy" PlaceholderText="IP : Port" />
+                                <TextBlock FontSize="20" Text="API 分流" />
                                 <Button x:Name="c_Button_ProxyConfirm"
                                         Click="{x:Bind SetWebProxy}"
                                         Content="确定" />
@@ -106,6 +116,7 @@
                     </FlyoutBase.AttachedFlyout>
                 </HyperlinkButton>
                 <AppBarSeparator Padding="2" />
+                <!--  暂不登录  -->
                 <HyperlinkButton x:Name="c_Button_Skip"
                                  Padding="4,2,4,2"
                                  Click="{x:Bind SkipLogin}"

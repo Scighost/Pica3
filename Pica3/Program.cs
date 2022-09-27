@@ -1,4 +1,7 @@
-﻿namespace Pica3;
+﻿using System.Globalization;
+using System.Threading;
+
+namespace Pica3;
 
 /// <summary>
 /// Program class

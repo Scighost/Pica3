@@ -157,7 +157,6 @@ public sealed partial class MainWindow : Window
     {
         FullWindowContent.Visibility = Visibility.Visible;
         FullWindowContent.Content = content;
-        content.Focus(FocusState.Programmatic);
         if (collapsed)
         {
             RootFrame.Visibility = Visibility.Collapsed;

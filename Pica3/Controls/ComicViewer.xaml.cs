@@ -90,6 +90,7 @@ public sealed partial class ComicViewer : UserControl
     {
         try
         {
+            Focus(FocusState.Programmatic);
             InitializeScrollViewerOfListView();
             GetMorePagesAsync();
         }
@@ -132,11 +133,90 @@ public sealed partial class ComicViewer : UserControl
                     if (VisualTreeHelper.GetChild(presenter, 1) is ItemsStackPanel panel)
                     {
                         CurrentPage = panel.FirstVisibleIndex + 1;
-                        Debug.WriteLine(CurrentPage);
                         return;
                     }
                 }
             }
+        }
+        catch { }
+    }
+
+
+
+    private void c_ListView_Comics_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        try
+        {
+            if (sender is ListView listView)
+            {
+                var width = e.NewSize.Width;
+                if (width <= 1000)
+                {
+                    listView.Padding = new Thickness(0);
+                }
+                else
+                {
+                    var padding = (width - 1000) / 2;
+                    listView.Padding = new Thickness(padding, 0, padding, 0);
+                }
+            }
+        }
+        catch { }
+    }
+
+
+
+    private bool canImageMoved;
+
+    private Point oldPosition;
+
+
+    private void c_ListView_Comics_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        try
+        {
+            canImageMoved = true;
+            oldPosition = e.GetCurrentPoint(c_ListView_Comics).Position;
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// 鼠标拖动图片
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void c_ListView_Comics_PointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        try
+        {
+            if (c_ScrolViewer_ListView != null)
+            {
+                if (canImageMoved)
+                {
+
+                    var pointer = e.GetCurrentPoint(c_ListView_Comics);
+                    if (pointer.Properties.IsLeftButtonPressed)
+                    {
+                        var deltaX = pointer.Position.X - oldPosition.X;
+                        var deltaY = pointer.Position.Y - oldPosition.Y;
+                        oldPosition = pointer.Position;
+                        // offset 的方向应与鼠标移动的方向相反
+                        // 不要使用 ChangeView，会出现图片无法跟随鼠标的情况
+                        c_ScrolViewer_ListView.ScrollToHorizontalOffset(c_ScrolViewer_ListView.HorizontalOffset - deltaX);
+                        c_ScrolViewer_ListView.ScrollToVerticalOffset(c_ScrolViewer_ListView.VerticalOffset - deltaY);
+                    }
+                }
+            }
+        }
+        catch { }
+    }
+
+    private void c_ListView_Comics_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        try
+        {
+            canImageMoved = false;
         }
         catch { }
     }
@@ -273,6 +353,7 @@ public sealed partial class ComicViewer : UserControl
             MainWindow.Current.CloseFullWindowContent();
         }
     }
+
 
 }
 

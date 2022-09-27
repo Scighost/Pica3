@@ -122,10 +122,12 @@
                                     Tag="FavoritePage" />
                 <NavigationViewItem Content="评论"
                                     Icon="Comment"
-                                    Tag="" />
+                                    Tag=""
+                                    Visibility="Collapsed" />
                 <NavigationViewItem Content="历史记录"
                                     Icon="Clock"
-                                    Tag="" />
+                                    Tag=""
+                                    Visibility="Collapsed" />
 
             </NavigationView.MenuItems>
 

@@ -52,18 +52,28 @@
 
         <!--  上下滚动  -->
         <ListView x:Name="c_ListView_Comics"
+                  IsItemClickEnabled="False"
                   ItemContainerStyle="{StaticResource SimpleListViewItemStyle}"
                   ItemsSource="{x:Bind ComicImageList}"
+                  PointerMoved="c_ListView_Comics_PointerMoved"
+                  PointerPressed="c_ListView_Comics_PointerPressed"
+                  PointerReleased="c_ListView_Comics_PointerReleased"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.ZoomMode="Enabled"
                   SelectionMode="None"
+                  SizeChanged="c_ListView_Comics_SizeChanged"
                   Tapped="c_ListView_Comics_Tapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="pc:IndexComicImage">
-                    <pc:ComicImage Height="800"
-                                   MaxWidth="1000"
+                    <pc:ComicImage x:Name="c_Image_Comic"
+                                   Height="800"
                                    EnableLazyLoading="True"
                                    FontSize="36"
                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                    ImageOrder="{x:Bind Index}"
+                                   PointerPressed="c_ListView_Comics_PointerPressed"
+                                   PointerReleased="c_ListView_Comics_PointerReleased"
                                    RetryOnLoaded="True"
                                    Source="{x:Bind Url}" />
                 </DataTemplate>

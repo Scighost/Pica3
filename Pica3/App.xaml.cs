@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -42,16 +43,49 @@ public partial class App : Application
         }
     }
 
+
+
+    private MainWindow m_window;
+
     /// <summary>
     /// Invoked when the application is launched normally by the end user.  Other entry points
     /// will be used such as when the application is launched to open a specific file.
     /// </summary>
     /// <param name="args">Details about the launch request and process.</param>
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs _)
     {
-        m_window = new MainWindow();
-        m_window.Activate();
+        var instance = AppInstance.FindOrRegisterForKey("Main");
+        if (!instance.IsCurrent)
+        {
+            await instance.RedirectActivationToAsync(instance.GetActivatedEventArgs());
+            Environment.Exit(0);
+        }
+        else
+        {
+            instance.Activated += Instance_Activated;
+            m_window = new MainWindow();
+            m_window.Activate();
+        }
     }
 
-    private Window m_window;
+
+    private void Instance_Activated(object? sender, AppActivationArguments e)
+    {
+        try
+        {
+            if (m_window is null)
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                m_window.DispatcherQueue.TryEnqueue(m_window.MoveToTop);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
 }

@@ -178,7 +178,8 @@
                     <!--  操作按键  -->
                     <StackPanel Grid.Row="2"
                                 Grid.Column="1"
-                                Height="48"
+                                Height="44"
+                                Margin="0,-8,0,0"
                                 Orientation="Horizontal"
                                 Spacing="12">
                         <!--  点赞  -->
@@ -192,7 +193,7 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Glyph="&#xEB51;" Visibility="{x:Bind VM.IsLiked, Converter={StaticResource BoolToVisibilityReversedConverter}, FallbackValue=Visible}" />
-                                <FontIcon Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                <FontIcon Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
                                           Glyph="&#xEB52;"
                                           Visibility="{x:Bind VM.IsLiked, FallbackValue=Collapsed}" />
                                 <FontIcon Foreground="{ThemeResource TextFillColorTertiaryBrush}"

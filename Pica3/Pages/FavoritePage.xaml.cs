@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Navigation;
 using Pica3.CoreApi.Comic;
 using Pica3.ViewModels;
 
@@ -14,65 +13,24 @@ namespace Pica3.Pages;
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
 [INotifyPropertyChanged]
-public sealed partial class CategoryDetailPage : Page
+public sealed partial class FavoritePage : Page
 {
-
-    private static Stack<CategoryDetailPageModel?> _vmCaches = new();
 
 
     [ObservableProperty]
-    private CategoryDetailPageModel? _VM;
+    private FavoritePageModel? _VM;
 
 
-    public CategoryDetailPage()
+    public FavoritePage()
     {
         this.InitializeComponent();
-    }
-
-
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        if (e.NavigationMode == NavigationMode.Back)
-        {
-            if (_vmCaches.TryPop(out var cache))
-            {
-                VM = cache;
-            }
-        }
-        else if (e.Parameter != null)
-        {
-            VM = ServiceProvider.GetService<CategoryDetailPageModel>();
-            if (VM != null)
-            {
-                VM.Initialize(e.Parameter);
-            }
-        }
+        VM = ServiceProvider.GetService<FavoritePageModel>();
         if (VM != null)
         {
+            VM.Initialize();
             Loaded += VM.Loaded;
         }
     }
-
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        if (e.NavigationMode != NavigationMode.Back)
-        {
-            _vmCaches.Push(VM);
-        }
-        if (VM != null)
-        {
-            Loaded -= VM.Loaded;
-        }
-    }
-
-
-
-
-
-    #region 点击卡片
-
-
 
     private async void ComicProfileGridView_Loaded(object sender, RoutedEventArgs e)
     {
@@ -121,14 +79,6 @@ public sealed partial class CategoryDetailPage : Page
             Logger.Error(ex);
         }
     }
-
-
-    #endregion
-
-
-
-
-
 
 
 }

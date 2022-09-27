@@ -7,6 +7,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:pc="using:Pica3.Controls"
       xmlns:pcc="using:Pica3.CoreApi.Comic"
+      xmlns:pvm="using:Pica3.ViewModels"
       x:DefaultBindMode="OneWay"
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
@@ -55,15 +56,15 @@
                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                 <Button.Flyout>
                     <Flyout>
-                        <ItemsRepeater MaxWidth="400" ItemsSource="{x:Bind Categories}">
+                        <ItemsRepeater MaxWidth="400" ItemsSource="{x:Bind VM.Categories}">
                             <ItemsRepeater.Layout>
                                 <UniformGridLayout MinColumnSpacing="12"
                                                    MinRowSpacing="4"
                                                    Orientation="Horizontal" />
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="local:SearchCategory">
-                                    <CheckBox Content="{x:Bind Category}" IsChecked="{x:Bind IsSelcted, Mode=TwoWay}" />
+                                <DataTemplate x:DataType="pvm:SearchCategory">
+                                    <CheckBox Content="{x:Bind Category}" IsChecked="{x:Bind IsChecked, Mode=TwoWay}" />
                                 </DataTemplate>
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
@@ -77,16 +78,16 @@
                         Orientation="Horizontal"
                         Spacing="8">
                 <TextBlock VerticalAlignment="Center" Text="第" />
-                <NumberBox Maximum="{x:Bind TotalPage}"
+                <NumberBox Maximum="{x:Bind VM.TotalPage}"
                            Minimum="1"
                            SpinButtonPlacementMode="Inline"
-                           Value="{x:Bind CurrentPage, Mode=TwoWay}" />
+                           Value="{x:Bind VM.CurrentPage, Mode=TwoWay}" />
                 <TextBlock VerticalAlignment="Center" Text="/" />
-                <TextBlock VerticalAlignment="Center" Text="{x:Bind TotalPage}" />
+                <TextBlock VerticalAlignment="Center" Text="{x:Bind VM.TotalPage}" />
                 <TextBlock VerticalAlignment="Center" Text="页" />
                 <ComboBox Width="120"
                           Margin="16,0,0,0"
-                          SelectedIndex="{x:Bind SortTypeIndex, Mode=TwoWay}">
+                          SelectedIndex="{x:Bind VM.SortTypeIndex, Mode=TwoWay}">
                     <ComboBoxItem Content="默认" />
                     <ComboBoxItem Content="最新" />
                     <ComboBoxItem Content="最旧" />
@@ -103,10 +104,10 @@
                              Padding="48,12,36,12"
                              DesiredWidth="440"
                              IsItemClickEnabled="True"
-                             ItemClick="c_GridView_Comics_ItemClick"
+                             ItemClick="ComicProfileGridView_ItemClicked"
                              ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
-                             ItemsSource="{x:Bind ComicList}"
-                             Loaded="c_GridView_Comics_Loaded"
+                             ItemsSource="{x:Bind VM.ComicList}"
+                             Loaded="ComicProfileGridView_Loaded"
                              SelectionMode="None">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="pcc:ComicProfile">

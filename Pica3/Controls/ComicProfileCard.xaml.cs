@@ -30,6 +30,4 @@ public sealed partial class ComicProfileCard : UserControl
         this.InitializeComponent();
     }
 
-
-
 }

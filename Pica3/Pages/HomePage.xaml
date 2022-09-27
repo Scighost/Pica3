@@ -83,14 +83,14 @@
                                                                          Storyboard.TargetName="c_Border_Mask"
                                                                          Storyboard.TargetProperty="Opacity"
                                                                          To="1"
-                                                                         Duration="0:0:0.5" />
+                                                                         Duration="0:0:0.6" />
                                                     </Storyboard>
                                                     <Storyboard x:Key="BorderPointerExitedAnimation">
                                                         <DoubleAnimation EasingFunction="{StaticResource CircleEase}"
                                                                          Storyboard.TargetName="c_Border_Mask"
                                                                          Storyboard.TargetProperty="Opacity"
                                                                          To="0"
-                                                                         Duration="0:0:0.5" />
+                                                                         Duration="0:0:0.6" />
                                                     </Storyboard>
                                                 </Grid.Resources>
                                                 <pc:CachedImage x:Name="c_Image_ComicCover"

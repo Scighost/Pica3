@@ -91,7 +91,6 @@ public sealed partial class ComicViewer : UserControl
         try
         {
             InitializeScrollViewerOfListView();
-            Focus(FocusState.Programmatic);
             GetMorePagesAsync();
         }
         catch (Exception ex)

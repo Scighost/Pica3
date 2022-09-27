@@ -1,20 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Pica3.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,202 +18,61 @@ namespace Pica3.Pages;
 public sealed partial class SearchPage : Page
 {
 
-
-    private static readonly Stack<PageCache> pageCaches = new();
-
-
-    private readonly PicaClient picaClient;
+    private static Stack<SearchPageModel?> _vmCaches = new();
 
 
-    private bool doNotRefresh;
+    [ObservableProperty]
+    private SearchPageModel? _VM;
 
 
     public SearchPage()
     {
         this.InitializeComponent();
-        picaClient = ServiceProvider.GetService<PicaClient>()!;
-        Loaded += SearchPage_Loaded;
+        VM = ServiceProvider.GetService<SearchPageModel>();
+        if (VM != null)
+        {
+            VM.Initialize();
+            Loaded += VM.Loaded;
+        }
     }
 
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        try
+        if (e.NavigationMode == NavigationMode.Back)
         {
-            doNotRefresh = true;
-            if (e.NavigationMode == NavigationMode.Back)
+            if (_vmCaches.TryPop(out var cache))
             {
-                if (pageCaches.TryPop(out var cache))
-                {
-                    SortTypeIndex = cache.SortTypeIndex;
-                    Categories = cache.Categories;
-                    ComicList = cache.ComicList;
-                    CurrentPage = cache.CurrentPage;
-                    keyword = cache.Keyword;
-                    lastClickedComic = cache.LastClickedComic;
-                    TotalPage = cache.TotalPage;
-                }
-            }
-            else
-            {
-                if (e.Parameter is string str)
-                {
-                    keyword = str;
-                    ComicList = null;
-                    Categories?.ForEach(x => x.IsSelcted = false);
-                    c_AutoSuggestBox_Search.Text = keyword;
-                }
+                VM = cache;
             }
         }
-        catch (Exception ex)
+        else if (e.Parameter is string str)
         {
-            Logger.Error(ex);
+            VM = ServiceProvider.GetService<SearchPageModel>();
+            if (VM != null)
+            {
+                VM.Initialize(str);
+            }
+            c_AutoSuggestBox_Search.Text = str;
         }
-        finally
+        if (VM != null)
         {
-            doNotRefresh = false;
+            Loaded += VM.Loaded;
         }
     }
 
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
-        try
+        if (e.NavigationMode != NavigationMode.Back)
         {
-            if (e.NavigationMode != NavigationMode.Back)
-            {
-                pageCaches.Push(new PageCache
-                {
-                    SortTypeIndex = this.SortTypeIndex,
-                    Categories = this.Categories,
-                    ComicList = this.ComicList,
-                    CurrentPage = this.CurrentPage,
-                    Keyword = this.keyword,
-                    LastClickedComic = this.lastClickedComic,
-                    TotalPage = this.TotalPage,
-                });
-            }
+            _vmCaches.Push(VM);
         }
-        catch (Exception ex)
+        if (VM != null)
         {
-            Logger.Error(ex);
+            Loaded -= VM.Loaded;
         }
     }
-
-
-    private async void SearchPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            if (picaClient.IsLogin && ComicList is null)
-            {
-                SearchAsync();
-            }
-            if (picaClient.IsLogin && suggestionKeyword is null)
-            {
-                suggestionKeyword = await picaClient.GetKeywordsAsync();
-            }
-            if (picaClient.IsLogin && Categories is null)
-            {
-                var info = await picaClient.GetAppInfoAsync();
-                Categories = info.Categories.Select(x => new SearchCategory(x.Title)).ToList();
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-    }
-
-
-    private List<string> suggestionKeyword;
-
-    [ObservableProperty]
-    private List<SearchCategory> categories;
-
-
-    [ObservableProperty]
-    private int sortTypeIndex;
-
-
-    [ObservableProperty]
-    private int totalPage = 1;
-
-
-
-    [ObservableProperty]
-    private int currentPage = 1;
-
-
-    [ObservableProperty]
-    private List<ComicProfile>? comicList;
-
-
-    private ComicProfile? lastClickedComic = null;
-
-
-    private string? keyword = null;
-
-
-
-    partial void OnSortTypeIndexChanged(int value)
-    {
-        SearchAsync();
-    }
-
-    partial void OnCurrentPageChanged(int value)
-    {
-        if (value > 0)
-        {
-            SearchAsync();
-        }
-    }
-
-
-
-    private int randomId;
-
-    private async void SearchAsync()
-    {
-        if (doNotRefresh)
-        {
-            return;
-        }
-        try
-        {
-            if (picaClient.IsLogin)
-            {
-                var id = Random.Shared.Next();
-                randomId = id;
-                var cats = Categories?.Where(x => x.IsSelcted).Select(x => x.Category).ToList();
-                if (string.IsNullOrWhiteSpace(keyword) && !(cats?.Any() ?? false))
-                {
-                    var list = await picaClient.GetRandomComicsAsync();
-                    if (randomId == id)
-                    {
-                        TotalPage = 1;
-                        CurrentPage = 1;
-                        ComicList = list;
-                    }
-                }
-                else
-                {
-                    var pageResult = await picaClient.AdvanceSearchAsync(keyword?.Trim() ?? "", CurrentPage, (SortType)SortTypeIndex, cats);
-                    if (randomId == id)
-                    {
-                        TotalPage = pageResult.Pages;
-                        CurrentPage = pageResult.Page;
-                        ComicList = pageResult.TList;
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            ex.HandlePicaException();
-        }
-    }
-
 
 
 
@@ -235,7 +84,7 @@ public sealed partial class SearchPage : Page
             {
                 if (string.IsNullOrWhiteSpace(suggestBox.Text))
                 {
-                    suggestBox.ItemsSource = suggestionKeyword;
+                    suggestBox.ItemsSource = VM?.SuggestionKeywords;
                     suggestBox.IsSuggestionListOpen = true;
                 }
                 else
@@ -264,7 +113,7 @@ public sealed partial class SearchPage : Page
             {
                 if (string.IsNullOrWhiteSpace(sender.Text))
                 {
-                    sender.ItemsSource = suggestionKeyword;
+                    sender.ItemsSource = VM?.SuggestionKeywords;
                     sender.IsSuggestionListOpen = true;
                 }
                 else
@@ -279,15 +128,20 @@ public sealed partial class SearchPage : Page
         }
     }
 
+
+
     private void c_AutoSuggestBox_Search_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
     {
         try
         {
             if (args.SelectedItem?.ToString() is string str)
             {
-                keyword = str;
-                sender.Text = keyword;
-                SearchAsync();
+                sender.Text = str;
+                if (VM != null)
+                {
+                    VM.Keyword = str;
+                    VM.SearchAsync();
+                }
             }
         }
         catch (Exception ex)
@@ -304,9 +158,13 @@ public sealed partial class SearchPage : Page
         {
             if (args.ChosenSuggestion is null)
             {
-                keyword = args.QueryText;
-                sender.Text = keyword;
-                SearchAsync();
+                var text = args.QueryText;
+                sender.Text = text;
+                if (VM != null)
+                {
+                    VM.Keyword = text;
+                    VM.SearchAsync();
+                }
             }
         }
         catch (Exception ex)
@@ -320,19 +178,23 @@ public sealed partial class SearchPage : Page
 
 
 
-    private async void c_GridView_Comics_Loaded(object sender, RoutedEventArgs e)
+    #region 点击卡片
+
+
+
+    private async void ComicProfileGridView_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
             var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverBackAnimation");
-            if (ani != null)
+            if (ani != null && VM != null)
             {
-                if (lastClickedComic != null && (ComicList?.Contains(lastClickedComic) ?? false) && sender is GridView gridView)
+                if (VM.LastClickedComic != null && (VM.ComicList?.Contains(VM.LastClickedComic) ?? false) && sender is GridView gridView)
                 {
-                    gridView.ScrollIntoView(lastClickedComic);
+                    gridView.ScrollIntoView(VM.LastClickedComic);
                     gridView.UpdateLayout();
                     ani.Configuration = new BasicConnectedAnimationConfiguration();
-                    await gridView.TryStartConnectedAnimationAsync(ani, lastClickedComic, "c_Image_ComicCover");
+                    await gridView.TryStartConnectedAnimationAsync(ani, VM.LastClickedComic, "c_Image_ComicCover");
                 }
                 else
                 {
@@ -346,13 +208,17 @@ public sealed partial class SearchPage : Page
         }
     }
 
-    private void c_GridView_Comics_ItemClick(object sender, ItemClickEventArgs e)
+
+    private void ComicProfileGridView_ItemClicked(object sender, ItemClickEventArgs e)
     {
         try
         {
             if (e.ClickedItem is ComicProfile comic && sender is GridView gridView)
             {
-                lastClickedComic = comic;
+                if (VM != null)
+                {
+                    VM.LastClickedComic = comic;
+                }
                 var ani = gridView.PrepareConnectedAnimation("ComicCoverAnimation", comic, "c_Image_ComicCover");
                 ani.Configuration = new BasicConnectedAnimationConfiguration();
                 MainPage.Current.Navigate(typeof(ComicDetailPage), comic, new SuppressNavigationTransitionInfo());
@@ -365,29 +231,7 @@ public sealed partial class SearchPage : Page
     }
 
 
-
-
-    private class PageCache
-    {
-
-        public int SortTypeIndex { get; set; }
-
-        public List<SearchCategory> Categories { get; set; }
-
-
-        public int TotalPage { get; set; }
-
-
-        public int CurrentPage { get; set; }
-
-        public List<ComicProfile>? ComicList { get; set; }
-
-        public ComicProfile? LastClickedComic { get; set; }
-
-
-        public string? Keyword { get; set; }
-    }
-
+    #endregion
 
 
 
@@ -396,17 +240,3 @@ public sealed partial class SearchPage : Page
 }
 
 
-[INotifyPropertyChanged]
-public partial class SearchCategory
-{
-
-    [ObservableProperty]
-    public bool isSelcted;
-
-    public string Category { get; set; }
-
-    public SearchCategory(string category)
-    {
-        Category = category;
-    }
-}

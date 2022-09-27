@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Pica3.Controls;
 using Pica3.CoreApi;
+using Pica3.ViewModels;
 using System.Net;
 using System.Net.Http;
 
@@ -34,7 +35,7 @@ internal static class ServiceProvider
     private static void Initialize()
     {
         var sc = new ServiceCollection();
-        ConfigureService(sc);
+        ConfigureHttpClient(sc);
         _serviceProvider = sc.BuildServiceProvider();
         _isInitialized = true;
     }
@@ -42,7 +43,7 @@ internal static class ServiceProvider
 
 
 
-    private static void ConfigureService(ServiceCollection sc)
+    private static void ConfigureHttpClient(ServiceCollection sc)
     {
         if (IPEndPoint.TryParse(AppSetting.GetValue<string>(SettingKeys.WebProxy)!, out var address))
         {
@@ -52,6 +53,12 @@ internal static class ServiceProvider
         {
             sc.AddSingleton(new PicaClient());
         }
+    }
+
+
+    private static void ConfigureService(ServiceCollection sc)
+    {
+
     }
 
 

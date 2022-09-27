@@ -9,56 +9,53 @@
              xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
              xmlns:local="using:Pica3.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:media="using:Microsoft.Xaml.Interactions.Media"
              xmlns:pc="using:Pica3.Controls"
              xmlns:pcc="using:Pica3.CoreApi.Comic"
+             xmlns:sn="using:System.Numerics"
              xmlns:ui="using:CommunityToolkit.WinUI.UI"
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
     <Grid>
-        <Grid Height="200"
+        <Grid x:Name="c_Grid_Card"
+              Height="200"
               Margin="0,0,4,4"
               Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
               BorderThickness="1"
-              CornerRadius="8">
+              CornerRadius="8"
+              Translation="0,0,8">
+            <Grid.Resources>
+                <CircleEase x:Key="CircleEase" EasingMode="EaseIn" />
+                <Storyboard x:Key="CardPointerEnteredAnimation">
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="c_Grid_Card" Storyboard.TargetProperty="Background">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlFillColorSecondaryBrush}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+                <Storyboard x:Key="CardPointerExitedAnimation">
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="c_Grid_Card" Storyboard.TargetProperty="Background">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </Grid.Resources>
             <!--  左右布局  -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--  左侧是图片  -->
-            <Border Width="150"
-                    Height="200"
-                    ui:UIElementExtensions.ClipToBounds="True"
-                    CornerRadius="8">
-                <pc:CachedImage x:Name="c_Image_ComicCover"
-                                Width="150"
-                                Height="200"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                PlaceholderSource="https://lsp-cdn.scighost.com/pica/icon_unknown_error.png"
-                                PlaceholderStretch="Uniform"
-                                RetryOnLoaded="True"
-                                Source="{x:Bind ComicProfile.Cover.Url}"
-                                Stretch="UniformToFill">
-                    <animation:Explicit.Animations>
-                        <animation:AnimationSet x:Name="ImagePointerEnteredAnimation">
-                            <animation:ScaleAnimation EasingMode="EaseOut"
-                                                      EasingType="Circle"
-                                                      To="1.1"
-                                                      Duration="0:0:1" />
-                        </animation:AnimationSet>
-                        <animation:AnimationSet x:Name="ImagePointerExitedAnimation">
-                            <animation:ScaleAnimation EasingMode="EaseOut"
-                                                      EasingType="Circle"
-                                                      To="1"
-                                                      Duration="0:0:1" />
-                        </animation:AnimationSet>
-                    </animation:Explicit.Animations>
-                </pc:CachedImage>
-            </Border>
+            <pc:CachedImage x:Name="c_Image_ComicCover"
+                            Width="150"
+                            Height="200"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            CornerRadius="8"
+                            PlaceholderSource="https://lsp-cdn.scighost.com/pica/icon_unknown_error.png"
+                            PlaceholderStretch="Uniform"
+                            RetryOnLoaded="True"
+                            Source="{x:Bind ComicProfile.Cover.Url}"
+                            Stretch="UniformToFill" />
             <!--  右侧是信息  -->
             <StackPanel Grid.Column="1"
                         Margin="12,4,8,4"
@@ -66,15 +63,12 @@
                 <!--  标题  -->
                 <TextBlock HorizontalAlignment="Left"
                            FontWeight="Bold"
-                           IsTextSelectionEnabled="True"
                            MaxLines="2"
                            Text="{x:Bind ComicProfile.Title}"
                            TextTrimming="WordEllipsis"
                            TextWrapping="Wrap" />
                 <!--  作者  -->
-                <TextBlock HorizontalAlignment="Left"
-                           IsTextSelectionEnabled="True"
-                           Text="{x:Bind ComicProfile.Author}" />
+                <TextBlock HorizontalAlignment="Left" Text="{x:Bind ComicProfile.Author}" />
                 <!--  章节页数  -->
                 <StackPanel Margin="0,4,0,0"
                             Orientation="Horizontal"
@@ -117,13 +111,12 @@
             <!--  动画  -->
             <interactivity:Interaction.Behaviors>
                 <interaction:EventTriggerBehavior EventName="PointerEntered">
-                    <behavoir:StartAnimationAction Animation="{Binding ElementName=ImagePointerEnteredAnimation}" />
+                    <media:ControlStoryboardAction Storyboard="{StaticResource CardPointerEnteredAnimation}" />
                 </interaction:EventTriggerBehavior>
                 <interaction:EventTriggerBehavior EventName="PointerExited">
-                    <behavoir:StartAnimationAction Animation="{Binding ElementName=ImagePointerExitedAnimation}" />
+                    <media:ControlStoryboardAction Storyboard="{StaticResource CardPointerExitedAnimation}" />
                 </interaction:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
-
         </Grid>
     </Grid>
 

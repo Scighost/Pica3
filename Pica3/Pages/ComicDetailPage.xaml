@@ -34,31 +34,28 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.RowSpan="3"
-                            Width="270"
-                            Height="360"
-                            HorizontalAlignment="Left"
-                            CornerRadius="8">
-                        <!--  封面  -->
-                        <pc:CachedImage x:Name="c_Image_ComicCover"
-                                        Width="270"
-                                        Height="360"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        PlaceholderSource="https://lsp-cdn.scighost.com/pica/icon_unknown_error.png"
-                                        PlaceholderStretch="UniformToFill"
-                                        Source="{x:Bind ComicDetailInfo.Cover.Url}"
-                                        Stretch="UniformToFill"
-                                        Style="{ThemeResource CachedImageShowPlaceholderNoAnimationStyle}" />
-                    </Border>
+                    <!--  封面  -->
+                    <pc:CachedImage x:Name="c_Image_ComicCover"
+                                    Grid.RowSpan="3"
+                                    Width="270"
+                                    Height="360"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="8"
+                                    PlaceholderSource="{x:Bind VM.CoverPlaceholder}"
+                                    PlaceholderStretch="UniformToFill"
+                                    Source="{x:Bind VM.ComicDetailInfo.Cover.Url}"
+                                    Stretch="UniformToFill"
+                                    Style="{ThemeResource CachedImageShowPlaceholderNoAnimationStyle}" />
 
                     <!--  标题  -->
                     <TextBlock x:Name="c_TextBlock_Title"
                                Grid.Column="1"
                                FontSize="20"
                                FontWeight="Bold"
+                               IsTextSelectionEnabled="True"
                                MaxLines="2"
-                               Text="{x:Bind ComicDetailInfo.Title}"
+                               Text="{x:Bind VM.ComicDetailInfo.Title}"
                                TextWrapping="Wrap" />
 
                     <!--  信息  -->
@@ -75,41 +72,39 @@
                                 <HyperlinkButton x:Name="c_HyperlinkButton_Author"
                                                  Padding="4,2,4,2"
                                                  Click="OpenSearchPage"
-                                                 Content="{x:Bind ComicDetailInfo.Author}"
+                                                 Content="{x:Bind VM.ComicDetailInfo.Author}"
                                                  Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                                 <!--  团队  -->
                                 <HyperlinkButton x:Name="c_TextBlock_Team"
                                                  Padding="4,2,4,2"
                                                  Click="OpenSearchPage"
-                                                 Content="{x:Bind ComicDetailInfo.ChineseTeam}"
+                                                 Content="{x:Bind VM.ComicDetailInfo.ChineseTeam}"
                                                  Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                                 Visibility="{x:Bind ComicDetailInfo.ChineseTeam, FallbackValue=Collapsed, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                 Visibility="{x:Bind VM.ComicDetailInfo.ChineseTeam, FallbackValue=Collapsed, Converter={StaticResource StringToVisibilityConverter}}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <!--  章节页数  -->
-                                <FontIcon Margin="8,0,0,0"
-                                          Glyph="&#xE160;"
-                                          ToolTipService.ToolTip="章节/页数" />
+                                <FontIcon Glyph="&#xE160;" ToolTipService.ToolTip="章节/页数" />
                                 <TextBlock x:Name="c_TextBlock_EP">
-                                    <Run Text="{x:Bind ComicDetailInfo.EpisodeCount}" /><Run Text="E" />
+                                    <Run Text="{x:Bind VM.ComicDetailInfo.EpisodeCount}" /><Run Text="E" />
                                     <Run Text="/" />
-                                    <Run Text="{x:Bind ComicDetailInfo.PagesCount}" /><Run Text="P" />
+                                    <Run Text="{x:Bind VM.ComicDetailInfo.PagesCount}" /><Run Text="P" />
                                 </TextBlock>
                                 <!--  阅读数  -->
                                 <FontIcon Margin="8,0,0,0"
                                           Glyph="&#xE18B;"
                                           ToolTipService.ToolTip="阅读" />
-                                <TextBlock x:Name="c_TextBlock_Views" Text="{x:Bind ComicDetailInfo.ViewsCount}" />
+                                <TextBlock x:Name="c_TextBlock_Views" Text="{x:Bind VM.ComicDetailInfo.ViewsCount}" />
                                 <!--  点赞数  -->
                                 <FontIcon Margin="8,0,0,0"
                                           Glyph="&#xE19F;"
                                           ToolTipService.ToolTip="点赞" />
-                                <TextBlock x:Name="c_TextBlock_Likes" Text="{x:Bind ComicDetailInfo.LikesCount}" />
+                                <TextBlock x:Name="c_TextBlock_Likes" Text="{x:Bind VM.ComicDetailInfo.LikesCount}" />
                                 <!--  更新时间  -->
                                 <FontIcon Margin="8,0,0,0"
                                           Glyph="&#xE121;"
                                           ToolTipService.ToolTip="更新时间" />
-                                <TextBlock x:Name="c_TextBlock_UpdateTime" Text="{x:Bind ComicDetailInfo.UpdatedAt.LocalDateTime, Converter={StaticResource DateTimeToStringConverter}}" />
+                                <TextBlock x:Name="c_TextBlock_UpdateTime" Text="{x:Bind VM.ComicDetailInfo.UpdatedAt.LocalDateTime, Converter={StaticResource DateTimeToStringConverter}}" />
                             </StackPanel>
 
                             <!--  分类  -->
@@ -123,7 +118,7 @@
                                           ToolTipService.ToolTip="分类" />
                                 <ItemsRepeater x:Name="c_ItemsRepeater_Categories"
                                                Grid.Column="1"
-                                               ItemsSource="{x:Bind ComicDetailInfo.Categories}">
+                                               ItemsSource="{x:Bind VM.ComicDetailInfo.Categories}">
                                     <ItemsRepeater.Layout>
                                         <cc:WrapLayout HorizontalSpacing="4" Orientation="Horizontal" />
                                     </ItemsRepeater.Layout>
@@ -149,7 +144,7 @@
                                           ToolTipService.ToolTip="标签" />
                                 <ItemsRepeater x:Name="c_ItemsRepeater_Tags"
                                                Grid.Column="1"
-                                               ItemsSource="{x:Bind ComicDetailInfo.Tags}">
+                                               ItemsSource="{x:Bind VM.ComicDetailInfo.Tags}">
                                     <ItemsRepeater.Layout>
                                         <cc:WrapLayout HorizontalSpacing="4" Orientation="Horizontal" />
                                     </ItemsRepeater.Layout>
@@ -173,7 +168,7 @@
                                        FontSize="12"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                        IsTextSelectionEnabled="True"
-                                       Text="{x:Bind ComicDetailInfo.Description}"
+                                       Text="{x:Bind VM.ComicDetailInfo.Description}"
                                        TextWrapping="Wrap" />
 
 
@@ -189,27 +184,48 @@
                         <!--  点赞  -->
                         <Button x:Name="c_Button_Like"
                                 VerticalAlignment="Stretch"
-                                Command="{x:Bind LikeComicCommand}"
+                                Command="{x:Bind VM.LikeComicCommand}"
                                 Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon x:Name="c_FontIcon_Like" Glyph="&#xEB51;" />
-                                <TextBlock Text="点赞" />
-                            </StackPanel>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xEB51;" Visibility="{x:Bind VM.IsLiked, Converter={StaticResource BoolToVisibilityReversedConverter}, FallbackValue=Visible}" />
+                                <FontIcon Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                          Glyph="&#xEB52;"
+                                          Visibility="{x:Bind VM.IsLiked, FallbackValue=Collapsed}" />
+                                <FontIcon Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                          Glyph="&#xEB52;"
+                                          Visibility="{x:Bind VM.LikeComicCommand.IsRunning, FallbackValue=Collapsed}" />
+                                <TextBlock Grid.Column="1" Text="点赞" />
+                            </Grid>
                         </Button>
                         <!--  收藏  -->
                         <Button x:Name="c_Button_Star"
                                 VerticalAlignment="Stretch"
-                                Command="{x:Bind StarComicCommand}"
+                                Command="{x:Bind VM.StarComicCommand}"
                                 Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon x:Name="c_FontIcon_Star" Glyph="&#xE1CE;" />
-                                <TextBlock Text="收藏" />
-                            </StackPanel>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Glyph="&#xE1CE;" Visibility="{x:Bind VM.IsFavourite, Converter={StaticResource BoolToVisibilityReversedConverter}, FallbackValue=Visible}" />
+                                <FontIcon Foreground="{ThemeResource AccentTextFillColorTertiaryBrush}"
+                                          Glyph="&#xE1CF;"
+                                          Visibility="{x:Bind VM.IsFavourite, FallbackValue=Collapsed}" />
+                                <FontIcon Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                          Glyph="&#xE1CF;"
+                                          Visibility="{x:Bind VM.StarComicCommand.IsRunning, FallbackValue=Collapsed}" />
+                                <TextBlock Grid.Column="1" Text="收藏" />
+                            </Grid>
                         </Button>
                         <!--  下载  -->
                         <Button x:Name="c_Button_Download"
                                 VerticalAlignment="Stretch"
-                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                Visibility="Collapsed">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon x:Name="c_FontIcon_Download" Glyph="&#xE118;" />
                                 <TextBlock Text="下载" />
@@ -222,125 +238,88 @@
                 </Grid>
 
 
-                <Pivot x:Name="c_Pivot_Section" SelectionChanged="c_Pivot_Section_SelectionChanged">
-                    <Pivot.Resources>
-                        <Thickness x:Key="PivotItemMargin">0,12,0,0</Thickness>
-                        <Thickness x:Key="PivotHeaderItemMargin">0,0,24,0</Thickness>
-                    </Pivot.Resources>
 
-                    <!--  章节  -->
-                    <PivotItem>
-                        <PivotItem.Header>
-                            <!--  章节标题  -->
-                            <StackPanel Margin="0,12,0,0"
-                                        Orientation="Horizontal"
-                                        Spacing="8">
-                                <FontIcon Glyph="&#xE82D;" />
-                                <TextBlock FontSize="16">
-                                    <Run Text="章节" />
-                                    <Run FontSize="14" Text="{x:Bind ComicDetailInfo.EpisodeCount}" />
-                                </TextBlock>
-                            </StackPanel>
-                        </PivotItem.Header>
-                        <!--  章节内容  -->
-                        <Grid RowSpacing="12">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <!--  章节列表  -->
-                            <ItemsRepeater ItemsSource="{x:Bind EpisodeProfiles}">
-                                <ItemsRepeater.Layout>
-                                    <cc:WrapLayout HorizontalSpacing="4"
-                                                   Orientation="Horizontal"
-                                                   VerticalSpacing="4" />
-                                </ItemsRepeater.Layout>
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="pcc:ComicEpisodeProfile">
-                                        <Button x:Name="c_Button_ComicEpisode"
-                                                Padding="0"
-                                                Click="c_Button_ComicEpisode_Click"
-                                                Tag="{x:Bind}">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition />
-                                                </Grid.ColumnDefinitions>
-                                                <Border Padding="8"
-                                                        Background="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
-                                                        CornerRadius="2">
-                                                    <TextBlock Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Text="{x:Bind Order}" />
-                                                </Border>
-                                                <TextBlock Grid.Column="1"
-                                                           Margin="8"
-                                                           Text="{x:Bind Title}" />
-                                            </Grid>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
-                            <!--  下一页  -->
-                            <StackPanel Grid.Row="1"
-                                        Orientation="Horizontal"
-                                        Spacing="16"
-                                        Visibility="{x:Bind NextPageVisibility}">
-                                <Button Command="{x:Bind LoadNextEpisodePageCommand}" Content="下一页" />
-                                <Button Command="{x:Bind LoadAllEpisodePageCommand}" Content="加载全部" />
-                            </StackPanel>
-                        </Grid>
-                    </PivotItem>
-
-                    <!--  评论  -->
-                    <PivotItem>
-                        <PivotItem.Header>
-                            <!--  评论标题  -->
-                            <StackPanel Margin="0,12,0,0"
-                                        Orientation="Horizontal"
-                                        Spacing="8">
-                                <FontIcon Glyph="&#xE134;" />
-                                <TextBlock FontSize="16">
-                                    <Run Text="评论" />
-                                    <Run FontSize="14" Text="{x:Bind ComicDetailInfo.CommentsCount}" />
-                                </TextBlock>
-                            </StackPanel>
-                        </PivotItem.Header>
-                        <!--  评论内容  -->
-                    </PivotItem>
+                <!--  章节标题  -->
+                <StackPanel Margin="0,12,0,0"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <FontIcon Glyph="&#xE82D;" />
+                    <TextBlock FontSize="16" Text="章节" />
+                </StackPanel>
 
 
-                    <!--  推荐  -->
-                    <PivotItem>
-                        <PivotItem.Header>
-                            <!--  推荐标题  -->
-                            <StackPanel Margin="0,12,0,0"
-                                        Orientation="Horizontal"
-                                        Spacing="8">
-                                <FontIcon Glyph="&#xECCD;" />
-                                <TextBlock FontSize="16" Text="推荐" />
-                            </StackPanel>
-                        </PivotItem.Header>
-                        <!--  推荐内容  -->
-                        <cc:AdaptiveGridView x:Name="c_GridView_RecommendComics"
-                                             DesiredWidth="440"
-                                             IsItemClickEnabled="True"
-                                             ItemClick="c_GridView_RecommendComics_ItemClick"
-                                             ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
-                                             ItemsSource="{x:Bind RecommendComics}"
-                                             Loaded="c_GridView_RecommendComics_Loaded"
-                                             SelectionMode="None">
-                            <GridView.ItemTemplate>
-                                <DataTemplate x:DataType="pcc:ComicProfile">
-                                    <pc:ComicProfileCard ComicProfile="{x:Bind}" />
-                                </DataTemplate>
-                            </GridView.ItemTemplate>
-                        </cc:AdaptiveGridView>
-                    </PivotItem>
-
-
-                </Pivot>
+                <!--  章节内容  -->
+                <Grid RowSpacing="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  章节列表  -->
+                    <ItemsRepeater ItemsSource="{x:Bind VM.EpisodeProfiles}">
+                        <ItemsRepeater.Layout>
+                            <cc:WrapLayout HorizontalSpacing="4"
+                                           Orientation="Horizontal"
+                                           VerticalSpacing="4" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="pcc:ComicEpisodeProfile">
+                                <Button x:Name="c_Button_ComicEpisode"
+                                        Padding="0"
+                                        Click="c_Button_ComicEpisode_Click"
+                                        Tag="{x:Bind}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Padding="8"
+                                                Background="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}"
+                                                CornerRadius="2">
+                                            <TextBlock Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" Text="{x:Bind Order}" />
+                                        </Border>
+                                        <TextBlock Grid.Column="1"
+                                                   Margin="8"
+                                                   Text="{x:Bind Title}" />
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                    <!--  下一页  -->
+                    <StackPanel Grid.Row="1"
+                                Orientation="Horizontal"
+                                Spacing="16"
+                                Visibility="{x:Bind VM.NextPageVisibility}">
+                        <Button Command="{x:Bind VM.LoadNextEpisodePageCommand}" Content="下一页" />
+                        <Button Command="{x:Bind VM.LoadAllEpisodePageCommand}" Content="加载全部" />
+                    </StackPanel>
+                </Grid>
 
 
 
+                <!--  推荐标题  -->
+                <StackPanel Margin="0,12,0,0"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <FontIcon Glyph="&#xECCD;" />
+                    <TextBlock FontSize="16" Text="推荐" />
+                </StackPanel>
+
+                <!--  推荐内容  -->
+                <cc:AdaptiveGridView x:Name="c_GridView_RecommendComics"
+                                     DesiredWidth="440"
+                                     IsItemClickEnabled="True"
+                                     ItemClick="ComicProfileGridView_ItemClicked"
+                                     ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
+                                     ItemsSource="{x:Bind VM.RecommendComics}"
+                                     Loaded="ComicProfileGridView_Loaded"
+                                     SelectionMode="None">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="pcc:ComicProfile">
+                            <pc:ComicProfileCard ComicProfile="{x:Bind}" />
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </cc:AdaptiveGridView>
 
 
 

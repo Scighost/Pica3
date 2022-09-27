@@ -5,28 +5,32 @@ using Microsoft.UI.Xaml.Navigation;
 using Pica3.CoreApi.Comic;
 using Pica3.ViewModels;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace Pica3.Pages;
 
+
 /// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
+/// <see cref="Page"/> 不能使用泛型，这个类只是一个参考，真正使用时需要复制其中的代码
 /// </summary>
-[INotifyPropertyChanged]
-public sealed partial class CategoryDetailPage : Page
+/// <typeparam name="ViewModel"></typeparam>
+[INotifyPropertyChanged, Obsolete("不能使用泛型", true)]
+public abstract partial class StackCachePage<ViewModel> : Page where ViewModel : ComicProfileViewModelBase
 {
 
-    private static Stack<CategoryDetailPageModel?> _vmCaches = new();
 
+    private static Stack<ViewModel?> _vmCaches = new();
 
     [ObservableProperty]
-    private CategoryDetailPageModel? _VM;
+    private ViewModel? _VM;
 
 
-    public CategoryDetailPage()
+    public StackCachePage()
     {
-        this.InitializeComponent();
+        VM = ServiceProvider.GetService<ViewModel>();
+        if (VM != null)
+        {
+            VM.Initialize();
+            Loaded += VM.Loaded;
+        }
     }
 
 
@@ -41,7 +45,7 @@ public sealed partial class CategoryDetailPage : Page
         }
         else if (e.Parameter != null)
         {
-            VM = ServiceProvider.GetService<CategoryDetailPageModel>();
+            VM = ServiceProvider.GetService<ViewModel>();
             if (VM != null)
             {
                 VM.Initialize(e.Parameter);
@@ -124,6 +128,10 @@ public sealed partial class CategoryDetailPage : Page
 
 
     #endregion
+
+
+
+
 
 
 

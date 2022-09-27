@@ -153,14 +153,23 @@ public class PicaClient
         request.Headers.Add("image-quality", ImageQuality.ToString().ToLower());
 
         var response = await _httpClient.SendAsync(request);
+        ResponseBase<T>? wrapper = null;
+        try
+        {
 #if DEBUG
-        var str = await response.Content.ReadAsStringAsync();
-        Debug.WriteLine(request.RequestUri);
-        Debug.WriteLine(str);
-        var wrapper = JsonSerializer.Deserialize<ResponseBase<T>>(str);
+            var str = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(request.RequestUri);
+            Debug.WriteLine(str);
+
+            wrapper = JsonSerializer.Deserialize<ResponseBase<T>>(str);
 #else
-        var wrapper = await response.Content.ReadFromJsonAsync<ResponseBase<T>>();
-#endif
+            wrapper = await response.Content.ReadFromJsonAsync<ResponseBase<T>>();
+#endif  
+        }
+        catch (JsonException)
+        {
+            response.EnsureSuccessStatusCode();
+        }
         if (wrapper is null)
         {
             response.EnsureSuccessStatusCode();

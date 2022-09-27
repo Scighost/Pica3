@@ -119,7 +119,7 @@
 
                 <NavigationViewItem Content="收藏"
                                     Icon="OutlineStar"
-                                    Tag="StartPage" />
+                                    Tag="FavoritePage" />
                 <NavigationViewItem Content="评论"
                                     Icon="Comment"
                                     Tag="" />

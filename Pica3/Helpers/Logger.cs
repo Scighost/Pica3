@@ -18,7 +18,7 @@ internal static class Logger
         try
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), $@"Pica3\Log\log_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.txt");
-            Log.Logger = new LoggerConfiguration().WriteTo.File(path: path, outputTemplate: "{NewLine}[{Timestamp:HH:mm:ss.fff}] [{Level:u4}] {CallerName}{NewLine}{Message}{NewLine}{Exception}")
+            Log.Logger = new LoggerConfiguration().WriteTo.File(path: path, outputTemplate: "[{Timestamp:HH:mm:ss.fff}] [{Level:u4}] {CallerName}{NewLine}{Message}{NewLine}{Exception}{NewLine}")
                                                   .Enrich.FromLogContext()
                                                   .CreateLogger();
             Log.Information($"{Environment.CommandLine}");

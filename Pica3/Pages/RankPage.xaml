@@ -11,6 +11,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:pc="using:Pica3.Controls"
       xmlns:pcc="using:Pica3.CoreApi.Comic"
+      xmlns:pp="using:Pica3.Pages"
+      xmlns:pvm="using:Pica3.ViewModels"
       xmlns:ui="using:CommunityToolkit.WinUI.UI"
       x:DefaultBindMode="OneWay"
       NavigationCacheMode="Enabled"
@@ -29,9 +31,7 @@
                        FontSize="24"
                        FontWeight="Bold"
                        Text="排行榜" />
-            <Pivot x:Name="c_Pivot_RankType"
-                   Margin="100,12,0,0"
-                   SelectionChanged="c_Pivot_RankType_SelectionChanged">
+            <Pivot Margin="100,12,0,0" SelectedIndex="{x:Bind VM.RankTypeIndex, Mode=TwoWay}">
                 <Pivot.Resources>
                     <Thickness x:Key="PivotItemMargin">0,12,0,0</Thickness>
                     <Style BasedOn="{StaticResource DefaultPivotHeaderItemStyle}" TargetType="PivotHeaderItem">
@@ -47,15 +47,14 @@
         </Grid>
 
 
-        <cc:AdaptiveGridView x:Name="c_GridView_RankList"
-                             Grid.Row="1"
+        <cc:AdaptiveGridView Grid.Row="1"
                              Padding="48,12,36,12"
                              DesiredWidth="440"
                              IsItemClickEnabled="True"
-                             ItemClick="c_GridView_RankList_ItemClick"
+                             ItemClick="ComicProfileGridView_ItemClicked"
                              ItemContainerStyle="{StaticResource SimpleGridViewItemStyle}"
-                             ItemsSource="{x:Bind SelectedRanks}"
-                             Loaded="c_GridView_RankList_Loaded"
+                             ItemsSource="{x:Bind VM.ComicList}"
+                             Loaded="ComicProfileGridView_Loaded"
                              SelectionMode="None">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="pcc:RankComic">

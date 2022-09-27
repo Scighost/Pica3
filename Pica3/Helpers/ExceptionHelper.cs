@@ -9,9 +9,9 @@ internal static class ExceptionHelper
     public static void HandlePicaException(this Exception ex)
     {
         Logger.Error(ex);
-        if (ex is HttpRequestException)
+        if (ex is HttpRequestException e1)
         {
-            NotificationProvider.Warning("网络错误", 1500);
+            NotificationProvider.Warning(e1.GetType().Name, $"网络错误{(e1.StatusCode.HasValue ? $" ({e1.StatusCode})" : "")}", 1500);
             return;
         }
         if (ex is TaskCanceledException)

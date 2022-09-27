@@ -218,16 +218,18 @@ public sealed partial class LoginPage : Page
         FlyoutBase.ShowAttachedFlyout(c_Button_SetProxy);
         try
         {
+            string selectItem;
             if (IPAddress.TryParse(AppSetting.GetValue(SettingKeys.OverrideApiAddress, ""), out var ip))
             {
-                c_ComboBox_ApiIPAddress.SelectedItem = ip.ToString();
+                selectItem = ip.ToString();
             }
             else
             {
-                c_ComboBox_ApiIPAddress.SelectedItem = "默认";
+                selectItem = "默认";
             }
             var ips = await picaClient.GetIpListAsync();
-            c_ComboBox_ApiIPAddress.ItemsSource = ips.Prepend("默认").ToList();
+            c_ComboBox_ApiIPAddress.ItemsSource = ips.Prepend(selectItem).Prepend("默认").Distinct().ToList();
+            c_ComboBox_ApiIPAddress.SelectedItem = selectItem;
         }
         catch (Exception ex)
         {
@@ -249,6 +251,10 @@ public sealed partial class LoginPage : Page
             {
                 uri = new Uri("http://" + address);
                 AppSetting.SetValue(SettingKeys.OverrideApiAddress, address.ToString());
+            }
+            else
+            {
+                AppSetting.SetValue(SettingKeys.OverrideApiAddress, "");
             }
             if (string.IsNullOrWhiteSpace(proxyText))
             {

@@ -1,9 +1,9 @@
 ﻿namespace Pica3.CoreApi;
 
 /// <summary>
-/// 哔咔图片或文件
+/// 哔咔图片或文件，使用 <see cref="Url"/> 获取完整链接
 /// </summary>
-public class PicaImage
+public class PicaFile
 {
 
     [JsonPropertyName("originalName")]

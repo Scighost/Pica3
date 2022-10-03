@@ -20,7 +20,7 @@ public class HomeCategory
     /// 图片
     /// </summary>
     [JsonPropertyName("thumb")]
-    public PicaImage Thumb { get; set; }
+    public PicaFile Thumb { get; set; }
 
     /// <summary>
     /// 是网页

@@ -49,7 +49,7 @@ public class UserProfile
     /// 头像
     /// </summary>
     [JsonPropertyName("avatar")]
-    public PicaImage? Avatar { get; set; }
+    public PicaFile? Avatar { get; set; }
 
     /// <summary>
     /// 是否验证，未验证无法发布评论

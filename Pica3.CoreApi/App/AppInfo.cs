@@ -77,7 +77,7 @@ public class LatestApplication
     public DateTimeOffset CreatedAt { get; set; }
 
     [JsonPropertyName("apk")]
-    public PicaImage Apk { get; set; }
+    public PicaFile Apk { get; set; }
 }
 
 

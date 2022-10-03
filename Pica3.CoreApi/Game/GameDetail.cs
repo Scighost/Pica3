@@ -35,7 +35,7 @@ public class GameDetail : GameProfile
     /// 截图
     /// </summary>
     [JsonPropertyName("screenshots")]
-    public List<PicaImage> Screenshots { get; set; }
+    public List<PicaFile> Screenshots { get; set; }
 
     /// <summary>
     /// 安卓端大小 MB

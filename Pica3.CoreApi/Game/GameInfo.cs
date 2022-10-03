@@ -61,7 +61,7 @@ public class GameProfile
     /// 封面
     /// </summary>
     [JsonPropertyName("icon")]
-    public PicaImage Icon { get; set; }
+    public PicaFile Icon { get; set; }
 
 
 }

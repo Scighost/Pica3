@@ -8,7 +8,7 @@
 public class CommentCollection
 {
     /// <summary>
-    /// 评论，可通过 <see cref="PicaPageResult{T}.Total"/> 算出评论楼层
+    /// 评论，时间倒序，可通过 <see cref="PicaPageResult{T}.Total"/> 算出评论楼层
     /// </summary>
     [JsonPropertyName("comments")]
     public PicaPageResult<CommentItem> Comments { get; set; }

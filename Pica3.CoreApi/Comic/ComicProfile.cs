@@ -62,7 +62,7 @@ public class ComicProfile
     /// 封面图
     /// </summary>
     [JsonPropertyName("thumb")]
-    public PicaImage Cover { get; set; }
+    public PicaFile Cover { get; set; }
 
     /// <summary>
     /// 点赞数，同 <see cref="TotalLikes"/>

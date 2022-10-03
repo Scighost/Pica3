@@ -7,7 +7,7 @@ public class ComicEpisodeDetail : ComicEpisodeProfile
 {
 
     [JsonPropertyName("pages")]
-    public PicaPageResult<ComicEpisodePage> Pages { get; set; }
+    public PicaPageResult<ComicEpisodeImage> Pages { get; set; }
 
 }
 
@@ -15,7 +15,7 @@ public class ComicEpisodeDetail : ComicEpisodeProfile
 /// <summary>
 /// 漫画章节图片
 /// </summary>
-public class ComicEpisodePage
+public class ComicEpisodeImage
 {
 
     [JsonPropertyName("_id")]
@@ -23,6 +23,6 @@ public class ComicEpisodePage
 
 
     [JsonPropertyName("media")]
-    public PicaImage Image { get; set; }
+    public PicaFile Image { get; set; }
 
 }

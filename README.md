@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# Pica 3
+# 哔咔 3
 
 不主动更新 &nbsp; | &nbsp; 不拒绝使用 &nbsp; | &nbsp; 不负责维护
 
@@ -14,60 +14,76 @@
 
 </div>
 
-Pica 3 is a third-party client on Windows platform only used for learning and communication.    
-It cannot be closed source or commercially available.
+**哔咔 3** 是 Windows 平台上的第三方 [哔咔漫画](http://picacgp.com/) 客户端，本项目仅用于学习和交流，不可闭源，严禁商用。
 
-## Get Start
+## 开始
 
-> Notice: The application only support Chinese Simplified.
+- 仅支持 Windows 10 1809 (17763) 及以上版本
+- 下载发行版并解压
+- 运行 `bika3.exe`
 
-- The OS version must be greater than or equal to Windows 10 1809 (17763)
-- Download the release file and decompress it
-- Find the file `bika3.exe` and double click it
+如果你使用的是 Windows 10，安装以下内容以改善体验：
 
-If you are using Widows 10, do the following to improve your experience:
+- 字体：[Segoe Fluent Icons](https://os.scighost.com/pica3/app/Segoe-Fluent-Icons.zip)
+- 浏览器环境：[WebView2 Runtime](https://go.microsoft.com/fwlink/p/?LinkId=2124703)
 
-- Install [Segoe Fluent Icons](https://os.scighost.com/pica3/app/Segoe-Fluent-Icons.zip)
-- Install [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
+不要随意删除文件夹内的任何内容，否则可能会出现无法运行的问题。  
+如遇网络问题，请使用代理。
 
-## Feature
+## 功能
 
-Pica 3 is in the early development stage, the feature is not yet perfect.
+本应用处于早期开发阶段，功能尚不完善。
 
-- Account
-  - [x] Login
-  - [x] Register
-  - [x] Find Password
-- User
-  - [ ] Information
-  - [x] Punch
-  - [x] Favorite
-  - [ ] Read History
-- Comic
-  - [x] Category
-  - [x] Search
-  - [x] Ranking List
-  - [x] Recommend
-  - [x] Random
-  - [ ] Comment
-- Read
-  - [x] Vertical Scroll
-  - [ ] Horizontal Switch
-  - [x] Light and Dark Theme
-  - [x] Zoom
-  - [ ] Copy or Save the Specified Image
-- Internet
-  - [x] HTTP Proxy
-  - [x] API Base Address
-- Others
-  - [ ] Block List
-  - [ ] Download
-  - [ ] ~~Game (Not Support)~~
+- 账号
+  - [x] 登录
+  - [x] 注册
+  - [x] 忘记密码
+- 用户
+  - [ ] 个人信息
+  - [x] 打哔咔
+  - [x] 收藏
+- 漫画
+  - [x] 分类
+  - [x] 搜索
+  - [x] 排行榜
+  - [x] 推荐
+  - [x] 随机
+  - [ ] 评论
+  - [ ] 历史记录
+- 阅读
+  - [x] 上下滚动
+  - [ ] 左右切换
+  - [x] 主题切换
+  - [x] 缩放
+  - [ ] 复制和保存指定图片
+- 网络
+  - [x] HTTP 代理
+  - [x] Api 分流
+- 其他
+  - [ ] 黑白名单
+  - [ ] 下载
+  - [ ] ~~游戏（不支持）~~
 
-## Thanks
+## 截图
 
-Thanks for the following project:
+![LoginPage](https://os.scighost.com/pica3/repo/LoginPage.webp)
+
+## 致谢
+
+感谢以下项目：
 
 - [AnkiKong/picacomic](https://github.com/AnkiKong/picacomic)
 - [tonquer/picacg-qt](https://github.com/tonquer/picacg-qt)
 - [Yoroion/Picsharp](https://github.com/Yoroion/Picsharp)
+
+## 关于 CoreApi
+
+![https://www.nuget.org/packages/Pica3.CoreApi](https://img.shields.io/nuget/v/Pica3.CoreApi)
+
+CoreApi is a PicACG api wrapper for dotnet.
+
+``` cs
+var client = new Pica3.CoreApi.PicaClient();
+await client.LoginAsync("account", "password");
+// Then do any other thing, see method comment for more information.
+```

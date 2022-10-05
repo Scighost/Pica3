@@ -162,7 +162,7 @@ public class PicaClient
         ResponseBase<T>? wrapper = null;
         try
         {
-#if !DEBUG
+#if DEBUG
             var str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Debug.WriteLine(request.RequestUri);
             Debug.WriteLine(str);
@@ -653,7 +653,7 @@ public class PicaClient
     /// 看了这本的人也在看
     /// </summary>
     /// <param name="comicId">漫画 id</param>
-    /// <returns></returns>
+    /// <returns>返回值中，阅读数、喜欢数都为 0</returns>
     public async Task<List<ComicProfile>> GetRecommendComicsAsync(string comicId)
     {
 

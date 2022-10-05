@@ -91,7 +91,7 @@
                     <ComboBoxItem Content="默认" />
                     <ComboBoxItem Content="最新" />
                     <ComboBoxItem Content="最旧" />
-                    <ComboBoxItem Content="点赞最多" />
+                    <ComboBoxItem Content="喜欢最多" />
                     <ComboBoxItem Content="阅读最多" />
                 </ComboBox>
             </StackPanel>

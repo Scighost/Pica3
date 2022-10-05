@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using Pica3.CoreApi;
 using Pica3.CoreApi.App;
+using Pica3.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,14 +17,15 @@ public sealed partial class CategoryPage : Page
 {
 
 
-    private readonly PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
 
     public CategoryPage()
     {
         this.InitializeComponent();
-        picaClient = ServiceProvider.GetService<PicaClient>()!;
+        picaService = ServiceProvider.GetService<PicaService>()!;
         Loaded += CategoryPage_Loaded;
     }
 
@@ -35,11 +36,11 @@ public sealed partial class CategoryPage : Page
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
                 if (Categories is null)
                 {
-                    var c = await picaClient.GetHomeCategoriesAsync();
+                    var c = await picaService.GetHomeCategoriesAsync();
                     Categories = c.Where(x => !x.IsWeb).ToList();
                 }
             }

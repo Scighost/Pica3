@@ -7,7 +7,7 @@ public class ComicEpisodeDetail : ComicEpisodeProfile
 {
 
     [JsonPropertyName("pages")]
-    public PicaPageResult<ComicEpisodeImage> Pages { get; set; }
+    public PicaPageResult<ComicEpisodeImage> Images { get; set; }
 
 }
 

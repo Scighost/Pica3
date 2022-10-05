@@ -68,13 +68,13 @@ public class GameDetail : GameProfile
     public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
-    /// 点赞数据
+    /// 喜欢数据
     /// </summary>
     [JsonPropertyName("likesCount")]
     public int LikesCount { get; set; }
 
     /// <summary>
-    /// 我已点赞
+    /// 我已喜欢
     /// </summary>
     [JsonPropertyName("isLiked")]
     public bool IsLiked { get; set; }

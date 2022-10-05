@@ -1,7 +1,8 @@
-﻿using System.Globalization;
-using System.Threading;
+﻿namespace Pica3;
 
-namespace Pica3;
+
+#if DISABLE_XAML_GENERATED_MAIN
+
 
 /// <summary>
 /// Program class
@@ -28,6 +29,10 @@ public static class Program
             new App();
         });
 
+        ServiceProvider.Dispose();
         Logger.CloseAndFlush();
     }
 }
+
+#endif
+

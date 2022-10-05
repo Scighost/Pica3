@@ -43,9 +43,32 @@
 
                     <!--  版本与外观  -->
                     <TextBlock Margin="0,0,0,8"
-                               FontSize="20"
+                               FontSize="16"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="版本与外观" />
+
+
+                    <!--  版本更新  -->
+                    <pc:SettingCard>
+                        <pc:SettingCard.Icon>
+                            <Image Margin="-4" Source="https://os.scighost.com/pica3/app/register_name.png" />
+                        </pc:SettingCard.Icon>
+                        <pc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="哔咔 3" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="{x:Bind AppVersion}" />
+                            </TextBlock>
+                        </pc:SettingCard.Content>
+                        <pc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Command="{x:Bind CheckUpdateCommand, Mode=OneTime}"
+                                    Content="检查更新" />
+                        </pc:SettingCard.Selector>
+                    </pc:SettingCard>
 
 
                     <!--  应用主题  -->
@@ -86,7 +109,7 @@
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="暂时只可在 Windows 11 上使用" />
+                                             Text="Windows 10 上可能用不了" />
                                     </TextBlock>
                                 </StackPanel>
                                 <ComboBox MinWidth="120"
@@ -120,33 +143,124 @@
 
 
 
-                    <!--  文件  -->
+                    <!--  数据与文件  -->
                     <TextBlock Margin="0,20,0,8"
-                               FontSize="20"
+                               FontSize="16"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="文件" />
+                               Text="数据与文件" />
+
 
 
 
                     <!--  数据  -->
+                    <pc:SettingCard>
+                        <pc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xE74C;" />
+                        </pc:SettingCard.Icon>
+                        <pc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="数据" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="漫画信息、历史记录等内容" />
+                            </TextBlock>
+                        </pc:SettingCard.Content>
+                        <pc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Command="{x:Bind OpenFolderCommand}"
+                                    CommandParameter="{x:Bind DataFolder}"
+                                    Content="打开文件夹" />
+                        </pc:SettingCard.Selector>
+                    </pc:SettingCard>
+
+
+                    <!--  日志  -->
+                    <pc:SettingCard>
+                        <pc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xF0E3;" />
+                        </pc:SettingCard.Icon>
+                        <pc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="日志" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="应用日志，没什么东西" />
+                            </TextBlock>
+                        </pc:SettingCard.Content>
+                        <pc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Command="{x:Bind OpenFolderCommand}"
+                                    CommandParameter="{x:Bind LogFolder}"
+                                    Content="打开文件夹" />
+                        </pc:SettingCard.Selector>
+                    </pc:SettingCard>
+
+
+                    <!--  下载  -->
+                    <pc:SettingCard Visibility="Collapsed">
+                        <pc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xE118;" />
+                        </pc:SettingCard.Icon>
+                        <pc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="下载" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="下载漫画时保存的位置" />
+                            </TextBlock>
+                        </pc:SettingCard.Content>
+                        <pc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Command="{x:Bind OpenFolderCommand}"
+                                    CommandParameter="{x:Bind DownloadFolder}"
+                                    Content="打开文件夹" />
+                        </pc:SettingCard.Selector>
+                    </pc:SettingCard>
+
+
+                    <!--  缓存  -->
+                    <pc:SettingCard Margin="0,-4,0,0">
+                        <pc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xE81E;" />
+                        </pc:SettingCard.Icon>
+                        <pc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="缓存" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="{x:Bind CacheSize}" />
+                            </TextBlock>
+                        </pc:SettingCard.Content>
+                        <pc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Command="{x:Bind ClearCacheCommand}"
+                                    Content="清理缓存" />
+                        </pc:SettingCard.Selector>
+                    </pc:SettingCard>
+
+
+                    <!--  修改路径  -->
                     <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
                             <Grid>
                                 <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
-                                    <FontIcon FontSize="20" Glyph="&#xE74C;" />
+                                    <FontIcon FontSize="20" Glyph="&#xE8B7;" />
                                     <TextBlock Margin="20,0,0,0">
-                                        <Run Text="数据" />
+                                        <Run Text="修改路径" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="收藏漫画、历史记录等内容" />
+                                             Text="修改以上内容的存储位置" />
                                     </TextBlock>
                                 </StackPanel>
-                                <Button HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{x:Bind OpenFolderCommand}"
-                                        CommandParameter="{x:Bind DataFolder}"
-                                        Content="打开文件夹" />
                             </Grid>
                         </Expander.Header>
                         <Expander.Content>
@@ -164,34 +278,32 @@
                                             Command="{x:Bind ChangeDataFolderCommand}"
                                             Content="修改路径" />
                                 </Grid>
-                            </StackPanel>
-                        </Expander.Content>
-                    </Expander>
-
-
-
-                    <!--  缓存  -->
-                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                        <Expander.Header>
-                            <Grid>
-                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
-                                    <FontIcon FontSize="20" Glyph="&#xE81E;" />
-                                    <TextBlock Margin="20,0,0,0">
-                                        <Run Text="缓存" />
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock IsTextSelectionEnabled="True">
+                                        <Run Text="日志位置" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="{x:Bind CacheSize}" />
+                                             Text="{x:Bind LogFolder}" />
                                     </TextBlock>
-                                </StackPanel>
-                                <Button HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{x:Bind ClearCacheCommand}"
-                                        Content="清理缓存" />
-                            </Grid>
-                        </Expander.Header>
-                        <Expander.Content>
-                            <StackPanel Margin="0,-16,44,-16">
+                                    <Button HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Command="{x:Bind ChangeLogFolderCommand}"
+                                            Content="修改路径" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12" Visibility="Collapsed">
+                                    <TextBlock IsTextSelectionEnabled="True">
+                                        <Run Text="下载位置" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind DownloadFolder}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Command="{x:Bind ChangeDownloadFolderCommand}"
+                                            Content="修改路径" />
+                                </Grid>
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock IsTextSelectionEnabled="True">
                                         <Run Text="缓存位置" />
@@ -210,74 +322,55 @@
                     </Expander>
 
 
-                    <!--  下载  -->
-                    <Expander HorizontalAlignment="Stretch"
-                              HorizontalContentAlignment="Stretch"
-                              Visibility="Collapsed">
-                        <Expander.Header>
-                            <Grid>
-                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
-                                    <FontIcon FontSize="20" Glyph="&#xE118;" />
-                                    <TextBlock Margin="20,0,0,0">
-                                        <Run Text="下载" />
-                                        <LineBreak />
-                                        <Run FontSize="12"
-                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="下载漫画时保存的位置" />
-                                    </TextBlock>
-                                </StackPanel>
-                                <Button HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{x:Bind OpenFolderCommand}"
-                                        CommandParameter="{x:Bind DownloadFolder}"
-                                        Content="打开文件夹" />
-                            </Grid>
-                        </Expander.Header>
-                        <Expander.Content>
-                            <StackPanel Margin="0,-16,44,-16">
-                                <Grid Padding="44,12,0,12">
-                                    <TextBlock IsTextSelectionEnabled="True">
-                                        <Run Text="下载位置" />
-                                        <LineBreak />
-                                        <Run FontSize="12"
-                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="{x:Bind DownloadFolder}" />
-                                    </TextBlock>
-                                    <Button HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            Command="{x:Bind ChangeDownloadFolderCommand}"
-                                            Content="修改路径" />
-                                </Grid>
-                            </StackPanel>
-                        </Expander.Content>
-                    </Expander>
+                    <!--  其他  -->
+                    <TextBlock Margin="0,20,0,8"
+                               FontSize="16"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="其他" />
 
-
-
-                    <!--  应用日志  -->
-                    <pc:SettingCard>
+                    <!--  单例模式  -->
+                    <pc:SettingCard Margin="0,-4,0,0">
                         <pc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xF0E3;" />
+                            <FontIcon FontSize="20" Glyph="&#xF158;" />
                         </pc:SettingCard.Icon>
                         <pc:SettingCard.Content>
                             <TextBlock VerticalAlignment="Center">
-                                <Run Text="日志" />
+                                <Run Text="单例模式" />
                                 <LineBreak />
                                 <Run FontSize="12"
                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="{x:Bind LogFolder}" />
+                                     Text="同时仅可存在一个进程，重启应用后生效" />
                             </TextBlock>
                         </pc:SettingCard.Content>
                         <pc:SettingCard.Selector>
-                            <Button HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Command="{x:Bind OpenFolderCommand}"
-                                    CommandParameter="{x:Bind LogFolder}"
-                                    Content="打开文件夹" />
+                            <ToggleSwitch IsOn="{x:Bind ApplicationSingleton, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                         </pc:SettingCard.Selector>
                     </pc:SettingCard>
 
 
+
+                    <!--  关于  -->
+                    <TextBlock Margin="0,20,0,8"
+                               FontSize="16"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="关于本应用" />
+
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Hyperlink NavigateUri="https://github.com/Scighost/Pica3" UnderlineStyle="None">哔咔 3</Hyperlink>
+                        <Run Text="是 Windows 平台上的第三方" />
+                        <Hyperlink NavigateUri="http://picacgp.com" UnderlineStyle="None">哔咔漫画</Hyperlink>
+                        <Run Text="客户端，使用 GPL v3.0 协议开源，仅用于学习和交流，不可闭源，严禁商用。" />
+                    </TextBlock>
+
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="本应用处于早期开发阶段，功能尚不完善。" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Text="相关链接" />
+                        <HyperlinkButton Content="更新记录" NavigateUri="https://github.com/Scighost/Pica3/releases" />
+                        <HyperlinkButton Content="反馈与建议" NavigateUri="https://github.com/Scighost/Pica3/issues" />
+                    </StackPanel>
 
 
                 </StackPanel>

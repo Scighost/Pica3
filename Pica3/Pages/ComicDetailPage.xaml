@@ -95,10 +95,10 @@
                                           Glyph="&#xE18B;"
                                           ToolTipService.ToolTip="阅读" />
                                 <TextBlock x:Name="c_TextBlock_Views" Text="{x:Bind VM.ComicDetailInfo.ViewsCount}" />
-                                <!--  点赞数  -->
+                                <!--  喜欢数  -->
                                 <FontIcon Margin="8,0,0,0"
-                                          Glyph="&#xE19F;"
-                                          ToolTipService.ToolTip="点赞" />
+                                          Glyph="&#xEB51;"
+                                          ToolTipService.ToolTip="喜欢" />
                                 <TextBlock x:Name="c_TextBlock_Likes" Text="{x:Bind VM.ComicDetailInfo.LikesCount}" />
                                 <!--  更新时间  -->
                                 <FontIcon Margin="8,0,0,0"
@@ -182,7 +182,7 @@
                                 Margin="0,-8,0,0"
                                 Orientation="Horizontal"
                                 Spacing="12">
-                        <!--  点赞  -->
+                        <!--  喜欢  -->
                         <Button x:Name="c_Button_Like"
                                 VerticalAlignment="Stretch"
                                 Command="{x:Bind VM.LikeComicCommand}"
@@ -199,7 +199,7 @@
                                 <FontIcon Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                           Glyph="&#xEB52;"
                                           Visibility="{x:Bind VM.LikeComicCommand.IsRunning, FallbackValue=Collapsed}" />
-                                <TextBlock Grid.Column="1" Text="点赞" />
+                                <TextBlock Grid.Column="1" Text="喜欢" />
                             </Grid>
                         </Button>
                         <!--  收藏  -->

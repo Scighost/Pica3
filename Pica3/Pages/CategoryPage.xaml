@@ -53,7 +53,7 @@
                             <pc:CachedImage HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                            PlaceholderSource="https://lsp-cdn.scighost.com/pica/placeholder_avatar_2.png"
+                                            PlaceholderSource="https://os.scighost.com/pica3/app/placeholder_avatar_2.png"
                                             PlaceholderStretch="Uniform"
                                             Source="{x:Bind Thumb.Url}"
                                             Stretch="UniformToFill">

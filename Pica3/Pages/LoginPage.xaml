@@ -25,6 +25,10 @@
 
         <!--  主页内容  -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image Width="60"
+                   Height="60"
+                   Margin="0,0,0,20"
+                   Source="https://os.scighost.com/pica3/app/register_name.png" />
             <!--  哔咔 3  -->
             <TextBlock Margin="0,0,0,40"
                        HorizontalAlignment="Center"
@@ -58,6 +62,7 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Name="c_CheckBox_RememberPassword"
                           Grid.Column="0"
+                          Click="{x:Bind RememberPasswordChecked}"
                           Content="记住密码" />
                 <CheckBox x:Name="c_CheckBox_AutoLogin"
                           Grid.Column="1"
@@ -125,6 +130,13 @@
                                  FontSize="12"
                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             </StackPanel>
+
+
+            <TextBlock Margin="0,40,0,0"
+                       HorizontalAlignment="Center"
+                       FontSize="12"
+                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                       Text="不主动更新  |  不拒绝使用  |  不负责维护" />
 
 
         </StackPanel>

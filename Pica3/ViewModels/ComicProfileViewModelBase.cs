@@ -1,19 +1,21 @@
 ﻿using Microsoft.UI.Xaml;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
+using Pica3.Services;
 
 namespace Pica3.ViewModels;
 
 public abstract partial class ComicProfileViewModelBase : ObservableObject
 {
 
-    private PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
-    public ComicProfileViewModelBase(PicaClient picaClient)
+    protected ComicProfileViewModelBase(PicaService picaService)
     {
-        this.picaClient = picaClient;
+        this.picaService = picaService;
     }
+
 
 
     [ObservableProperty]

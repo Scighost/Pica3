@@ -1,14 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
-using System;
-using System.Collections.Generic;
+using Pica3.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pica3.ViewModels;
 
@@ -16,7 +11,8 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
 {
 
 
-    private readonly PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
     public string ComicId { get; private set; }
@@ -25,9 +21,9 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
     private string coverPlaceholderUrl;
 
 
-    public ComicDetailPageModel(PicaClient picaClient)
+    public ComicDetailPageModel(PicaService picaService)
     {
-        this.picaClient = picaClient;
+        this.picaService = picaService;
     }
 
 
@@ -57,15 +53,16 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
             }
             if (ComicDetailInfo is null)
             {
-                ComicDetailInfo = await picaClient.GetComicDetailAsync(ComicId);
+                ComicDetailInfo = await picaService.GetComicDetailAsync(ComicId);
                 IsLiked = ComicDetailInfo.IsLiked;
                 IsFavourite = ComicDetailInfo.IsFavourite;
-                var pageResult = await picaClient.GetComicEpisodeAsync(ComicId, 1);
-                EpisodeProfiles = new(pageResult.TList);
+                var pageResult = await picaService.GetComicEpisodeListAsync(ComicId, 1);
+                EpisodeProfiles = new(pageResult.List);
                 TotalEpisodePage = pageResult.Pages;
                 CurrentEpisodePage = pageResult.Page;
+                PicaService.SaveReadHistory(ComicId, HistoryType.ComicDetail);
             }
-            RecommendComics ??= await picaClient.GetRecommendComicsAsync(ComicId);
+            RecommendComics ??= await picaService.GetRecommendComicsAsync(ComicId);
         }
         catch (Exception ex)
         {
@@ -103,11 +100,11 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
 
 
 
-    #region 点赞收藏
+    #region 喜欢收藏
 
 
     /// <summary>
-    /// 点赞
+    /// 喜欢
     /// </summary>
     [ObservableProperty]
     private bool isLiked;
@@ -120,7 +117,7 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
 
 
     /// <summary>
-    /// 给漫画点赞
+    /// 给漫画喜欢
     /// </summary>
     /// <returns></returns>
     [RelayCommand]
@@ -130,7 +127,7 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
         {
             if (ComicDetailInfo != null)
             {
-                if (await picaClient.LikeComicAsync(ComicId))
+                if (await picaService.LikeComicAsync(ComicId))
                 {
                     IsLiked = true;
                 }
@@ -159,7 +156,7 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
         {
             if (ComicDetailInfo != null)
             {
-                if (await picaClient.AddFavoriteAsync(ComicId))
+                if (await picaService.FavoriteComicAsync(ComicId))
                 {
                     IsFavourite = true;
                 }
@@ -225,8 +222,8 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
         {
             if (TotalEpisodePage == 0)
             {
-                var countResult = await picaClient.GetComicEpisodeAsync(ComicId, 1);
-                EpisodeProfiles = new(countResult.TList);
+                var countResult = await picaService.GetComicEpisodeListAsync(ComicId, 1);
+                EpisodeProfiles = new(countResult.List);
                 TotalEpisodePage = countResult.Pages;
                 CurrentEpisodePage = countResult.Page;
             }
@@ -234,8 +231,8 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
             {
                 if (CurrentEpisodePage < TotalEpisodePage)
                 {
-                    var countResult = await picaClient.GetComicEpisodeAsync(ComicId, CurrentEpisodePage + 1);
-                    countResult.TList.ForEach(x => EpisodeProfiles?.Add(x));
+                    var countResult = await picaService.GetComicEpisodeListAsync(ComicId, CurrentEpisodePage + 1);
+                    countResult.List.ForEach(x => EpisodeProfiles?.Add(x));
                     CurrentEpisodePage = countResult.Page;
                 }
             }
@@ -259,15 +256,15 @@ public sealed partial class ComicDetailPageModel : ObservableObject, IViewModel
         {
             if (TotalEpisodePage == 0)
             {
-                var countResult = await picaClient.GetComicEpisodeAsync(ComicId, 1);
-                EpisodeProfiles = new(countResult.TList);
+                var countResult = await picaService.GetComicEpisodeListAsync(ComicId, 1);
+                EpisodeProfiles = new(countResult.List);
                 TotalEpisodePage = countResult.Pages;
                 CurrentEpisodePage = countResult.Page;
             }
             while (CurrentEpisodePage < TotalEpisodePage)
             {
-                var countResult = await picaClient.GetComicEpisodeAsync(ComicId, CurrentEpisodePage + 1);
-                countResult.TList.ForEach(x => EpisodeProfiles?.Add(x));
+                var countResult = await picaService.GetComicEpisodeListAsync(ComicId, CurrentEpisodePage + 1);
+                countResult.List.ForEach(x => EpisodeProfiles?.Add(x));
                 CurrentEpisodePage = countResult.Page;
             }
         }

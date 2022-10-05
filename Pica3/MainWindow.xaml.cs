@@ -3,11 +3,14 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Pica3.Controls;
 using Pica3.Pages;
+using Scighost.WinUILib.Helpers;
 using System.IO;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.Graphics;
+using Windows.System;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -51,6 +54,7 @@ public sealed partial class MainWindow : Window
         InitliazeWindow();
         RootFrame.Content = new LoginPage();
         this.Closed += MainWindow_Closed;
+        CheckUpdateAsync();
     }
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
@@ -202,10 +206,107 @@ public sealed partial class MainWindow : Window
 
 
 
+    /// <summary>
+    /// 检查更新
+    /// </summary>
+    /// <returns></returns>
+    private async void CheckUpdateAsync()
+    {
+        try
+        {
+            var github = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Pica3"));
+            var releases = await github.Repository.Release.GetAll("Scighost", "Pica3");
+            if (releases.FirstOrDefault() is Octokit.Release release)
+            {
+                var thisVersion = typeof(MainPage).Assembly.GetName().Version;
+                Version.TryParse(AppSetting.GetValue<string>(SettingKeys.IgnoreVersion), out var ignoreVersion);
+                if (Version.TryParse(release.TagName, out var latestVersion))
+                {
+                    if (latestVersion > thisVersion && latestVersion > ignoreVersion)
+                    {
+                        var dialog = new ContentDialog
+                        {
+                            Content = new UpdateDialog(release)
+                            {
+                                Width = 500,
+                                Height = 624,
+                            },
+                            DefaultButton = ContentDialogButton.Primary,
+                            IsPrimaryButtonEnabled = true,
+                            IsSecondaryButtonEnabled = true,
+                            PrimaryButtonText = "下载新版本",
+                            SecondaryButtonText = "暂不更新",
+                            CloseButtonText = "忽略此版本",
+                            XamlRoot = this.XamlRoot,
+                        };
+                        var result = await dialog.ShowWithZeroMarginAsync();
+                        if (result is ContentDialogResult.Primary)
+                        {
+                            await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl));
+                        }
+                        if (result is ContentDialogResult.None)
+                        {
+                            AppSetting.TrySetValue(SettingKeys.IgnoreVersion, release.TagName);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
 
 
 
 
+    [StructLayout(LayoutKind.Explicit)]
+    private struct WindowRect
+    {
+        [FieldOffset(0)]
+        public short X;
+
+        [FieldOffset(2)]
+        public short Y;
+
+        [FieldOffset(4)]
+        public short Width;
+
+        [FieldOffset(6)]
+        public short Height;
+
+        [FieldOffset(0)]
+        public ulong Value;
+
+        public int Left => X;
+        public int Top => Y;
+        public int Right => X + Width;
+        public int Bottom => Y + Height;
+
+        public WindowRect(int x, int y, int width, int height)
+        {
+            Value = 0;
+            X = (short)x;
+            Y = (short)y;
+            Width = (short)width;
+            Height = (short)height;
+        }
+
+        public WindowRect(ulong value)
+        {
+            X = 0;
+            Y = 0;
+            Width = 0;
+            Height = 0;
+            Value = value;
+        }
+
+        public RectInt32 ToRectInt32()
+        {
+            return new RectInt32(X, Y, Width, Height);
+        }
+    }
 
 
 
@@ -213,49 +314,3 @@ public sealed partial class MainWindow : Window
 
 
 
-[StructLayout(LayoutKind.Explicit)]
-file struct WindowRect
-{
-    [FieldOffset(0)]
-    public short X;
-
-    [FieldOffset(2)]
-    public short Y;
-
-    [FieldOffset(4)]
-    public short Width;
-
-    [FieldOffset(6)]
-    public short Height;
-
-    [FieldOffset(0)]
-    public ulong Value;
-
-    public int Left => X;
-    public int Top => Y;
-    public int Right => X + Width;
-    public int Bottom => Y + Height;
-
-    public WindowRect(int x, int y, int width, int height)
-    {
-        Value = 0;
-        X = (short)x;
-        Y = (short)y;
-        Width = (short)width;
-        Height = (short)height;
-    }
-
-    public WindowRect(ulong value)
-    {
-        X = 0;
-        Y = 0;
-        Width = 0;
-        Height = 0;
-        Value = value;
-    }
-
-    public RectInt32 ToRectInt32()
-    {
-        return new RectInt32(X, Y, Width, Height);
-    }
-}

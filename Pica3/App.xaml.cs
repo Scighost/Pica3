@@ -54,15 +54,24 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override async void OnLaunched(LaunchActivatedEventArgs _)
     {
-        var instance = AppInstance.FindOrRegisterForKey("Main");
-        if (!instance.IsCurrent)
+        if (AppSetting.GetValue<bool>(SettingKeys.EnableApplicationSingleton))
         {
-            await instance.RedirectActivationToAsync(instance.GetActivatedEventArgs());
-            Environment.Exit(0);
+            var instance = AppInstance.FindOrRegisterForKey("Main");
+            if (!instance.IsCurrent)
+            {
+                await instance.RedirectActivationToAsync(instance.GetActivatedEventArgs());
+                Environment.Exit(0);
+            }
+            else
+            {
+                instance.Activated += Instance_Activated;
+                ServiceProvider.Initialize();
+                m_window = new MainWindow();
+                m_window.Activate();
+            }
         }
         else
         {
-            instance.Activated += Instance_Activated;
             m_window = new MainWindow();
             m_window.Activate();
         }

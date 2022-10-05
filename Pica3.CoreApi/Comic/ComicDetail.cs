@@ -57,7 +57,7 @@ public class ComicDetail : ComicProfile
     public bool AllowComment { get; set; }
 
     /// <summary>
-    /// 观看书，好像比 <see cref="ComicProfile.TotalViews"/> 大
+    /// 阅读数，好像比 <see cref="ComicProfile.TotalViews"/> 大
     /// </summary>
     [JsonPropertyName("viewsCount")]
     public int ViewsCount { get; set; }
@@ -75,7 +75,7 @@ public class ComicDetail : ComicProfile
     public bool IsFavourite { get; set; }
 
     /// <summary>
-    /// 已点赞
+    /// 已喜欢
     /// </summary>
     [JsonPropertyName("isLiked")]
     public bool IsLiked { get; set; }

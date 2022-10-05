@@ -1,0 +1,10 @@
+哔咔 3 是 Windows 平台上的第三方 哔咔哔咔 客户端，使用 GPL v3.0 协议开源，仅用于学习和交流，不可闭源，严禁商用。
+
+仅支持 Windows 10 1809 (17763) 及以上版本，双击 bika3.exe 即可运行，如遇网络问题，请自行使用代理。
+
+Windows 10 用户还需安装 Segoe Fluent Icons 字体 和 WebView2 Runtime，请从以下链接下载：
+Segoe Fluent Icons：https://os.scighost.com/pica3/app/Segoe-Fluent-Icons.zip
+WebView2 Runtime：https://go.microsoft.com/fwlink/p/?LinkId=2124703
+
+请不要随意删除文件夹内的任何内容，否则可能会出现无法运行的问题，如果出现问题请从下方链接处重新下载：
+https://github.com/Scighost/Pica3/releases

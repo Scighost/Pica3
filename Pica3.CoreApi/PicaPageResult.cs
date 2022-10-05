@@ -25,7 +25,7 @@ public class PicaPageResult<T>
     /// list of <see cref="T"/>
     /// </summary>
     [JsonPropertyName("docs")]
-    public List<T> TList { get; set; }
+    public List<T> List { get; set; }
 
     /// <summary>
     /// 这是第几页

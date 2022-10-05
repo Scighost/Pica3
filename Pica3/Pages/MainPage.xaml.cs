@@ -4,8 +4,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Account;
+using Pica3.Services;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,15 +21,13 @@ public sealed partial class MainPage : Page
 {
 
 
-
     public static MainPage Current { get; private set; }
 
 
+    private readonly PicaService picaService;
 
-    private readonly PicaClient picaClient;
 
-
-    public bool IsLogin => picaClient.IsLogin;
+    public bool IsLogin => picaService.IsLogin;
 
 
     public MainPage()
@@ -36,7 +35,7 @@ public sealed partial class MainPage : Page
         Current = this;
         this.InitializeComponent();
         MainWindow.Current.SetTitleBar(AppTitleBar);
-        picaClient = ServiceProvider.GetService<PicaClient>()!;
+        picaService = ServiceProvider.GetService<PicaService>()!;
         Navigate(typeof(HomePage), null, new SuppressNavigationTransitionInfo());
         c_NavigationView.SelectedItem = c_NavigationViewItem_Home;
         Loaded += MainPage_Loaded;
@@ -51,9 +50,9 @@ public sealed partial class MainPage : Page
     /// <param name="args"></param>
     private void Page_ProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
     {
-        if (args.Key == Windows.System.VirtualKey.Escape && args.Modifiers == Windows.System.VirtualKeyModifiers.None)
+        if (args.Key == VirtualKey.Escape && args.Modifiers == VirtualKeyModifiers.None)
         {
-            MainPage.Current.GoBack();
+            GoBack();
         }
     }
 
@@ -67,10 +66,10 @@ public sealed partial class MainPage : Page
         }
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
-                UserProfile = await picaClient.GetUserProfileAsync();
-                if (!UserProfile.IsPunched && await picaClient.PunchAsync())
+                UserProfile = await picaService.GetUserProfileAsync();
+                if (!UserProfile.IsPunched && await picaService.PunchAsync())
                 {
                     NotificationProvider.Success("已打哔咔");
                 }
@@ -103,9 +102,9 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
-                UserProfile = await picaClient.GetUserProfileAsync();
+                UserProfile = await picaService.GetUserProfileAsync();
             }
         }
         catch (Exception ex)
@@ -120,7 +119,7 @@ public sealed partial class MainPage : Page
     /// </summary>
     private void Logout()
     {
-        picaClient.Logout();
+        picaService.Logout();
         MainWindow.Current.Navigate(typeof(LoginPage), null, new DrillInNavigationTransitionInfo());
     }
 
@@ -206,7 +205,7 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            if (args.InvokedItemContainer.IsSelected)
+            if (args.InvokedItemContainer is null || args.InvokedItemContainer.IsSelected)
             {
                 return;
             }
@@ -287,5 +286,5 @@ public sealed partial class MainPage : Page
 
     #endregion
 
-   
+
 }

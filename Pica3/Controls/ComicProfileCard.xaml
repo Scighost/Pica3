@@ -51,7 +51,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             CornerRadius="8"
-                            PlaceholderSource="https://lsp-cdn.scighost.com/pica/icon_unknown_error.png"
+                            PlaceholderSource="https://os.scighost.com/pica3/app/icon_unknown_error.png"
                             PlaceholderStretch="Uniform"
                             RetryOnLoaded="True"
                             Source="{x:Bind ComicProfile.Cover.Url}"
@@ -87,11 +87,11 @@
                               Glyph="&#xE18B;"
                               ToolTipService.ToolTip="阅读" />
                     <TextBlock FontSize="12" Text="{x:Bind ComicProfile.TotalViews}" />
-                    <!--  点赞数  -->
+                    <!--  喜欢数  -->
                     <FontIcon Margin="8,0,0,0"
                               FontSize="12"
-                              Glyph="&#xE19F;"
-                              ToolTipService.ToolTip="点赞" />
+                              Glyph="&#xEB51;"
+                              ToolTipService.ToolTip="喜欢" />
                     <TextBlock FontSize="12" Text="{x:Bind ComicProfile.TotalLikes}" />
                 </StackPanel>
                 <!--  标签  -->

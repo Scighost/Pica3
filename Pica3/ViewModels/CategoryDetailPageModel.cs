@@ -1,24 +1,19 @@
 ﻿using Microsoft.UI.Xaml;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
-using Pica3.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Pica3.Services;
 
 namespace Pica3.ViewModels;
 
 public sealed partial class CategoryDetailPageModel : ObservableObject, IViewModel
 {
 
-    private readonly PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
-    public CategoryDetailPageModel(PicaClient picaClient)
+    public CategoryDetailPageModel(PicaService picaService)
     {
-        this.picaClient = picaClient;
+        this.picaService = picaService;
     }
 
 
@@ -84,16 +79,16 @@ public sealed partial class CategoryDetailPageModel : ObservableObject, IViewMod
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
                 var id = Random.Shared.Next();
                 randomId = id;
-                var pageResult = await picaClient.CategorySearchAsync(CategoryName, CurrentPage, (SortType)SortTypeIndex);
+                var pageResult = await picaService.CategorySearchAsync(CategoryName, CurrentPage, (SortType)SortTypeIndex);
                 if (randomId == id)
                 {
                     TotalPage = pageResult.Pages;
                     CurrentPage = pageResult.Page;
-                    ComicList = pageResult.TList;
+                    ComicList = pageResult.List;
                 }
             }
         }

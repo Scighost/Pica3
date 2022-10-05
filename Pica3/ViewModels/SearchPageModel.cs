@@ -1,23 +1,19 @@
 ﻿using Microsoft.UI.Xaml;
 using Pica3.CoreApi.Comic;
-using Pica3.CoreApi;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Pica3.Services;
 
 namespace Pica3.ViewModels;
 
 public sealed partial class SearchPageModel : ObservableObject, IViewModel
 {
 
-    private readonly PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
-    public SearchPageModel(PicaClient picaClient)
+    public SearchPageModel(PicaService picaService)
     {
-        this.picaClient = picaClient;
+        this.picaService = picaService;
     }
 
 
@@ -63,17 +59,17 @@ public sealed partial class SearchPageModel : ObservableObject, IViewModel
     {
         try
         {
-            if (picaClient.IsLogin && ComicList is null)
+            if (picaService.IsLogin && ComicList is null)
             {
                 SearchAsync();
             }
-            if (picaClient.IsLogin && SuggestionKeywords is null)
+            if (picaService.IsLogin && SuggestionKeywords is null)
             {
-                SuggestionKeywords = await picaClient.GetKeywordsAsync();
+                SuggestionKeywords = await picaService.GetKeywordsAsync();
             }
-            if (picaClient.IsLogin && Categories is null)
+            if (picaService.IsLogin && Categories is null)
             {
-                var info = await picaClient.GetAppInfoAsync();
+                var info = await picaService.GetAppInfoAsync();
                 Categories = info.Categories.Select(x => new SearchCategory(x.Title)).ToList();
             }
         }
@@ -106,14 +102,14 @@ public sealed partial class SearchPageModel : ObservableObject, IViewModel
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
                 var id = Random.Shared.Next();
                 randomId = id;
                 var cats = Categories?.Where(x => x.IsChecked).Select(x => x.Category).ToList();
                 if (string.IsNullOrWhiteSpace(Keyword) && !(cats?.Any() ?? false))
                 {
-                    var list = await picaClient.GetRandomComicsAsync();
+                    var list = await picaService.GetRandomComicsAsync();
                     if (randomId == id)
                     {
                         TotalPage = 1;
@@ -123,12 +119,12 @@ public sealed partial class SearchPageModel : ObservableObject, IViewModel
                 }
                 else
                 {
-                    var pageResult = await picaClient.AdvanceSearchAsync(Keyword?.Trim() ?? "", CurrentPage, (SortType)SortTypeIndex, cats);
+                    var pageResult = await picaService.AdvanceSearchAsync(Keyword.Trim(), CurrentPage, (SortType)SortTypeIndex, cats);
                     if (randomId == id)
                     {
                         TotalPage = pageResult.Pages;
                         CurrentPage = pageResult.Page;
-                        ComicList = pageResult.TList;
+                        ComicList = pageResult.List;
                     }
                 }
             }

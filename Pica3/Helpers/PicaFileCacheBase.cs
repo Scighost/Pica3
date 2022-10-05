@@ -1,14 +1,9 @@
 ﻿using CommunityToolkit.WinUI.UI;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Pica3.Helpers
@@ -408,9 +403,8 @@ namespace Pica3.Helpers
                                 break;
                             }
                         }
-                        catch (FileNotFoundException)
-                        {
-                        }
+                        catch (HttpRequestException) { }
+                        catch (FileNotFoundException) { }
 
                         retries++;
                     }

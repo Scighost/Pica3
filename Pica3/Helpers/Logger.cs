@@ -17,11 +17,16 @@ internal static class Logger
     {
         try
         {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), $@"Pica3\Log\log_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.txt");
+            var path = Path.Combine(AppSetting.GetValue<string>(SettingKeys.LogFolder) ?? Path.Combine(AppContext.BaseDirectory, "Log"), $"log_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.txt");
             Log.Logger = new LoggerConfiguration().WriteTo.File(path: path, outputTemplate: "[{Timestamp:HH:mm:ss.fff}] [{Level:u4}] {CallerName}{NewLine}{Message}{NewLine}{Exception}{NewLine}")
                                                   .Enrich.FromLogContext()
                                                   .CreateLogger();
-            Log.Information($"{Environment.CommandLine}");
+            Log.Information($"""
+                哔咔 3 - {typeof(App).Assembly.GetName().Version}
+                {DateTimeOffset.Now}
+                {Environment.OSVersion}
+                {Environment.CommandLine}
+                """);
             _initialized = true;
         }
         catch { }

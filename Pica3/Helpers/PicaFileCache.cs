@@ -13,40 +13,12 @@ internal class PicaFileCache : PicaFileCacheBase<StorageFile>
     private static PicaFileCache instance;
 
 
-    public static PicaFileCache Instance
+    public static PicaFileCache Instance => instance ??= new PicaFileCache
     {
-        get
-        {
-            if (instance is null)
-            {
-                instance = new PicaFileCache();
-                instance.CacheDuration = TimeSpan.FromDays(30);
-                instance.RetryCount = 3;
-                try
-                {
-                    var folder = AppSetting.GetValue<string>(SettingKeys.CacheFolder) ?? Path.Combine(AppContext.BaseDirectory, "Cache");
-                    if (!Directory.Exists(folder)) { Directory.CreateDirectory(folder); }
-                    instance.Initialize(StorageFolder.GetFolderFromPathAsync(folder).GetAwaiter().GetResult());
-                    WebProxy? proxy = null;
-                    Uri? uri = null;
-                    if (IPAddress.TryParse(AppSetting.GetValue<string>(SettingKeys.OverrideApiAddress)!, out var address))
-                    {
-                        uri = new Uri("http://" + address.ToString());
-                    }
-                    if (IPEndPoint.TryParse(AppSetting.GetValue<string>(SettingKeys.WebProxy)!, out var endPoint))
-                    {
-                        proxy = new WebProxy(endPoint.ToString());
-                    }
-                    instance.ChangeProxyAndBaseAddress(proxy, uri);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex);
-                }
-            }
-            return instance;
-        }
-    }
+        CacheDuration = TimeSpan.FromDays(30),
+        RetryCount = 3
+    };
+
 
 
 

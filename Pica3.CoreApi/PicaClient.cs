@@ -162,7 +162,7 @@ public class PicaClient
         ResponseBase<T>? wrapper = null;
         try
         {
-#if DEBUG
+#if !DEBUG
             var str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Debug.WriteLine(request.RequestUri);
             Debug.WriteLine(str);
@@ -590,10 +590,10 @@ public class PicaClient
 
 
     /// <summary>
-    /// 点赞或取消点赞
+    /// 喜欢或取消喜欢
     /// </summary>
     /// <param name="comicId">漫画 id</param>
-    /// <returns>已点赞/已取消点赞</returns>
+    /// <returns>已喜欢/已取消喜欢</returns>
     public async Task<bool> LikeComicAsync(string comicId)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"comics/{comicId}/like");
@@ -666,13 +666,13 @@ public class PicaClient
     /// <summary>
     /// 漫画章节图片内容
     /// </summary>
-    /// <param name="bookId">漫画 id <see cref="ComicProfile.Id"/></param>
+    /// <param name="comicId">漫画 id <see cref="ComicProfile.Id"/></param>
     /// <param name="episodeOrderId">漫画章节顺序 <see cref="ComicEpisodeProfile.Order"/></param>
     /// <param name="page">第几页</param>
     /// <returns></returns>
-    public async Task<ComicEpisodeDetail> GetComicEpisodeImagesAsync(string bookId, int episodeOrderId, int page = 1)
+    public async Task<ComicEpisodeDetail> GetComicEpisodeImagesAsync(string comicId, int episodeOrderId, int page = 1)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"comics/{bookId}/order/{episodeOrderId}/pages?page={page}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"comics/{comicId}/order/{episodeOrderId}/pages?page={page}");
         var node = await CommonSendAsync<JsonNode>(request).ConfigureAwait(false);
         var detail = JsonSerializer.Deserialize<ComicEpisodeDetail>(node);
         detail!.Order = episodeOrderId;
@@ -785,10 +785,10 @@ public class PicaClient
 
 
     /// <summary>
-    /// 给评论点赞
+    /// 给评论喜欢
     /// </summary>
     /// <param name="commentId"></param>
-    /// <returns>已点赞</returns>
+    /// <returns>已喜欢</returns>
     /// <exception cref="PicaApiException"></exception>
     public async Task<bool> LikeCommentAsync(string commentId)
     {

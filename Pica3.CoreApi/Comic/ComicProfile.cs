@@ -23,16 +23,10 @@ public class ComicProfile
     public string Author { get; set; }
 
     /// <summary>
-    /// 观看数
+    /// 章节数
     /// </summary>
-    [JsonPropertyName("totalViews")]
-    public int TotalViews { get; set; }
-
-    /// <summary>
-    /// 点赞数，同 <see cref="LikesCount"/>
-    /// </summary>
-    [JsonPropertyName("totalLikes")]
-    public int TotalLikes { get; set; }
+    [JsonPropertyName("epsCount")]
+    public int EpisodeCount { get; set; }
 
     /// <summary>
     /// 图片页数
@@ -41,16 +35,28 @@ public class ComicProfile
     public int PagesCount { get; set; }
 
     /// <summary>
-    /// 章节数
-    /// </summary>
-    [JsonPropertyName("epsCount")]
-    public int EpisodeCount { get; set; }
-
-    /// <summary>
     /// 完结
     /// </summary>
     [JsonPropertyName("finished")]
     public bool Finished { get; set; }
+
+    /// <summary>
+    /// 阅读数
+    /// </summary>
+    [JsonPropertyName("totalViews")]
+    public int TotalViews { get; set; }
+
+    /// <summary>
+    /// 喜欢数，同 <see cref="LikesCount"/>
+    /// </summary>
+    [JsonPropertyName("totalLikes")]
+    public int TotalLikes { get; set; }
+
+    /// <summary>
+    /// 喜欢数，同 <see cref="TotalLikes"/>
+    /// </summary>
+    [JsonPropertyName("likesCount")]
+    public int LikesCount { get; set; }
 
     /// <summary>
     /// 分类
@@ -64,11 +70,7 @@ public class ComicProfile
     [JsonPropertyName("thumb")]
     public PicaFile Cover { get; set; }
 
-    /// <summary>
-    /// 点赞数，同 <see cref="TotalLikes"/>
-    /// </summary>
-    [JsonPropertyName("likesCount")]
-    public int LikesCount { get; set; }
+
 
 
 }

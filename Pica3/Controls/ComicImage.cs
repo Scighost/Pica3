@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Scighost.WinUILib.Cache;
 using System.IO;
 using System.Threading;
 
@@ -56,6 +55,10 @@ internal class ComicImage : ImageEx
             return new BitmapImage(new Uri(file.Path));
         }
         catch (TaskCanceledException)
+        {
+            throw;
+        }
+        catch (FileNotFoundException)
         {
             throw;
         }

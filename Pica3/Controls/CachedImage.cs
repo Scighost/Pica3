@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.IO;
 using System.Threading;
-using Windows.Storage;
 
 namespace Pica3.Controls;
 
@@ -30,6 +29,10 @@ internal class CachedImage : ImageEx
             return new BitmapImage(new Uri(file.Path));
         }
         catch (TaskCanceledException)
+        {
+            throw;
+        }
+        catch (FileNotFoundException)
         {
             throw;
         }

@@ -1,18 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Pica3.Controls;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
 using Pica3.ViewModels;
-using Scighost.WinUILib.Cache;
-using System;
-using System.Collections.ObjectModel;
-using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -172,7 +164,7 @@ public sealed partial class ComicDetailPage : Page
         {
             if (sender is Button button && button.Tag is ComicEpisodeProfile episode)
             {
-                MainWindow.Current.SetFullWindowContent(new ComicViewer(VM!.ComicDetailInfo, episode.Order), true);
+                MainWindow.Current.SetFullWindowContent(new ComicViewer(VM!.ComicDetailInfo, episode), true);
             }
         }
         catch (Exception ex)

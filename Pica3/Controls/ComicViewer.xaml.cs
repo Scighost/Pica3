@@ -1,25 +1,14 @@
-﻿using CommunityToolkit.Common.Collections;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.WinUI.UI;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
-using System;
-using System.Collections.Generic;
+using Pica3.Services;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Timer = System.Timers.Timer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,14 +22,18 @@ public sealed partial class ComicViewer : UserControl
 
     private readonly PicaClient picaClient;
 
+    private readonly PicaService picaService;
+
+    private readonly Timer timer = new(60000);
+
     /// <summary>
     /// 漫画信息
     /// </summary>
     [ObservableProperty]
     private ComicDetail initComic;
 
-
-    private int initEpisodeId;
+    [ObservableProperty]
+    private ComicEpisodeProfile initEpisode;
 
 
     /// <summary>
@@ -65,17 +58,95 @@ public sealed partial class ComicViewer : UserControl
     private ObservableCollection<IndexComicImage> comicImageList;
 
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RequestThemeString))]
+    private int _ComicViewerTheme = AppSetting.GetValue<int>(SettingKeys.ComicViewerTheme);
+    partial void OnComicViewerThemeChanged(int value)
+    {
+        AppSetting.TrySetValue(SettingKeys.ComicViewerTheme, value);
+        this.RequestedTheme = value switch
+        {
+            1 => ElementTheme.Light,
+            2 => ElementTheme.Dark,
+            _ => ElementTheme.Default,
+        };
+    }
 
 
 
-    public ComicViewer(ComicDetail comic, int episodeOrderId)
+    public string RequestThemeString => ComicViewerTheme switch
+    {
+        0 => "跟随系统",
+        1 => "浅色模式",
+        2 => "深色模式",
+        _ => ""
+    };
+
+
+
+    [RelayCommand]
+    private void ChangeRequestTheme(string value)
+    {
+        if (int.TryParse(value, out int index))
+        {
+            ComicViewerTheme = index;
+        }
+    }
+
+
+
+
+    [ObservableProperty]
+    private double _ImageMaxWidth = AppSetting.GetValue<double>(SettingKeys.ComicViewerVerticalScrollMaxWidth, 1000);
+    partial void OnImageMaxWidthChanged(double value)
+    {
+        AppSetting.TrySetValue(SettingKeys.ComicViewerVerticalScrollMaxWidth, value);
+        try
+        {
+            var width = c_ListView_Comics.ActualWidth;
+            if (width <= value || value == 0)
+            {
+                c_ListView_Comics.Padding = new Thickness(0);
+            }
+            else
+            {
+                var padding = (width - value) / 2;
+                c_ListView_Comics.Padding = new Thickness(padding, 0, padding, 0);
+            }
+        }
+        catch { }
+    }
+
+
+
+    private void Slider_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+    {
+        if (sender is Slider slider)
+        {
+            ImageMaxWidth = slider.Value;
+        }
+    }
+
+
+
+    public ComicViewer(ComicDetail comic, ComicEpisodeProfile episode)
     {
         this.InitializeComponent();
-        initComic = comic;
-        initEpisodeId = episodeOrderId;
+        this.RequestedTheme = ComicViewerTheme switch
+        {
+            1 => ElementTheme.Light,
+            2 => ElementTheme.Dark,
+            _ => ElementTheme.Default,
+        };
+        InitComic = comic;
+        InitEpisode = episode;
         picaClient = ServiceProvider.GetService<PicaClient>()!;
+        picaService = ServiceProvider.GetService<PicaService>()!;
         Loaded += ComicViewer_Loaded;
+        Unloaded += ComicViewer_Unloaded;
+        timer.Elapsed += Timer_Elapsed;
     }
+
 
 
 
@@ -93,11 +164,26 @@ public sealed partial class ComicViewer : UserControl
             Focus(FocusState.Programmatic);
             InitializeScrollViewerOfListView();
             GetMorePagesAsync();
+            PicaService.SaveReadHistory(initComic.Id, initEpisode.Id, initEpisode.Order, CurrentPage, HistoryType.ReadBegin);
+            timer.Start();
         }
         catch (Exception ex)
         {
             ex.HandlePicaException();
         }
+    }
+
+
+    private void ComicViewer_Unloaded(object sender, RoutedEventArgs e)
+    {
+        PicaService.SaveReadHistory(initComic.Id, initEpisode.Id, initEpisode.Order, CurrentPage, HistoryType.ReadEnd);
+        timer.Stop();
+    }
+
+
+    private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        PicaService.SaveReadHistory(initComic.Id, initEpisode.Id, initEpisode.Order, CurrentPage, HistoryType.Reading);
     }
 
 
@@ -150,13 +236,13 @@ public sealed partial class ComicViewer : UserControl
             if (sender is ListView listView)
             {
                 var width = e.NewSize.Width;
-                if (width <= 1000)
+                if (width <= ImageMaxWidth || ImageMaxWidth == 0)
                 {
                     listView.Padding = new Thickness(0);
                 }
                 else
                 {
-                    var padding = (width - 1000) / 2;
+                    var padding = (width - ImageMaxWidth) / 2;
                     listView.Padding = new Thickness(padding, 0, padding, 0);
                 }
             }
@@ -254,9 +340,9 @@ public sealed partial class ComicViewer : UserControl
             isRefresh = true;
             if (ComicImageList is null)
             {
-                var episodeDetail = await picaClient.GetComicEpisodePageAsync(initComic.Id, initEpisodeId);
-                TotalPage = episodeDetail.Pages.Total;
-                var list = episodeDetail.Pages.TList.Zip(Enumerable.Range(1, episodeDetail.Pages.TList.Count)).Select(x => new IndexComicImage(x.Second, x.First.Image.Url));
+                var episodeDetail = await picaService.GetComicEpisodeImagesAsync(initComic.Id, initEpisode.Order);
+                TotalPage = episodeDetail.Images.Total;
+                var list = episodeDetail.Images.List.Zip(Enumerable.Range(1, episodeDetail.Images.List.Count)).Select(x => new IndexComicImage(x.Second, x.First.Image.Url));
                 ComicImageList = new(list);
             }
             else
@@ -268,8 +354,8 @@ public sealed partial class ComicViewer : UserControl
                 else
                 {
                     var getCount = ComicImageList.Count / 40 + 1;
-                    var episodeDetail = await picaClient.GetComicEpisodePageAsync(initComic.Id, initEpisodeId, getCount);
-                    episodeDetail.Pages.TList.ForEach(x => ComicImageList.Add(new IndexComicImage(ComicImageList.Count + 1, x.Image.Url)));
+                    var episodeDetail = await picaService.GetComicEpisodeImagesAsync(initComic.Id, initEpisode.Order, getCount);
+                    episodeDetail.Images.List.ForEach(x => ComicImageList.Add(new IndexComicImage(ComicImageList.Count + 1, x.Image.Url)));
                 }
             }
         }

@@ -67,7 +67,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="pc:IndexComicImage">
                     <pc:ComicImage x:Name="c_Image_Comic"
-                                   Height="800"
+                                   Height="600"
                                    EnableLazyLoading="True"
                                    FontSize="36"
                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
@@ -124,24 +124,79 @@
                             VerticalAlignment="Center"
                             Source="{x:Bind InitComic.Cover.Url}"
                             Stretch="UniformToFill" />
-            <StackPanel Grid.Row="1" Margin="24">
+            <StackPanel Grid.Row="1"
+                        Margin="24"
+                        Spacing="8">
                 <TextBlock FontSize="16"
                            MaxLines="2"
                            Text="{x:Bind InitComic.Title}"
                            TextWrapping="Wrap" />
+                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="WordEllipsis">
+                    <Run Text="(" /><Run Text="{x:Bind InitEpisode.Order}" /><Run Text=")" />
+                    <Run Text="" />
+                    <Run Text="{x:Bind InitEpisode.Title}" />
+                </TextBlock>
             </StackPanel>
         </Grid>
 
 
 
         <!--  顶栏  -->
-        <Grid Height="120"
+        <Grid Height="112"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Top"
               Background="{ThemeResource ComicViewerAcrylicBrush}"
               IsHitTestVisible="{x:Bind OperationAreaHitTest}"
               Opacity="{x:Bind OperationAreaOpacity}"
-              OpacityTransition="{StaticResource OpacityTransition}" />
+              OpacityTransition="{StaticResource OpacityTransition}">
+            <StackPanel Height="48"
+                        Margin="60,0,0,0"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="{x:Bind InitComic.Title}" />
+            </StackPanel>
+            <StackPanel Margin="0,48,48,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <AppBarButton Label="{x:Bind RequestThemeString}">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE793;" />
+                    </AppBarButton.Icon>
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind ChangeRequestThemeCommand}"
+                                            CommandParameter="0"
+                                            Text="跟随系统" />
+                            <MenuFlyoutItem Command="{x:Bind ChangeRequestThemeCommand}"
+                                            CommandParameter="1"
+                                            Text="浅色模式" />
+                            <MenuFlyoutItem Command="{x:Bind ChangeRequestThemeCommand}"
+                                            CommandParameter="2"
+                                            Text="深色模式" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Icon="Remote" Label="图片宽度">
+
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <StackPanel Spacing="8">
+                                <TextBlock>
+                                    <Run Text="图片最大宽度" />
+                                    <Run Text="{x:Bind ImageMaxWidth}" />
+                                </TextBlock>
+                                <Slider Width="200"
+                                        ManipulationCompleted="Slider_ManipulationCompleted"
+                                        ManipulationMode="All"
+                                        Maximum="3000"
+                                        Minimum="0"
+                                        Value="{x:Bind ImageMaxWidth}" />
+                            </StackPanel>
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+            </StackPanel>
+        </Grid>
 
 
         <!--  底栏  -->
@@ -198,7 +253,6 @@
                 Command="{x:Bind CloseComicViewerCommand}"
                 Content="&#xE112;"
                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
 
 

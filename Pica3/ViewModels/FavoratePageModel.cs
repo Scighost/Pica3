@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
+using Pica3.Services;
 
 namespace Pica3.ViewModels;
 
@@ -8,12 +8,13 @@ public sealed partial class FavoritePageModel : ObservableObject, IViewModel
 {
 
 
-    private readonly PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
-    public FavoritePageModel(PicaClient picaClient)
+    public FavoritePageModel(PicaService picaService)
     {
-        this.picaClient = picaClient;
+        this.picaService = picaService;
     }
 
 
@@ -73,16 +74,16 @@ public sealed partial class FavoritePageModel : ObservableObject, IViewModel
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
                 var id = Random.Shared.Next();
                 randomId = id;
-                var pageResult = await picaClient.GetFavouriteAsync((SortType)SortTypeIndex + 1, CurrentPage);
+                var pageResult = await picaService.GetFavouriteComicAsync((SortType)SortTypeIndex + 1, CurrentPage);
                 if (randomId == id)
                 {
                     TotalPage = pageResult.Pages;
                     CurrentPage = pageResult.Page;
-                    ComicList = pageResult.TList;
+                    ComicList = pageResult.List;
                 }
             }
         }

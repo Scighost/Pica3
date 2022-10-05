@@ -38,9 +38,9 @@
                             Margin="16,0,0,0"
                             CornerRadius="44"
                             Tapped="c_Border_AccountImage_Tapped">
-                        <pc:CachedImage PlaceholderSource="https://lsp-cdn.scighost.com/pica/placeholder_avatar.png"
+                        <pc:CachedImage PlaceholderSource="https://os.scighost.com/pica3/app/placeholder_avatar.png"
                                         PlaceholderStretch="Uniform"
-                                        Source="{x:Bind UserProfile.Avatar.Url, FallbackValue=https://lsp-cdn.scighost.com/pica/placeholder_avatar.png}" />
+                                        Source="{x:Bind UserProfile.Avatar.Url, FallbackValue=https://os.scighost.com/pica3/app/placeholder_avatar.png}" />
                     </Border>
                     <TextBlock Grid.Column="1"
                                Width="140"

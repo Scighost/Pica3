@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
+using Pica3.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,13 +17,14 @@ public sealed partial class HomePage : Page
 {
 
 
-    private readonly PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
     public HomePage()
     {
         this.InitializeComponent();
-        picaClient = ServiceProvider.GetService<PicaClient>()!;
+        picaService = ServiceProvider.GetService<PicaService>()!;
         Loaded += HomePage_Loaded;
     }
 
@@ -37,11 +38,11 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
                 if (RecommendComics is null)
                 {
-                    RecommendComics = await picaClient.GetRecommendComicsAsync();
+                    RecommendComics = await picaService.GetRecommendComicsAsync();
                 }
             }
         }

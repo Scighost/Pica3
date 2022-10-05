@@ -36,7 +36,7 @@ public class MyComment
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// 点赞数
+    /// 喜欢数
     /// </summary>
     [JsonPropertyName("likesCount")]
     public int LikesCount { get; set; }
@@ -48,7 +48,7 @@ public class MyComment
     public int CommentsCount { get; set; }
 
     /// <summary>
-    /// 我已点赞
+    /// 我已喜欢
     /// </summary>
     [JsonPropertyName("isLiked")]
     public bool IsLiked { get; set; }

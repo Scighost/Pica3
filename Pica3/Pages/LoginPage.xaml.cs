@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Dapper;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using Pica3.CoreApi;
 using Pica3.CoreApi.Account;
+using Pica3.Services;
 using Scighost.WinUILib.Helpers;
 using System.Net;
 using System.Net.Http;
@@ -57,10 +57,7 @@ public sealed partial class LoginPage : Page
         try
         {
             await Task.Delay(1);
-            using var dapper = DatabaseProvider.CreateConnection();
-            var accounts = dapper.Query<PicaAccount>("SELECT * FROM PicaAccount;").ToList();
-            accounts.ForEach(x => x.Decrypt());
-            Accounts = accounts.Where(x => x.IsDecrypted).ToList();
+            Accounts = PicaService.GetAccounts();
             var selectedItem = Accounts.FirstOrDefault();
             if (Accounts.FirstOrDefault(x => x.Selected) is PicaAccount a)
             {
@@ -121,20 +118,18 @@ public sealed partial class LoginPage : Page
             picaClient.Logout();
             if (await picaClient.LoginAsync(account, password))
             {
-                using var dapper = DatabaseProvider.CreateConnection();
                 var model = new PicaAccount { Account = account, Selected = true };
                 if (c_CheckBox_RememberPassword.IsChecked ?? false)
                 {
                     model.Password = password;
                 }
                 model.AutoLogin = c_CheckBox_AutoLogin.IsChecked ?? false;
+                MainWindow.Current.Navigate(typeof(MainPage));
                 await Task.Run(() =>
                 {
                     try
                     {
-                        model.Encrypt();
-                        dapper.Execute("UPDATE PicaAccount SET Selected=False WHERE True;");
-                        dapper.Execute("INSERT OR REPLACE INTO PicaAccount VALUES (@Account, @Password, @Selected, @AutoLogin);", model);
+                        PicaService.SaveAccount(model);
                     }
                     catch (Exception ex)
                     {
@@ -142,7 +137,6 @@ public sealed partial class LoginPage : Page
                         NotificationProvider.Error(ex);
                     }
                 });
-                MainWindow.Current.Navigate(typeof(MainPage));
             }
             else
             {
@@ -162,6 +156,15 @@ public sealed partial class LoginPage : Page
         }
     }
 
+
+
+    private void RememberPasswordChecked()
+    {
+        if (!(c_CheckBox_RememberPassword.IsChecked ?? false))
+        {
+            c_CheckBox_AutoLogin.IsChecked = false;
+        }
+    }
 
 
     private void AutoLoginChecked()
@@ -231,6 +234,7 @@ public sealed partial class LoginPage : Page
             c_ComboBox_ApiIPAddress.ItemsSource = ips.Prepend(selectItem).Prepend("默认").Distinct().ToList();
             c_ComboBox_ApiIPAddress.SelectedItem = selectItem;
         }
+        catch (HttpRequestException) { }
         catch (Exception ex)
         {
             ex.HandlePicaException();
@@ -313,25 +317,9 @@ public sealed partial class LoginPage : Page
             c_PasswordBox_Password.Password = request.Password;
             c_TeachingTip_Register.IsOpen = false;
         }
-        catch (PicaApiException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Warning("网络错误", 1500);
-        }
-        catch (TaskCanceledException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Warning("连接超时", 1500);
-        }
         catch (Exception ex)
         {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
+            ex.HandlePicaException();
         }
     }
 
@@ -390,25 +378,9 @@ public sealed partial class LoginPage : Page
                 c_TeachingTip_ForgotPassword.IsOpen = false;
             }
         }
-        catch (PicaApiException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
-        }
-        catch (HttpRequestException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Warning("网络错误", 1500);
-        }
-        catch (TaskCanceledException ex)
-        {
-            Logger.Error(ex);
-            NotificationProvider.Warning("网络错误", 1500);
-        }
         catch (Exception ex)
         {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
+            ex.HandlePicaException();
         }
     }
 

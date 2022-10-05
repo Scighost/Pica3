@@ -1,18 +1,19 @@
 ﻿using Microsoft.UI.Xaml;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
+using Pica3.Services;
 
 namespace Pica3.ViewModels;
 
 public sealed partial class RankPageModel : ObservableObject, IViewModel
 {
 
-    private PicaClient picaClient;
+
+    private readonly PicaService picaService;
 
 
-    public RankPageModel(PicaClient picaClient)
+    public RankPageModel(PicaService picaService)
     {
-        this.picaClient = picaClient;
+        this.picaService = picaService;
     }
 
 
@@ -51,11 +52,11 @@ public sealed partial class RankPageModel : ObservableObject, IViewModel
     {
         try
         {
-            if (picaClient.IsLogin)
+            if (picaService.IsLogin)
             {
-                DayRanks ??= await picaClient.GetRankComicsAsync(RankType.H24);
-                WeekRanks ??= await picaClient.GetRankComicsAsync(RankType.D7);
-                MonthRanks ??= await picaClient.GetRankComicsAsync(RankType.D30);
+                DayRanks ??= await picaService.GetRankComicsAsync(RankType.H24);
+                WeekRanks ??= await picaService.GetRankComicsAsync(RankType.D7);
+                MonthRanks ??= await picaService.GetRankComicsAsync(RankType.D30);
                 ComicList ??= DayRanks;
             }
         }

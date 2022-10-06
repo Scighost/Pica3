@@ -163,8 +163,12 @@ public class PicaClient
         try
         {
 #if DEBUG
-            var str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Debug.WriteLine(request.RequestUri);
+            if (request.Content is JsonContent json)
+            {
+                Debug.WriteLine(json.Value);
+            }
+            var str = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             Debug.WriteLine(str);
 
             wrapper = JsonSerializer.Deserialize<ResponseBase<T>>(str);
@@ -535,12 +539,12 @@ public class PicaClient
     /// <param name="page"></param>
     /// <param name="sort"></param>
     /// <param name="categories">分类，<see cref="HomeCategory.Title"/></param>
-    /// <returns></returns>
+    /// <returns>章节数和页数为 0</returns>
     public async Task<PicaPageResult<ComicProfile>> AdvanceSearchAsync(string keyword, int page = 1, SortType sort = SortType.ua, IEnumerable<string>? categories = default)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"comics/advanced-search?page={page}")
         {
-            Content = JsonContent.Create(new { keyword, sort, categories }),
+            Content = JsonContent.Create(new { keyword, sort = sort.ToString(), categories }),
         };
         return await CommonSendAsync<PicaPageResult<ComicProfile>>(request, "comics").ConfigureAwait(false);
     }
@@ -650,7 +654,7 @@ public class PicaClient
 
 
     /// <summary>
-    /// 看了这本的人也在看
+    /// 看了这本的人也在看，相关漫画推荐
     /// </summary>
     /// <param name="comicId">漫画 id</param>
     /// <returns>返回值中，阅读数、喜欢数都为 0</returns>
@@ -737,7 +741,7 @@ public class PicaClient
 
 
     /// <summary>
-    /// 本子推荐
+    /// 首页本子推荐
     /// </summary>
     /// <returns></returns>
     public async Task<List<RecommendComic>> GetRecommendComicsAsync()

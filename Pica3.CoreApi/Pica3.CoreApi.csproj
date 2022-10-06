@@ -5,12 +5,22 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>preview</LangVersion>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<Authors>Scighost</Authors>
 		<PackageId>Pica3.CoreApi</PackageId>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageTags>picacg; picacomic;</PackageTags>
+		<Description>A PicACG api wrapper for dotnet.</Description>
 		<PackageProjectUrl>https://github.com/Scighost/Pica3</PackageProjectUrl>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Update="logo.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 </Project>

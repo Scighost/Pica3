@@ -1,0 +1,79 @@
+
+name: Build Every Commit
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64, arm64]
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: Pica3.sln
+      Configuration: ${{ matrix.configuration }}
+      Platform: ${{ matrix.platform }}
+      Publish_Path: ./Pica3/bin/${{ matrix.platform }}/${{ matrix.configuration }}/bika3
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Restore the Packages
+      run: dotnet restore
+
+    - name: Build the Solution
+      if: env.Configuration == 'Debug'
+      run: dotnet build $env:Solution_Name -p:Configuration=$env:Configuration -p:Platform=$env:Platform
+
+    - name: Publish the Application
+      if: env.Configuration == 'Release'
+      run: |
+        $xml = [Xml] (Get-Content ./Pica3/Pica3.csproj)
+        $v = $xml.Project.PropertyGroup.Version + '.' + ${{ github.run_number }}
+        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$v -p:DefineConstants=CommitBuild
+        $time = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss zzz')
+        Add-Content -Path $env:Publish_Path/！看这里.txt -Value "`n`nVersion: $v`nBuild by GitHub Actions automatically.`n$time`n"
+        New-Item -Path ./publish -ItemType Directory -Force
+        Add-Content -Path ./publish/latest_version_$env:Platform -Value $v
+
+    - name: Delete Useless Folder
+      if: env.Configuration == 'Release'
+      run: Get-ChildItem -Path $env:Publish_Path -Directory | Where { $_.Name -ne "en-us" -and $_.Name -ne "Microsoft.UI.Xaml" } | Remove-Item -Recurse
+
+    - name: Compress Published Files
+      if: env.Configuration == 'Release'
+      run: |
+        New-Item -Path ./publish -ItemType Directory -Force
+        Compress-Archive -Path $env:Publish_Path -DestinationPath ./publish/bika3_latest_$env:Platform.zip
+
+    - name: Upload to OSS
+      if: env.Configuration == 'Release'
+      run: |
+        Invoke-WebRequest https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64.zip -OutFile ./ossutil.zip
+        Expand-Archive -Path ./ossutil.zip -DestinationPath ./
+        ossutil64/ossutil64.exe config -e ${{ secrets.OSS_ENDPOINT }} -i ${{ secrets.ACCESS_KEY_ID }} -k ${{ secrets.ACCESS_KEY_SECRET }}
+        $v = Get-Content ./publish/latest_version_$env:Platform
+        ossutil64/ossutil64.exe cp -rf ./publish/bika3_latest_$env:Platform.zip oss://${{ secrets.OSS_BUCKET_NAME }}/pica3/build/bika3_latest_$env:Platform.zip --meta x-oss-meta-version:$v
+        ossutil64/ossutil64.exe config -e 0 -i 0 -k 0
+
+    - name: Purge Cache
+      if: env.Configuration == 'Release'
+      run: Invoke-WebRequest ${{ secrets.PURGE_CACHE_URL }} -Method Post -Headers @{'X-Auth-Email'='${{ secrets.PURGE_CACHE_EMAIL }}';'X-Auth-Key'='${{ secrets.PURGE_CACHE_AUTHKEY }}'} -ContentType 'application/json' -Body '{"files":["https://os.scighost.com/pica3/build/bika3_latest_${{ env.Platform }}.zip"]}'
+

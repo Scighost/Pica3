@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
         platform: [x64, arm64]
 
     runs-on: windows-latest
@@ -47,7 +47,7 @@ jobs:
       run: |
         $xml = [Xml] (Get-Content ./Pica3/Pica3.csproj)
         $v = $xml.Project.PropertyGroup.Version + '.' + ${{ github.run_number }}
-        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$v -p:DefineConstants=CommitBuild
+        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$v -p:DefineConstants=Dev
         $time = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss zzz')
         Add-Content -Path $env:Publish_Path/！看这里.txt -Value "`n`nVersion: $v`nBuild by GitHub Actions automatically.`n$time`n"
         New-Item -Path ./publish -ItemType Directory -Force

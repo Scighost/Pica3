@@ -50,7 +50,10 @@ public sealed partial class ComicDetailPage : Page
                 c_ItemsRepeater_Categories.ItemsSource = comic.Categories;
                 c_TextBlock_Views.Text = comic.TotalViews.ToString();
                 c_TextBlock_Likes.Text = comic.TotalLikes.ToString();
-                c_TextBlock_EP.Text = $"{comic.EpisodeCount}E / {comic.PagesCount}P";
+                if (comic.EpisodeCount + comic.PagesCount != 0)
+                {
+                    c_TextBlock_EP.Text = $"{comic.EpisodeCount}E / {comic.PagesCount}P";
+                }
 
                 VM = ServiceProvider.GetService<ComicDetailPageModel>();
                 if (VM != null)

@@ -118,7 +118,7 @@ public class PicaService
     /// 保存漫画简单信息
     /// </summary>
     /// <param name="comic"></param>
-    private static void SaveComicProfile(IEnumerable<ComicProfile> comics, bool isFavorite = false, bool isRecommend = false)
+    private static void SaveComicProfile(IEnumerable<ComicProfile> comics, bool isFavorite = false)
     {
         Task.Run(() =>
         {
@@ -126,24 +126,32 @@ public class PicaService
             {
                 using var dapper = DatabaseProvider.CreateConnection();
                 using var t = dapper.BeginTransaction();
-                if (isRecommend)
+                var sql = (comics?.FirstOrDefault()?.EpisodeCount, comics?.FirstOrDefault()?.TotalViews) switch
                 {
-                    dapper.Execute("""
-                        INSERT INTO ComicDetail (Id, Title, Author, EpisodeCount, PagesCount, Finished, Cover, Categories, LastUpdateTime)
-                        VALUES (@Id, @Title, @Author, @EpisodeCount, @PagesCount, @Finished, @Cover, @Categories, DATETIME())
-                        ON CONFLICT DO UPDATE SET
-                        EpisodeCount=@EpisodeCount, PagesCount=@PagesCount, Finished=@Finished, LastUpdateTime=DATETIME();
-                        """, comics, t);
-                }
-                else
-                {
-                    dapper.Execute("""
-                        INSERT INTO ComicDetail (Id, Title, Author, EpisodeCount, PagesCount, Finished, Cover, Categories, TotalViews, TotalLikes, LikesCount, LastUpdateTime)
-                        VALUES (@Id, @Title, @Author, @EpisodeCount, @PagesCount, @Finished, @Cover, @Categories, @TotalViews, @TotalLikes, @LikesCount, DATETIME())
-                        ON CONFLICT DO UPDATE SET
-                        EpisodeCount=@EpisodeCount, PagesCount=@PagesCount, Finished=@Finished, TotalViews=@TotalViews, TotalLikes=@TotalLikes, LikesCount=@LikesCount, LastUpdateTime=DATETIME();
-                        """, comics, t);
-                }
+                    ( > 0, > 0) => """
+                    INSERT INTO ComicDetail (Id, Title, Author, EpisodeCount, PagesCount, Finished, Cover, Categories, TotalViews, TotalLikes, LikesCount, LastUpdateTime)
+                    VALUES (@Id, @Title, @Author, @EpisodeCount, @PagesCount, @Finished, @Cover, @Categories, @TotalViews, @TotalLikes, @LikesCount, DATETIME())
+                    ON CONFLICT DO UPDATE SET
+                    EpisodeCount=@EpisodeCount, PagesCount=@PagesCount, Finished=@Finished, TotalViews=@TotalViews, TotalLikes=@TotalLikes, LikesCount=@LikesCount, LastUpdateTime=DATETIME();
+                    """,
+                    ( > 0, 0) => """
+                    INSERT INTO ComicDetail (Id, Title, Author, EpisodeCount, PagesCount, Finished, Cover, Categories, LastUpdateTime)
+                    VALUES (@Id, @Title, @Author, @EpisodeCount, @PagesCount, @Finished, @Cover, @Categories, DATETIME())
+                    ON CONFLICT DO UPDATE SET
+                    EpisodeCount=@EpisodeCount, PagesCount=@PagesCount, Finished=@Finished, LastUpdateTime=DATETIME();
+                    """,
+                    (0, > 0) => """
+                    INSERT INTO ComicDetail (Id, Title, Author, Finished, Cover, Categories, TotalViews, TotalLikes, LikesCount, LastUpdateTime)
+                    VALUES (@Id, @Title, @Author, @Finished, @Cover, @Categories, @TotalViews, @TotalLikes, @LikesCount, DATETIME())
+                    ON CONFLICT DO UPDATE SET
+                    Finished=@Finished, TotalViews=@TotalViews, TotalLikes=@TotalLikes, LikesCount=@LikesCount, LastUpdateTime=DATETIME();
+                    """,
+                    (_, _) => """
+                    INSERT INTO ComicDetail (Id, Title, Author, Finished, Cover, Categories, LastUpdateTime)
+                    VALUES (@Id, @Title, @Author, @Finished, @Cover, @Categories, DATETIME())
+                    ON CONFLICT DO UPDATE SET Finished=@Finished, LastUpdateTime=DATETIME();
+                    """,
+                };
                 if (isFavorite)
                 {
                     dapper.Execute("UPDATE ComicDetail SET IsFavourite = TRUE WHERE Id IN @Ids;", new { Ids = comics.Select(x => x.Id) }, t);
@@ -668,14 +676,14 @@ public class PicaService
 
 
     /// <summary>
-    /// 看了这本的人也在看
+    /// 看了这本的人也在看，相关漫画推荐
     /// </summary>
     /// <param name="comicId">漫画 id</param>
     /// <returns></returns>
     public async Task<List<ComicProfile>> GetRecommendComicsAsync(string comicId)
     {
         var list = await picaClient.GetRecommendComicsAsync(comicId);
-        SaveComicProfile(list, isRecommend: true);
+        SaveComicProfile(list);
         return list;
     }
 
@@ -746,7 +754,7 @@ public class PicaService
 
 
     /// <summary>
-    /// 本子推荐
+    /// 首页本子推荐
     /// </summary>
     /// <returns></returns>
     public async Task<List<RecommendComic>> GetRecommendComicsAsync()

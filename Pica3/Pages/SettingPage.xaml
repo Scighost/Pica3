@@ -347,6 +347,25 @@
                         </pc:SettingCard.Selector>
                     </pc:SettingCard>
 
+                    <!--  最新生成版本  -->
+                    <pc:SettingCard>
+                        <pc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xE783;" />
+                        </pc:SettingCard.Icon>
+                        <pc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="最新生成版" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="每次代码提交后生成的版本，可以体验最新的内容" />
+                            </TextBlock>
+                        </pc:SettingCard.Content>
+                        <pc:SettingCard.Selector>
+                            <Button Command="{x:Bind CheckComicBuildVersionCommand, Mode=OneTime}" Content="检查更新" />
+                        </pc:SettingCard.Selector>
+                    </pc:SettingCard>
+
 
 
                     <!--  关于  -->

@@ -44,6 +44,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="bika3Update.ps1">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="logo.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

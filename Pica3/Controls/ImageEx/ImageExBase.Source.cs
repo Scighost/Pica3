@@ -50,8 +50,8 @@ public partial class ImageExBase
         {
             if (e.NewValue == null || !control.EnableLazyLoading || control._isInViewport)
             {
-                control._lazyLoadingSource = null;
-                control.SetSource(e.NewValue);
+                control._lazyLoadingSource = null!;
+                control.SetSource(e.NewValue!);
             }
             else
             {

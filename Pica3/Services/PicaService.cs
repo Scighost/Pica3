@@ -154,9 +154,9 @@ public class PicaService
                 };
                 if (isFavorite)
                 {
-                    dapper.Execute("UPDATE ComicDetail SET IsFavourite = TRUE WHERE Id IN @Ids;", new { Ids = comics.Select(x => x.Id) }, t);
+                    dapper.Execute("UPDATE ComicDetail SET IsFavourite = TRUE WHERE Id IN @Ids;", new { Ids = comics?.Select(x => x.Id) }, t);
                 }
-                dapper.Execute("INSERT OR IGNORE INTO ComicCategory (ComicId, Category) VALUES (@ComicId, @Category);", comics.SelectMany(x => x.Categories.Select(y => new { ComicId = x.Id, Category = y })), t);
+                dapper.Execute("INSERT OR IGNORE INTO ComicCategory (ComicId, Category) VALUES (@ComicId, @Category);", comics?.SelectMany(x => x.Categories.Select(y => new { ComicId = x.Id, Category = y })), t);
                 t.Commit();
             }
             catch (Exception ex)

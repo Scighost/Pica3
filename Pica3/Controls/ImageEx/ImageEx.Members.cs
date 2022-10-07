@@ -39,7 +39,7 @@ public partial class ImageEx
             return image.GetAlphaMask();
         }
 
-        return null;
+        return null!;
     }
 
     /// <summary>
@@ -53,6 +53,6 @@ public partial class ImageEx
             return image.GetAsCastingSource();
         }
 
-        return null;
+        return null!;
     }
 }

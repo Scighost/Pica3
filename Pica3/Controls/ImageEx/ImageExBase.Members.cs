@@ -146,13 +146,13 @@ public partial class ImageExBase
             var value = (bool)e.NewValue;
             if (value)
             {
-                control.LayoutUpdated += control.ImageExBase_LayoutUpdated;
+                control.LayoutUpdated += control.ImageExBase_LayoutUpdated!;
 
                 control.InvalidateLazyLoading();
             }
             else
             {
-                control.LayoutUpdated -= control.ImageExBase_LayoutUpdated;
+                control.LayoutUpdated -= control.ImageExBase_LayoutUpdated!;
             }
         }
     }
@@ -197,7 +197,7 @@ public partial class ImageExBase
     {
         if (_controlState == FailedState)
         {
-            SetSource(Source);
+            SetSource(Source!);
         }
     }
 }

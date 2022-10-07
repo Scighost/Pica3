@@ -23,7 +23,7 @@ public class ImageExFailedEventArgs : EventArgs
     public ImageExFailedEventArgs(Exception errorException)
     {
         ErrorException = errorException;
-        ErrorMessage = ErrorException?.Message;
+        ErrorMessage = ErrorException?.Message!;
     }
 
     /// <summary>

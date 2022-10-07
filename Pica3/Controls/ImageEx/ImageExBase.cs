@@ -159,8 +159,8 @@ public abstract partial class ImageExBase : Control, IAlphaMaskProvider
 
         if (Source == null || !EnableLazyLoading || _isInViewport)
         {
-            _lazyLoadingSource = null;
-            SetSource(Source);
+            _lazyLoadingSource = null!;
+            SetSource(Source!);
         }
         else
         {
@@ -215,7 +215,7 @@ public abstract partial class ImageExBase : Control, IAlphaMaskProvider
         }
 
         // Find the first ascendant ScrollViewer, if not found, use the root element.
-        FrameworkElement hostElement = null;
+        FrameworkElement hostElement = null!;
         var ascendants = this.FindAscendants().OfType<FrameworkElement>();
         foreach (var ascendant in ascendants)
         {
@@ -248,7 +248,7 @@ public abstract partial class ImageExBase : Control, IAlphaMaskProvider
             if (_lazyLoadingSource != null)
             {
                 var source = _lazyLoadingSource;
-                _lazyLoadingSource = null;
+                _lazyLoadingSource = null!;
                 SetSource(source);
             }
         }

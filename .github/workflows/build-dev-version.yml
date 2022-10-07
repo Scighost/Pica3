@@ -1,5 +1,5 @@
 
-name: Build Every Commit
+name: Build Dev Version
 
 on:
   push:

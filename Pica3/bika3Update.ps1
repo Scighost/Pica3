@@ -1,14 +1,14 @@
 ﻿try {
     Write-Host "哔咔 3 开发版下载脚本"
-    Write-Host "注意：开发版基于最新的代码，不是正式发布版，可能存在功能缺失，Bug 频出的问题。" -ForegroundColor Yellow
+    Write-Host "注意：开发版基于最新的代码，不是正式发布的版本，可能存在功能缺失，Bug 频出的问题。" -ForegroundColor Yellow
     Write-Host "`n`n`n"
     Write-Host "当前路径：$(Get-Location)"
     $null = New-Item ./temp -ItemType Directory -Force -ErrorAction Stop
-    $result = Invoke-WebRequest https://os.scighost.com/pica3/build/bika3_latest_x64.zip -Method HEAD -ErrorAction Stop
+    $result = Invoke-WebRequest https://os.scighost.com/pica3/build/bika3_latest_x64.zip -UseBasicParsing -Method HEAD -ErrorAction Stop
     $version = $result.Headers['x-oss-meta-version']
     $size = ($result.Headers['Content-Length']/1024/1024).ToString('F2')
     Write-Host "下载安装包（版本：$version，大小：$size MB）"
-    Invoke-WebRequest https://os.scighost.com/pica3/build/bika3_latest_x64.zip -OutFile ./temp/bika3_latest.zip -ErrorAction Stop
+    Invoke-WebRequest https://os.scighost.com/pica3/build/bika3_latest_x64.zip -UseBasicParsing -OutFile ./temp/bika3_latest.zip -ErrorAction Stop
     Write-Host "开始解压"
     Expand-Archive -Path ./temp/bika3_latest.zip -DestinationPath ./temp/ -Force -ErrorAction Stop
     try {
@@ -27,6 +27,8 @@
     Start-Sleep -Seconds 2
 } catch {
     Write-Host $_.Exception -ForegroundColor Red -BackgroundColor Black
+    Write-Host "更新失败，可以从以下链接手动下载最新开发版：" -ForegroundColor Yellow
+    Write-Host "https://os.scighost.com/pica3/build/bika3_latest_x64.zip" -ForegroundColor Yellow
     Write-Host "任意键退出"
     [Console]::ReadKey()
 }

@@ -8,9 +8,10 @@
 
 不主动更新 &nbsp; | &nbsp; 不拒绝使用 &nbsp; | &nbsp; 不负责维护
 
-![https://github.com/Scighost/Pica3/blob/main/LICENSE](https://img.shields.io/github/license/Scighost/Pica3)
-![https://github.com/Scighost/Pica3/releases](https://img.shields.io/github/downloads/Scighost/Pica3/total)
-![https://github.com/Scighost/Pica3/releases/latest](https://img.shields.io/github/downloads/Scighost/Pica3/latest/total)
+[![LICENSE](https://img.shields.io/github/license/Scighost/Pica3)](https://github.com/Scighost/Pica3/blob/main/LICENSE)
+[![releases](https://img.shields.io/github/downloads/Scighost/Pica3/total)](https://github.com/Scighost/Pica3/releases)
+[![releases/latest](https://img.shields.io/github/downloads/Scighost/Pica3/latest/total)](https://github.com/Scighost/Pica3/releases/latest)
+[![build](https://img.shields.io/github/workflow/status/Scighost/Pica3/Build%20Dev%20Version)](https://github.com/Scighost/Pica3/actions)
 
 </div>
 

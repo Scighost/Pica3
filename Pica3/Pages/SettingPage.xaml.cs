@@ -45,8 +45,12 @@ public sealed partial class SettingPage : Page
     #region 版本
 
 
+#if Dev
+    public string AppVersion => "开发版 " + typeof(App).Assembly.GetName().Version?.ToString() ?? "-";
+#else
+    public string AppVersion => "当前版本 " + typeof(App).Assembly.GetName().Version?.ToString() ?? "-";
+#endif
 
-    public string AppVersion => typeof(App).Assembly.GetName().Version?.ToString() ?? "-";
 
 
 
@@ -531,15 +535,15 @@ public sealed partial class SettingPage : Page
 
 
     [RelayCommand]
-    private async Task CheckComicBuildVersionAsync()
+    private async Task CheckDevVersionAsync()
     {
         try
         {
             const string URL = "https://os.scighost.com/pica3/build/bika3_latest_x64.zip";
             const string SCRIPT = """
                 try {
-                    Write-Host "哔咔 3 最新生成版 下载脚本"
-                    Write-Host "注意：最新生成版不是正式发布版，可能存在功能缺失，Bug 频出的问题。" -ForegroundColor Yellow
+                    Write-Host "哔咔 3 开发版下载脚本"
+                    Write-Host "注意：开发版基于最新的代码，不是正式发布版，可能存在功能缺失，Bug 频出的问题。" -ForegroundColor Yellow
                     Write-Host "`n`n`n"
                     Write-Host "当前路径：$(Get-Location)"
                     $null = New-Item ./temp -ItemType Directory -Force -ErrorAction Stop

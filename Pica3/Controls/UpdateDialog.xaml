@@ -6,7 +6,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="WebViewBackgroud">#FFFFFF</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="WebViewBackgroud">#2B2B2B</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
-        <WebView2 x:Name="webview" IsRightTapEnabled="False" />
+        <WebView2 x:Name="webview"
+                  DefaultBackgroundColor="{ThemeResource WebViewBackgroud}"
+                  IsRightTapEnabled="False" />
     </Grid>
 </UserControl>

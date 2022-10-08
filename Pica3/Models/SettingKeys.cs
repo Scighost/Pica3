@@ -73,11 +73,15 @@ internal static class SettingKeys
     /// </summary>
     public const string ComicViewerVerticalScrollMaxWidth = nameof(ComicViewerVerticalScrollMaxWidth);
 
-
     /// <summary>
     /// 启用应用单例模式
     /// </summary>
     public const string EnableApplicationSingleton = nameof(EnableApplicationSingleton);
+
+    /// <summary>
+    /// 开发版更新渠道
+    /// </summary>
+    public const string EnableDevChannel = nameof(EnableDevChannel);
 
 
 

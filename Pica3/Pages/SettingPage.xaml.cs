@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
-using Pica3.Controls;
+using Pica3.Services;
 using Scighost.WinUILib.Helpers;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
-using System.Runtime.InteropServices;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
@@ -45,7 +42,7 @@ public sealed partial class SettingPage : Page
 
 
 #if Dev
-    public string AppVersion => (typeof(App).Assembly.GetName().Version?.ToString() ?? "-") + " (dev)";
+    public string AppVersion => (typeof(App).Assembly.GetName().Version?.ToString() ?? "-") + " - dev";
 #else
     public string AppVersion => typeof(App).Assembly.GetName().Version?.ToString() ?? "-";
 #endif
@@ -58,44 +55,7 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            var github = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Pica3"));
-            var releases = await github.Repository.Release.GetAll("Scighost", "Pica3");
-            if (releases.FirstOrDefault() is Octokit.Release release)
-            {
-                var thisVersion = typeof(MainPage).Assembly.GetName().Version;
-                if (Version.TryParse(release.TagName, out var latestVersion))
-                {
-                    if (latestVersion > thisVersion)
-                    {
-                        var dialog = new ContentDialog
-                        {
-                            Content = new UpdateDialog(release)
-                            {
-                                Width = 500,
-                                Height = 624,
-                            },
-                            DefaultButton = ContentDialogButton.Primary,
-                            IsPrimaryButtonEnabled = true,
-                            IsSecondaryButtonEnabled = true,
-                            PrimaryButtonText = "下载新版本",
-                            SecondaryButtonText = "暂不更新",
-                            CloseButtonText = "忽略此版本",
-                            XamlRoot = MainWindow.Current.XamlRoot,
-                        };
-                        var result = await dialog.ShowWithZeroMarginAsync();
-                        if (result is ContentDialogResult.Primary)
-                        {
-                            await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl));
-                        }
-                        if (result is ContentDialogResult.None)
-                        {
-                            AppSetting.TrySetValue(SettingKeys.IgnoreVersion, release.TagName);
-                        }
-                        return;
-                    }
-                }
-            }
-            NotificationProvider.Success("已是最新版本");
+            await UpdateService.CheckUpdateAsync(true);
         }
         catch (Exception ex)
         {
@@ -105,6 +65,12 @@ public sealed partial class SettingPage : Page
 
 
 
+    [ObservableProperty]
+    private bool _EnableDevChannel = AppSetting.GetValue<bool>(SettingKeys.EnableDevChannel);
+    partial void OnEnableDevChannelChanged(bool value)
+    {
+        AppSetting.TrySetValue(SettingKeys.EnableDevChannel, value);
+    }
 
 
 
@@ -309,6 +275,7 @@ public sealed partial class SettingPage : Page
                         PrimaryButtonText = "覆盖",
                         SecondaryButtonText = "跳过",
                         CloseButtonText = "取消",
+                        RequestedTheme = MainWindow.Current.ActualTheme,
                     };
                     var result = await dialog.ShowWithZeroMarginAsync();
                     if (result is ContentDialogResult.None)
@@ -529,97 +496,6 @@ public sealed partial class SettingPage : Page
     partial void OnApplicationSingletonChanged(bool value)
     {
         AppSetting.TrySetValue(SettingKeys.EnableApplicationSingleton, value);
-    }
-
-
-
-    [RelayCommand]
-    private async Task CheckDevVersionAsync()
-    {
-        try
-        {
-            const string URL = "https://os.scighost.com/pica3/build/bika3_latest_x64.zip";
-            const string SCRIPT = """
-                try {
-                    Write-Host "哔咔 3 开发版下载脚本"
-                    Write-Host "注意：开发版基于最新的代码，不是正式发布的版本，可能存在功能缺失，Bug 频出的问题。" -ForegroundColor Yellow
-                    Write-Host "`n`n`n"
-                    Write-Host "当前路径：$(Get-Location)"
-                    if(![System.IO.File]::Exists('./7Zip4Powershell/7Zip4Powershell.psd1')) {
-                        Write-Host "下载解压模块"
-                        Invoke-WebRequest "https://os.scighost.com/common/tool/7Zip4Powershell.zip" -UseBasicParsing -OutFile "./7Zip4Powershell.zip" -ErrorAction Stop
-                        Expand-Archive -Path "./7Zip4Powershell.zip" -DestinationPath "./" -Force -ErrorAction Stop
-                        Remove-Item -Path "./7Zip4Powershell.zip" -Force -Recurse -ErrorAction Stop
-                    }
-                    Import-Module -Name "./7Zip4Powershell/7Zip4Powershell.psd1" -Force -ErrorAction Stop
-                    $null = New-Item "./temp" -ItemType "Directory" -Force -ErrorAction Stop
-                    $result = Invoke-WebRequest "https://os.scighost.com/pica3/build/bika3_latest_x64.7z" -UseBasicParsing -Method HEAD -ErrorAction Stop
-                    $version = $result.Headers['x-oss-meta-version']
-                    $size = ($result.Headers['Content-Length']/1024/1024).ToString('F2')
-                    Write-Host "下载安装包 `(v$version`, $size MB`)"
-                    Invoke-WebRequest "https://os.scighost.com/pica3/build/bika3_latest_x64.7z" -UseBasicParsing -OutFile "./temp/bika3_latest.7z" -ErrorAction Stop
-                    Write-Host "开始解压"
-                    Expand-7Zip -ArchiveFileName "./temp/bika3_latest.7z" -TargetPath "./temp/" -ErrorAction Stop
-                    try {
-                        $null = Get-Process -Name bika3 -ErrorAction Stop
-                        Write-Host "bika3.exe 正在运行，等待进程退出" -ForegroundColor Yellow
-                        Wait-Process -Name bika3 -ErrorAction Stop
-                        Start-Sleep -Seconds 1
-                    } catch { }
-                    Write-Host "替换文件"
-                    Get-ChildItem -Path "./temp/bika3/*" -File | Move-Item -Destination "./" -Force -ErrorAction Stop
-                    Copy-Item -Path "./temp/bika3/*" -Destination "./" -Force -Recurse -ErrorAction Stop
-                    Write-Host "更新完成"
-                    Invoke-Item -Path "./bika3.exe" -ErrorAction Stop
-                    Write-Host "清理安装包"
-                    Remove-Item -Path "./temp" -Force -Recurse -ErrorAction Stop
-                    Start-Sleep -Seconds 1
-                } catch {
-                    Write-Host $_.Exception -ForegroundColor Red -BackgroundColor Black
-                    Write-Host "`n更新失败，可以从以下链接手动下载最新开发版：" -ForegroundColor Yellow
-                    Write-Host "https://os.scighost.com/pica3/build/bika3_latest_x64.7z`n" -ForegroundColor Yellow
-                    Write-Host "任意键退出"
-                    [Console]::ReadKey()
-                }
-                """;
-            var replace = RuntimeInformation.ProcessArchitecture switch
-            {
-                Architecture.X64 => false,
-                Architecture.Arm64 => true,
-                _ => throw new PlatformNotSupportedException($"不支持 {RuntimeInformation.ProcessArchitecture}"),
-            };
-            var url = replace ? URL.Replace("x64", "arm64") : URL;
-            var result = await new HttpClient().GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-            if (result.Headers.TryGetValues("x-oss-meta-version", out var values))
-            {
-                if (Version.TryParse(values.FirstOrDefault(), out var version))
-                {
-                    if (version > typeof(App).Assembly.GetName().Version)
-                    {
-                        var dialog = new ContentDialog
-                        {
-                            Title = $"新版本 {version}",
-                            Content = "开发版不是正式发布的版本，可能存在功能缺失，Bug 频出的问题。\n下载过程中可继续使用，关闭应用后自动更新。",
-                            IsPrimaryButtonEnabled = true,
-                            PrimaryButtonText = "下载",
-                            CloseButtonText = "取消",
-                            DefaultButton = ContentDialogButton.Close,
-                            XamlRoot = MainWindow.Current.XamlRoot,
-                        };
-                        if (await dialog.ShowWithZeroMarginAsync() is ContentDialogResult.Primary)
-                        {
-                            Process.Start("PowerShell", replace ? SCRIPT.Replace("x64", "arm64") : SCRIPT);
-                        }
-                        return;
-                    }
-                }
-            }
-            NotificationProvider.Success("已是最新版本");
-        }
-        catch (Exception ex)
-        {
-            ex.HandlePicaException();
-        }
     }
 
 

@@ -35,8 +35,7 @@ public sealed partial class UpdateDialog : UserControl
             sb.AppendLine();
 
             var html = Markdig.Markdown.ToHtml(sb.ToString());
-            var theme = AppSetting.GetValue<int>(SettingKeys.ApplicationTheme);
-            var css = theme switch
+            var css = (int)ActualTheme switch
             {
                 1 => "https://os.scighost.com/pica3/app/github-markdown-light_5.1.0.css",
                 2 => "https://os.scighost.com/pica3/app/github-markdown-dark_5.1.0.css",

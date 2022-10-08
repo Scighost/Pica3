@@ -3,14 +3,12 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using Pica3.Controls;
 using Pica3.Pages;
-using Scighost.WinUILib.Helpers;
+using Pica3.Services;
 using System.IO;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.Graphics;
-using Windows.System;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -37,6 +35,9 @@ public sealed partial class MainWindow : Window
 
 
     public DisplayArea DisplayArea => DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
+
+
+    public ElementTheme ActualTheme => RootGrid.ActualTheme;
 
 
 
@@ -214,43 +215,7 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            var github = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Pica3"));
-            var releases = await github.Repository.Release.GetAll("Scighost", "Pica3");
-            if (releases.FirstOrDefault() is Octokit.Release release)
-            {
-                var thisVersion = typeof(MainPage).Assembly.GetName().Version;
-                Version.TryParse(AppSetting.GetValue<string>(SettingKeys.IgnoreVersion), out var ignoreVersion);
-                if (Version.TryParse(release.TagName, out var latestVersion))
-                {
-                    if (latestVersion > thisVersion && latestVersion > ignoreVersion)
-                    {
-                        var dialog = new ContentDialog
-                        {
-                            Content = new UpdateDialog(release)
-                            {
-                                Width = 500,
-                                Height = 624,
-                            },
-                            DefaultButton = ContentDialogButton.Primary,
-                            IsPrimaryButtonEnabled = true,
-                            IsSecondaryButtonEnabled = true,
-                            PrimaryButtonText = "下载新版本",
-                            SecondaryButtonText = "暂不更新",
-                            CloseButtonText = "忽略此版本",
-                            XamlRoot = this.XamlRoot,
-                        };
-                        var result = await dialog.ShowWithZeroMarginAsync();
-                        if (result is ContentDialogResult.Primary)
-                        {
-                            await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl));
-                        }
-                        if (result is ContentDialogResult.None)
-                        {
-                            AppSetting.TrySetValue(SettingKeys.IgnoreVersion, release.TagName);
-                        }
-                    }
-                }
-            }
+            await UpdateService.CheckUpdateAsync(false);
         }
         catch (Exception ex)
         {

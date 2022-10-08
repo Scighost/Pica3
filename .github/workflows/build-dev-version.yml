@@ -53,8 +53,10 @@ jobs:
 
     - name: Compress Published Files
       run: |
+        Install-Module -Name 7Zip4Powershell -Scope CurrentUser -Force
         New-Item -Path ./publish -ItemType Directory -Force
         Compress-Archive -Path $env:Publish_Path -DestinationPath ./publish/bika3_latest_$env:Platform.zip
+        Compress-7Zip -ArchiveFileName bika3_latest_${{env.Platform}}.7z -Path $env:Publish_Path -OutputPath ./publish -CompressionLevel Ultra -PreserveDirectoryRoot
 
     - name: Upload to OSS
       run: |
@@ -62,9 +64,7 @@ jobs:
         Expand-Archive -Path ./ossutil.zip -DestinationPath ./
         ossutil64/ossutil64.exe config -e ${{ secrets.OSS_ENDPOINT }} -i ${{ secrets.ACCESS_KEY_ID }} -k ${{ secrets.ACCESS_KEY_SECRET }}
         $v = Get-Content ./publish/latest_version_$env:Platform
+        ossutil64/ossutil64.exe cp -rf ./publish/bika3_latest_$env:Platform.7z oss://${{ secrets.OSS_BUCKET_NAME }}/pica3/build/bika3_latest_$env:Platform.7z --meta x-oss-meta-version:$v
         ossutil64/ossutil64.exe cp -rf ./publish/bika3_latest_$env:Platform.zip oss://${{ secrets.OSS_BUCKET_NAME }}/pica3/build/bika3_latest_$env:Platform.zip --meta x-oss-meta-version:$v
         ossutil64/ossutil64.exe config -e 0 -i 0 -k 0
-
-    - name: Purge Cache
-      run: Invoke-WebRequest ${{ secrets.PURGE_CACHE_URL }} -Method Post -Headers @{'X-Auth-Email'='${{ secrets.PURGE_CACHE_EMAIL }}';'X-Auth-Key'='${{ secrets.PURGE_CACHE_AUTHKEY }}'} -ContentType 'application/json' -Body '{"files":["https://os.scighost.com/pica3/build/bika3_latest_${{ env.Platform }}.zip"]}'
 

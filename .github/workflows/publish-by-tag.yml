@@ -50,6 +50,7 @@ jobs:
 
     - name: Compress Published Files
       run: |
+        $ProgressPreference = 'SilentlyContinue'
         Install-Module -Name 7Zip4Powershell -Scope CurrentUser -Force
         New-Item -Path ./publish -ItemType Directory -Force
         Compress-7Zip -ArchiveFileName bika3_${{env.Tag_Name}}_${{env.Platform}}.7z -Path $env:Publish_Path -OutputPath ./publish -CompressionLevel Ultra -PreserveDirectoryRoot

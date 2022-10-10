@@ -108,12 +108,12 @@ internal static class UpdateService
                     {
                         var dialog = new ContentDialog
                         {
-                            Title = $"新版本 {latestVersion}",
-                            Content = "开发版不是正式发布的版本，可能存在功能缺失，Bug 频出的问题。\n下载过程中可继续使用，关闭应用后自动更新。",
+                            Title = $"开发版 {latestVersion}",
+                            Content = "开发版不是正式发布的版本，可能存在功能缺失，Bug 频出的问题。\n\n下载过程中可继续使用，关闭应用后自动更新。",
                             DefaultButton = ContentDialogButton.Primary,
                             IsPrimaryButtonEnabled = true,
                             IsSecondaryButtonEnabled = true,
-                            PrimaryButtonText = "下载安装包",
+                            PrimaryButtonText = "下载并安装",
                             SecondaryButtonText = "暂不更新",
                             CloseButtonText = "忽略此版本",
                             XamlRoot = MainWindow.Current.XamlRoot,

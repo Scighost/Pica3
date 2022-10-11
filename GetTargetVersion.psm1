@@ -20,7 +20,7 @@ function Get-TargetVersion {
             $targetVer = "$lastVer-dev.$comitCount"
         }
         else {
-            $targetVer = "$($lastVer.Value.Major).$($lastVer.Value.Minor).$($lastVer.Value.Pathch+1)-dev.$comitCount"
+            $targetVer = "$($lastVer.Value.Major).$($lastVer.Value.Minor).$($lastVer.Value.Patch+1)-dev.$comitCount"
         }
     }
     else {

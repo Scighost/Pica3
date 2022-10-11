@@ -50,7 +50,7 @@
 		<None Update="logo.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="！看这里.txt">
+		<None Update="!看这里.txt">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

@@ -40,9 +40,13 @@ jobs:
 
     - name: Publish the Application
       run: |
-        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$env:Tag_Name
+        $tag = ${{env.Tag_Name}}
+        if ($tag.StartsWith('v') -or $tag.StartsWith('V')) {
+            $tag = $tag.SubString(1)
+        }
+        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$tag
         $time = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss zzz')
-        Add-Content -Path $env:Publish_Path/！看这里.txt -Value "`n`nVersion: ${{ env.Tag_Name }}`nBuild by GitHub Actions automatically.`n$time`n"
+        Add-Content -Path $env:Publish_Path/!看这里.txt -Value "`n`n${{env.Tag_Name}}`nBuild by GitHub Actions automatically.`n$time`n"
         New-Item -Path ./publish -ItemType Directory -Force
 
     - name: Delete Useless Folder

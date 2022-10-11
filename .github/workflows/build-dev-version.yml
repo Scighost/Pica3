@@ -40,13 +40,15 @@ jobs:
 
     - name: Publish the Application
       run: |
-        $xml = [Xml] (Get-Content ./Pica3/Pica3.csproj)
-        $v = $xml.Project.PropertyGroup.Version + '.' + ${{ github.run_number }}
-        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$v -p:DefineConstants=Dev
+        $dll = "${{runner.temp}}/NuGet.Versioning.Dll"
+        Invoke-WebRequest https://os.scighost.com/common/tool/NuGet.Versioning.dll -OutFile ${{runner.temp}}/NuGet.Versioning.Dll
+        Import-Module ./GetTargetVersion.psm1
+        $v = Get-TargetVersion -NuGetVersioningDllPath $dll
+        dotnet publish ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform -p:Version=$v -p:DefineConstants=DEV
         $time = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss zzz')
-        Add-Content -Path $env:Publish_Path/！看这里.txt -Value "`n`nVersion: $v`nBuild by GitHub Actions automatically.`n$time`n"
+        Add-Content -Path $env:Publish_Path/!看这里.txt -Value "`n`nv$v`nBuild by GitHub Actions automatically.`n$time`n"
         New-Item -Path ./publish -ItemType Directory -Force
-        Add-Content -Path ./publish/latest_version_$env:Platform -Value $v
+        Add-Content -Path ./publish/latest_version_$env:Platform -Value "v$v"
 
     - name: Delete Useless Folder
       run: Get-ChildItem -Path $env:Publish_Path -Directory | Where { $_.Name -ne "en-us" -and $_.Name -ne "Microsoft.UI.Xaml" } | Remove-Item -Recurse
@@ -58,12 +60,16 @@ jobs:
         New-Item -Path ./publish -ItemType Directory -Force
         Compress-7Zip -ArchiveFileName bika3_latest_${{env.Platform}}.7z -Path $env:Publish_Path -OutputPath ./publish -CompressionLevel Ultra -PreserveDirectoryRoot
 
+    - name: Setup OssUtil
+      run: |
+        Invoke-WebRequest https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64.zip -OutFile ${{runner.temp}}/ossutil.zip
+        Expand-Archive -Path ${{runner.temp}}/ossutil.zip -DestinationPath ${{runner.temp}}
+        Move-Item -Path ${{runner.temp}}/ossutil64/ossutil64.exe -Destination C:/Windows/System32/ossutil.exe -Force
+        ossutil config -e ${{ secrets.OSS_ENDPOINT }} -i ${{ secrets.ACCESS_KEY_ID }} -k ${{ secrets.ACCESS_KEY_SECRET }}
+
     - name: Upload to OSS
       run: |
-        Invoke-WebRequest https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64.zip -OutFile ./ossutil.zip
-        Expand-Archive -Path ./ossutil.zip -DestinationPath ./
-        ossutil64/ossutil64.exe config -e ${{ secrets.OSS_ENDPOINT }} -i ${{ secrets.ACCESS_KEY_ID }} -k ${{ secrets.ACCESS_KEY_SECRET }}
         $v = Get-Content ./publish/latest_version_$env:Platform
-        ossutil64/ossutil64.exe cp -rf ./publish/bika3_latest_$env:Platform.7z oss://${{ secrets.OSS_BUCKET_NAME }}/pica3/build/bika3_latest_$env:Platform.7z --meta x-oss-meta-version:$v
-        ossutil64/ossutil64.exe config -e 0 -i 0 -k 0
+        ossutil cp -rf ./publish/bika3_latest_$env:Platform.7z oss://${{ secrets.OSS_BUCKET_NAME }}/pica3/build/bika3_latest_$env:Platform.7z --meta x-oss-meta-version:$v
+        ossutil config -e 0 -i 0 -k 0
 

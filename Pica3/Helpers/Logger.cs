@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Pica3.Services;
+using Serilog;
 using Serilog.Context;
 using System.Diagnostics;
 using System.IO;
@@ -22,7 +23,7 @@ internal static class Logger
                                                   .Enrich.FromLogContext()
                                                   .CreateLogger();
             Log.Information($"""
-                哔咔 3 - {typeof(App).Assembly.GetName().Version}
+                哔咔 3 - {UpdateService.AppVersion}
                 {DateTimeOffset.Now}
                 {Environment.OSVersion}
                 {Environment.CommandLine}

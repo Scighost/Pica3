@@ -41,11 +41,7 @@ public sealed partial class SettingPage : Page
     #region 版本
 
 
-#if Dev
-    public string AppVersion => (typeof(App).Assembly.GetName().Version?.ToString() ?? "-") + " - dev";
-#else
-    public string AppVersion => typeof(App).Assembly.GetName().Version?.ToString() ?? "-";
-#endif
+    public string AppVersion => "v" + UpdateService.AppVersion?.ToString() ?? "-";
 
 
 

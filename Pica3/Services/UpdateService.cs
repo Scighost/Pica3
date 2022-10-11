@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using Microsoft.UI.Xaml.Controls;
+using NuGet.Versioning;
 using Octokit;
 using Pica3.Controls;
 using Scighost.WinUILib.Helpers;
@@ -16,7 +17,31 @@ namespace Pica3.Services;
 internal static class UpdateService
 {
 
-    public static Version? AppVersion => typeof(App).Assembly.GetName().Version;
+    public static SemanticVersion? AppVersion;
+
+
+    static UpdateService()
+    {
+        try
+        {
+            var location = typeof(App).Assembly.Location;
+            if (!File.Exists(location))
+            {
+                var fileVersion = FileVersionInfo.GetVersionInfo(location);
+                AppVersion = SemanticVersion.Parse(fileVersion.ProductVersion);
+            }
+            else
+            {
+                var path = Path.Combine(AppContext.BaseDirectory, "bika3.exe");
+                if (File.Exists(path))
+                {
+                    var fileVersion = FileVersionInfo.GetVersionInfo(location);
+                    AppVersion = SemanticVersion.Parse(fileVersion.ProductVersion);
+                }
+            }
+        }
+        catch { }
+    }
 
 
     public static async Task CheckUpdateAsync(bool showResult = false)
@@ -45,11 +70,16 @@ internal static class UpdateService
         var releases = await github.Repository.Release.GetAll("Scighost", "Pica3");
         if (releases.FirstOrDefault() is Release release)
         {
-            if (Version.TryParse(release.TagName, out var latestVersion))
+            string versionStr = release.TagName.FirstOrDefault() switch
+            {
+                'V' or 'v' => release.TagName[1..],
+                _ => release.TagName,
+            };
+            if (SemanticVersion.TryParse(versionStr, out var latestVersion))
             {
                 if (latestVersion > AppVersion)
                 {
-                    Version.TryParse(AppSetting.GetValue<string>(SettingKeys.IgnoreVersion), out var ignoreVersion);
+                    SemanticVersion.TryParse(AppSetting.GetValue<string>(SettingKeys.IgnoreVersion), out var ignoreVersion);
                     if (alwaysShowResult || (latestVersion > ignoreVersion))
                     {
                         var dialog = new ContentDialog
@@ -102,11 +132,16 @@ internal static class UpdateService
         var totalSize = res.Content.Headers.ContentLength;
         if (res.Headers.TryGetValues("x-oss-meta-version", out var values))
         {
-            if (Version.TryParse(values.FirstOrDefault(), out var latestVersion))
+            string? versionStr = values.FirstOrDefault()?.FirstOrDefault() switch
+            {
+                'V' or 'v' => values.FirstOrDefault()?[1..],
+                _ => values.FirstOrDefault(),
+            };
+            if (SemanticVersion.TryParse(values.FirstOrDefault(), out var latestVersion))
             {
                 if (latestVersion > AppVersion)
                 {
-                    Version.TryParse(AppSetting.GetValue<string>(SettingKeys.IgnoreVersion), out var ignoreVersion);
+                    SemanticVersion.TryParse(AppSetting.GetValue<string>(SettingKeys.IgnoreVersion), out var ignoreVersion);
                     if (alwaysShowResult || (latestVersion > ignoreVersion))
                     {
                         var dialog = new ContentDialog

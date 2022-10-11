@@ -19,21 +19,27 @@ internal static class UpdateService
     public static Version? AppVersion => typeof(App).Assembly.GetName().Version;
 
 
-    public static async Task CheckUpdateAsync(bool alwaysShowResult = false)
+    public static async Task CheckUpdateAsync(bool showResult = false)
     {
         if (AppSetting.GetValue<bool>(SettingKeys.EnableDevChannel))
         {
-            await CheckDevChannelUpdateAsync(alwaysShowResult);
+            if (await CheckDevChannelUpdateAsync(showResult))
+            {
+                return;
+            }
         }
-        else
+        if (!await CheckReleaseChannelUpdateAsync(showResult))
         {
-            await CheckReleaseChannelUpdateAsync(alwaysShowResult);
+            if (showResult)
+            {
+                NotificationProvider.Success("已是最新版本");
+            }
         }
     }
 
 
 
-    private static async Task CheckReleaseChannelUpdateAsync(bool alwaysShowResult = false)
+    private static async Task<bool> CheckReleaseChannelUpdateAsync(bool alwaysShowResult = false)
     {
         var github = new GitHubClient(new ProductHeaderValue("Pica3"));
         var releases = await github.Repository.Release.GetAll("Scighost", "Pica3");
@@ -71,21 +77,18 @@ internal static class UpdateService
                         {
                             AppSetting.TrySetValue(SettingKeys.IgnoreVersion, release.TagName);
                         }
-                        return;
+                        return true;
                     }
                 }
             }
         }
-        if (alwaysShowResult)
-        {
-            NotificationProvider.Success("已是最新版本");
-        }
+        return false;
     }
 
 
 
 
-    private static async Task CheckDevChannelUpdateAsync(bool alwaysShowResult = false)
+    private static async Task<bool> CheckDevChannelUpdateAsync(bool alwaysShowResult = false)
     {
         const string URL = "https://os.scighost.com/pica3/build/bika3_latest_x64.7z";
         var replace = RuntimeInformation.ProcessArchitecture switch
@@ -149,15 +152,12 @@ internal static class UpdateService
                         {
                             AppSetting.TrySetValue(SettingKeys.IgnoreVersion, latestVersion);
                         }
-                        return;
+                        return true;
                     }
                 }
             }
         }
-        if (alwaysShowResult)
-        {
-            NotificationProvider.Success("已是最新版本");
-        }
+        return false;
     }
 
     private static void Current_Closed(object sender, Microsoft.UI.Xaml.WindowEventArgs args)

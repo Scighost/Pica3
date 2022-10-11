@@ -137,7 +137,7 @@ internal static class UpdateService
                 'V' or 'v' => values.FirstOrDefault()?[1..],
                 _ => values.FirstOrDefault(),
             };
-            if (SemanticVersion.TryParse(values.FirstOrDefault(), out var latestVersion))
+            if (SemanticVersion.TryParse(versionStr, out var latestVersion))
             {
                 if (latestVersion > AppVersion)
                 {

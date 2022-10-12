@@ -40,7 +40,7 @@ jobs:
 
     - name: Publish the Application
       run: |
-        $tag = ${{env.Tag_Name}}
+        $tag = "${{env.Tag_Name}}"
         if ($tag.StartsWith('v') -or $tag.StartsWith('V')) {
             $tag = $tag.SubString(1)
         }

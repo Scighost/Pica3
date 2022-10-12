@@ -19,7 +19,7 @@
         Write-Host "是否显示下载进度条（显示进度条会减慢下载速度）"
         Write-Host '[Y] 是(Y) ' -NoNewline
         Write-Host ' [N] 否(N)' -NoNewline -ForegroundColor Yellow
-        Write-Host ' (默认值为 `"N`" ):' -NoNewline -ForegroundColor Yellow
+        Write-Host ' (默认值为 N ):' -NoNewline
         $read = Read-Host
         if($read -eq 'Y' -or $read -eq 'y') {
             $ProgressPreference = 'Continue'
@@ -80,14 +80,13 @@
     Start-Sleep -Seconds 1
 } catch {
     Write-Host $_.Exception -ForegroundColor Red -BackgroundColor Black
-    Remove-Item -Path "./temp" -Force -Recurse
     $archi = (Get-WmiObject WIN32_PROCESSOR).Architecture
     if($archi -eq 5) {
         $url = 'https://os.scighost.com/pica3/build/bika3_latest_arm64.7z'
     } else {
         $url = 'https://os.scighost.com/pica3/build/bika3_latest_x64.7z'
     }
-    Write-Host "`n更新失败，可以从以下链接手动下载最新开发版：" -ForegroundColor Yellow
+    Write-Host "`n更新失败，请解压并替换「安装路径/temp」文件夹中的安装包，或重新下载最新开发版：" -ForegroundColor Yellow
     Write-Host "$url`n" -ForegroundColor Yellow
     Write-Host "任意键退出"
     [Console]::ReadKey()

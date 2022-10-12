@@ -48,7 +48,7 @@ jobs:
         $time = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss zzz')
         Add-Content -Path $env:Publish_Path/!看这里.txt -Value "`n`nv$v`nBuild by GitHub Actions automatically.`n$time`n"
         New-Item -Path ./publish -ItemType Directory -Force
-        Add-Content -Path ./publish/latest_version_$env:Platform -Value "v$v"
+        Add-Content -Path ./publish/latest_version_$env:Platform -Value "$v"
 
     - name: Delete Useless Folder
       run: Get-ChildItem -Path $env:Publish_Path -Directory | Where { $_.Name -ne "en-us" -and $_.Name -ne "Microsoft.UI.Xaml" } | Remove-Item -Recurse

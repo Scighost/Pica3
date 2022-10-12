@@ -58,6 +58,21 @@ public sealed partial class MainPage : Page
 
 
 
+    /// <summary>
+    /// 鼠标中键，后退
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Page_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        if (e.GetCurrentPoint(null).Properties.IsMiddleButtonPressed)
+        {
+            GoBack();
+        }
+    }
+
+
+
     private async void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
         if (AppSetting.TryGetValue<bool>(SettingKeys.NavigationViewPaneClose, out var isClosed))
@@ -274,6 +289,7 @@ public sealed partial class MainPage : Page
             c_NavigationView.SelectedItem = null;
         }
     }
+
 
 
 

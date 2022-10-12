@@ -6,8 +6,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:pc="using:Pica3.Controls"
       x:DefaultBindMode="OneWay"
+      PointerPressed="Page_PointerPressed"
       ProcessKeyboardAccelerators="Page_ProcessKeyboardAccelerators"
       mc:Ignorable="d">
+
 
     <Grid>
 

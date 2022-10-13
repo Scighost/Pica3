@@ -1,0 +1,42 @@
+
+name: Test PR
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64]
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: Pica3.sln
+      Configuration: ${{ matrix.configuration }}
+      Platform: ${{ matrix.platform }}
+      Publish_Path: ./Pica3/bin/${{ matrix.platform }}/${{ matrix.configuration }}/bika3
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Restore the Packages
+      run: dotnet restore
+
+    - name: Build the Application
+      run: |
+        dotnet build ./Pica3/Pica3.csproj -p:Configuration=$env:Configuration -p:Platform=$env:Platform
+

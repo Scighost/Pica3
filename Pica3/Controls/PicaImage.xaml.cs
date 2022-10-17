@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+ï»¿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using CommunityToolkit.Mvvm.Input;
@@ -448,7 +448,7 @@ public sealed partial class PicaImage : UserControl
 
 
     /// <summary>
-    /// Ë¢ĞÂ
+    /// åˆ·æ–°
     /// </summary>
     [RelayCommand]
     private void Refresh()
@@ -458,7 +458,7 @@ public sealed partial class PicaImage : UserControl
 
 
     /// <summary>
-    /// ¸´ÖÆÍ¼Æ¬
+    /// å¤åˆ¶å›¾ç‰‡
     /// </summary>
     /// <returns></returns>
     [RelayCommand]
@@ -486,7 +486,7 @@ public sealed partial class PicaImage : UserControl
 
 
     /// <summary>
-    /// ¸´ÖÆÍ¼Æ¬Á´½Ó
+    /// å¤åˆ¶å›¾ç‰‡é“¾æ¥
     /// </summary>
     [RelayCommand]
     private void CopyLink()
@@ -506,7 +506,7 @@ public sealed partial class PicaImage : UserControl
 
 
     /// <summary>
-    /// Áí´æÎª
+    /// å¦å­˜ä¸º
     /// </summary>
     /// <returns></returns>
     [RelayCommand]

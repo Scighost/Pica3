@@ -164,7 +164,7 @@ public class PicaClient
         {
 #if DEBUG
             Debug.WriteLine(request.RequestUri);
-            if (request.Content is JsonContent json)
+            if (request.Content is JsonContent json && request.RequestUri?.ToString() != "https://picaapi.picacomic.com/users/avatar")
             {
                 Debug.WriteLine(json.Value);
             }
@@ -477,6 +477,10 @@ public class PicaClient
             _ => throw new NotSupportedException($"Format '{format}' is not supported.")
         };
         var avatar = $"data:image/{format};base64,{Convert.ToBase64String(bytes)}";
+        if (avatar.Length > 689493)
+        {
+            throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array is too large, the base64 character length must less than or euqal 689493.");
+        }
         var request = new HttpRequestMessage(HttpMethod.Put, "users/avatar")
         {
             Content = JsonContent.Create(new { avatar }),

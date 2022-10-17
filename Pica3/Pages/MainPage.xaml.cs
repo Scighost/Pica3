@@ -4,8 +4,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Pica3.Controls;
 using Pica3.CoreApi.Account;
 using Pica3.Services;
+using Windows.Storage.Pickers;
 using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,7 +45,7 @@ public sealed partial class MainPage : Page
 
 
 
-   
+
 
 
 
@@ -112,6 +114,37 @@ public sealed partial class MainPage : Page
         MainWindow.Current.Navigate(typeof(LoginPage), null, new DrillInNavigationTransitionInfo());
     }
 
+
+
+    /// <summary>
+    /// 修改头像
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task ChangeAvatarAsync()
+    {
+        try
+        {
+            if (picaService.IsLogin)
+            {
+                var picker = new FileOpenPicker();
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".png");
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    MainWindow.Current.SetFullWindowContent(new AvatarUploader(file));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
 
 
 

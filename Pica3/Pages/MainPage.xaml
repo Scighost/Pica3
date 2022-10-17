@@ -43,7 +43,19 @@
                             Tapped="c_Border_AccountImage_Tapped">
                         <pc:PicaImage FailedSource="https://os.scighost.com/pica3/app/placeholder_avatar.png"
                                       PlaceholderSource="https://os.scighost.com/pica3/app/placeholder_avatar.png"
-                                      Source="{x:Bind UserProfile.Avatar.Url, FallbackValue=https://os.scighost.com/pica3/app/placeholder_avatar.png}" />
+                                      Source="{x:Bind UserProfile.Avatar.Url, FallbackValue=https://os.scighost.com/pica3/app/placeholder_avatar.png}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip MaxHeight="320"
+                                         Padding="0"
+                                         Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                                         BorderThickness="0"
+                                         CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    <pc:PicaImage FailedSource="https://os.scighost.com/pica3/app/placeholder_avatar.png"
+                                                  PlaceholderSource="https://os.scighost.com/pica3/app/placeholder_avatar.png"
+                                                  Source="{x:Bind UserProfile.Avatar.Url, FallbackValue=https://os.scighost.com/pica3/app/placeholder_avatar.png}" />
+                                </ToolTip>
+                            </ToolTipService.ToolTip>
+                        </pc:PicaImage>
                     </Border>
                     <TextBlock Grid.Column="1"
                                Width="140"
@@ -86,6 +98,9 @@
                                 <MenuFlyoutItem Command="{x:Bind RefreshUserProfileCommand}"
                                                 Icon="Refresh"
                                                 Text="刷新信息" />
+                                <MenuFlyoutItem Command="{x:Bind ChangeAvatarCommand}"
+                                                Icon="Contact2"
+                                                Text="修改头像" />
                                 <MenuFlyoutItem Click="{x:Bind Logout}"
                                                 Icon="Undo"
                                                 Text="退出登录" />

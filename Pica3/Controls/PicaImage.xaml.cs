@@ -176,15 +176,19 @@ public sealed partial class PicaImage : UserControl
 
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(PixelSizeString))]
+    [NotifyPropertyChangedFor(nameof(PixelInfoString))]
     private int pixelHeight;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(PixelSizeString))]
+    [NotifyPropertyChangedFor(nameof(PixelInfoString))]
     private int pixelWidth;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PixelInfoString))]
+    private long fileSize;
 
-    public string PixelSizeString => $"{PixelWidth} x {PixelHeight}";
+
+    public string PixelInfoString => $"{PixelWidth} x {PixelHeight}   {fileSize / 1024:N0} KB";
 
 
     #endregion
@@ -359,6 +363,7 @@ public sealed partial class PicaImage : UserControl
             {
                 throw new FileNotFoundException(imageUri.ToString());
             }
+            FileSize = new FileInfo(file.Path).Length;
             return new BitmapImage(new Uri(file.Path));
         }
         catch (TaskCanceledException)

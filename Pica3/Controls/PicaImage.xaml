@@ -10,7 +10,7 @@
     <Grid Background="Transparent" CornerRadius="{x:Bind CornerRadius}">
         <Grid.ContextFlyout>
             <MenuFlyout Placement="RightEdgeAlignedTop">
-                <MenuFlyoutItem IsEnabled="False" Text="{x:Bind PixelSizeString}">
+                <MenuFlyoutItem IsEnabled="False" Text="{x:Bind PixelInfoString}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE91B;" />
                     </MenuFlyoutItem.Icon>

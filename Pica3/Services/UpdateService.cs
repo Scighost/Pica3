@@ -262,6 +262,7 @@ internal static class UpdateService
     private static void Current_Closed(object sender, Microsoft.UI.Xaml.WindowEventArgs args)
     {
         Process.Start("PowerShell", SCRIPT);
+        ToastNotificationManagerCompat.History.Clear();
     }
 
     private static ToastNotification SendToast(ToastNotifierCompat manager)

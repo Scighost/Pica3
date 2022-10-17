@@ -93,15 +93,13 @@
                                                                          Duration="0:0:0.6" />
                                                     </Storyboard>
                                                 </Grid.Resources>
-                                                <pc:CachedImage x:Name="c_Image_ComicCover"
-                                                                HorizontalAlignment="Center"
-                                                                VerticalAlignment="Center"
-                                                                ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                                                PlaceholderSource="https://os.scighost.com/pica3/app/icon_unknown_error.png"
-                                                                PlaceholderStretch="Uniform"
-                                                                RetryOnLoaded="True"
-                                                                Source="{x:Bind Cover.Url}"
-                                                                Stretch="UniformToFill">
+                                                <pc:PicaImage x:Name="c_Image_ComicCover"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"
+                                                              ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                                              FailedSource="https://os.scighost.com/pica3/app/icon_unknown_error.png"
+                                                              Source="{x:Bind Cover.Url}"
+                                                              Stretch="UniformToFill">
                                                     <animations:Explicit.Animations>
                                                         <animations:AnimationSet x:Name="ImagePointerEnteredAnimation">
                                                             <animations:ScaleAnimation EasingMode="EaseOut"
@@ -116,9 +114,10 @@
                                                                                        Duration="0:0:1.5" />
                                                         </animations:AnimationSet>
                                                     </animations:Explicit.Animations>
-                                                </pc:CachedImage>
+                                                </pc:PicaImage>
                                                 <Border x:Name="c_Border_Mask"
                                                         Background="#60000000"
+                                                        IsHitTestVisible="False"
                                                         Opacity="0"
                                                         RequestedTheme="Dark">
                                                     <TextBlock Margin="4"

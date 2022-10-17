@@ -1,7 +1,6 @@
 ﻿<Application x:Class="Pica3.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:converters="using:Pica3.Converters"
              xmlns:local="using:Pica3"
              xmlns:pc="using:Pica3.Controls"
              xmlns:pcc="using:Pica3.CoreApi.Comic"
@@ -11,7 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
 
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <ResourceDictionary Source="Themes\CachedImageStyle.xaml" />
+                <swc:ConverterResource />
+
                 <ResourceDictionary Source="Themes\ContainerStyle.xaml" />
                 <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
 
@@ -29,19 +29,6 @@
             <StaticResource x:Key="AppBarButtonSubItemChevronForegroundSubMenuOpened" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="AppBarButtonSubItemChevronForegroundDisabled" ResourceKey="ControlFillColorTransparentBrush" />
             <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
-
-
-
-
-
-            <swc:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
-            <swc:BoolToVisibilityReversedConverter x:Key="BoolToVisibilityReversedConverter" />
-            <swc:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-
-            <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-
-
-
 
 
 

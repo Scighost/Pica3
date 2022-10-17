@@ -56,10 +56,7 @@ public sealed partial class ComicDetailPage : Page
                 }
 
                 VM = ServiceProvider.GetService<ComicDetailPageModel>();
-                if (VM != null)
-                {
-                    VM.Initialize(comic);
-                }
+                VM?.Initialize(comic);
 
                 var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("ComicCoverAnimation");
                 ani?.TryStart(c_Image_ComicCover);

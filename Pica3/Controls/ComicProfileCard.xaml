@@ -45,17 +45,15 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--  左侧是图片  -->
-            <pc:CachedImage x:Name="c_Image_ComicCover"
-                            Width="150"
-                            Height="200"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            CornerRadius="8"
-                            PlaceholderSource="https://os.scighost.com/pica3/app/icon_unknown_error.png"
-                            PlaceholderStretch="Uniform"
-                            RetryOnLoaded="True"
-                            Source="{x:Bind ComicProfile.Cover.Url}"
-                            Stretch="UniformToFill" />
+            <pc:PicaImage x:Name="c_Image_ComicCover"
+                          Width="150"
+                          Height="200"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          CornerRadius="8"
+                          FailedSource="https://os.scighost.com/pica3/app/icon_unknown_error.png"
+                          Source="{x:Bind ComicProfile.Cover.Url}"
+                          Stretch="UniformToFill" />
             <!--  右侧是信息  -->
             <StackPanel Grid.Column="1"
                         Margin="12,4,8,4"

@@ -20,8 +20,6 @@ public sealed partial class ComicViewer : UserControl
 {
 
 
-    private readonly PicaClient picaClient;
-
     private readonly PicaService picaService;
 
     private readonly Timer timer = new(60000);
@@ -140,7 +138,6 @@ public sealed partial class ComicViewer : UserControl
         };
         InitComic = comic;
         InitEpisode = episode;
-        picaClient = ServiceProvider.GetService<PicaClient>()!;
         picaService = ServiceProvider.GetService<PicaService>()!;
         Loaded += ComicViewer_Loaded;
         Unloaded += ComicViewer_Unloaded;

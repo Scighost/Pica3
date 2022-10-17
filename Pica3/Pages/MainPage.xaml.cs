@@ -43,33 +43,7 @@ public sealed partial class MainPage : Page
 
 
 
-    /// <summary>
-    /// Esc 键，后退
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    private void Page_ProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
-    {
-        if (args.Key == VirtualKey.Escape && args.Modifiers == VirtualKeyModifiers.None)
-        {
-            GoBack();
-        }
-    }
-
-
-
-    /// <summary>
-    /// 鼠标中键，后退
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void Page_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        if (e.GetCurrentPoint(null).Properties.IsMiddleButtonPressed)
-        {
-            GoBack();
-        }
-    }
+   
 
 
 
@@ -292,7 +266,58 @@ public sealed partial class MainPage : Page
 
 
 
+    /// <summary>
+    /// Esc 键，后退
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void Page_ProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+    {
+        if (args.Key == VirtualKey.Escape && args.Modifiers == VirtualKeyModifiers.None)
+        {
+            GoBack();
+            args.Handled = true;
+        }
+    }
 
+
+
+    /// <summary>
+    /// 鼠标中键，后退
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Page_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        if (e.GetCurrentPoint(null).Properties.IsMiddleButtonPressed)
+        {
+            isMiddleButtonPressed = true;
+            e.Handled = true;
+        }
+        else
+        {
+            isMiddleButtonPressed = false;
+        }
+    }
+
+
+    private bool isMiddleButtonPressed;
+
+
+    /// <summary>
+    /// 鼠标中键，后退
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Page_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        if (isMiddleButtonPressed)
+        {
+            GoBack();
+            e.Handled = true;
+            isMiddleButtonPressed = false;
+        }
+    }
 
 
 

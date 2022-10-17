@@ -33,10 +33,10 @@
 
 
         <!--  背景图  -->
-        <pc:CachedImage HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Source="{x:Bind InitComic.Cover.Url}"
-                        Stretch="UniformToFill" />
+        <pc:PicaImage HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Source="{x:Bind InitComic.Cover.Url}"
+                      Stretch="UniformToFill" />
 
 
         <!--  亚克力背景  -->
@@ -66,16 +66,16 @@
                   Tapped="c_ListView_Comics_Tapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="pc:IndexComicImage">
-                    <pc:ComicImage x:Name="c_Image_Comic"
-                                   Height="600"
-                                   EnableLazyLoading="True"
-                                   FontSize="36"
-                                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                   ImageOrder="{x:Bind Index}"
-                                   PointerPressed="c_ListView_Comics_PointerPressed"
-                                   PointerReleased="c_ListView_Comics_PointerReleased"
-                                   RetryOnLoaded="True"
-                                   Source="{x:Bind Url}" />
+                    <pc:PicaImage x:Name="c_Image_Comic"
+                                  Height="600"
+                                  ClearHeightOnLoaded="True"
+                                  FontSize="36"
+                                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                  PlaceholderText="{x:Bind Index}"
+                                  PointerPressed="c_ListView_Comics_PointerPressed"
+                                  PointerReleased="c_ListView_Comics_PointerReleased"
+                                  ShowLoadingRing="True"
+                                  Source="{x:Bind Url}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
@@ -120,10 +120,10 @@
                 <RowDefinition Height="300" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <pc:CachedImage HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Source="{x:Bind InitComic.Cover.Url}"
-                            Stretch="UniformToFill" />
+            <pc:PicaImage HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Source="{x:Bind InitComic.Cover.Url}"
+                          Stretch="UniformToFill" />
             <StackPanel Grid.Row="1"
                         Margin="24"
                         Spacing="8">

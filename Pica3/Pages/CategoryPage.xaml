@@ -50,13 +50,12 @@
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Border ui:UIElementExtensions.ClipToBounds="True" CornerRadius="8">
-                            <pc:CachedImage HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                            PlaceholderSource="https://os.scighost.com/pica3/app/placeholder_avatar_2.png"
-                                            PlaceholderStretch="Uniform"
-                                            Source="{x:Bind Thumb.Url}"
-                                            Stretch="UniformToFill">
+                            <pc:PicaImage HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                          FailedSource="https://os.scighost.com/pica3/app/placeholder_avatar_2.png"
+                                          Source="{x:Bind Thumb.Url}"
+                                          Stretch="UniformToFill">
                                 <animations:Explicit.Animations>
                                     <animations:AnimationSet x:Name="PointerEnteredAnimation">
                                         <animations:ScaleAnimation EasingMode="EaseOut"
@@ -71,7 +70,7 @@
                                                                    Duration="0:0:0.6" />
                                     </animations:AnimationSet>
                                 </animations:Explicit.Animations>
-                            </pc:CachedImage>
+                            </pc:PicaImage>
                         </Border>
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Center"

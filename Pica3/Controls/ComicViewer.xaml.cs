@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Pica3.CoreApi;
 using Pica3.CoreApi.Comic;
 using Pica3.Services;
 using System.Collections.ObjectModel;

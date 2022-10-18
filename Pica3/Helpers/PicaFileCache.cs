@@ -42,8 +42,16 @@ internal class PicaFileCache : CacheBase<StorageFile>
         }
         else
         {
-            request = new HttpRequestMessage(HttpMethod.Get, new Uri(overrideBaseAddress, uri.PathAndQuery));
-            request.Headers.Add("Host", uri.Host);
+            if (uri.ToString().Contains("tobeimg"))
+            {
+                request = new HttpRequestMessage(HttpMethod.Get, new Uri(overrideBaseAddress, uri.PathAndQuery.Replace("/static/tobeimg", "")));
+                request.Headers.Add("Host", "img.picacomic.com");
+            }
+            else
+            {
+                request = new HttpRequestMessage(HttpMethod.Get, new Uri(overrideBaseAddress, uri.PathAndQuery));
+                request.Headers.Add("Host", uri.Host);
+            }
         }
         return request;
     }

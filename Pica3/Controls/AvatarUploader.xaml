@@ -22,7 +22,7 @@
 
 
 
-    <Grid Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
+    <Grid Background="{ThemeResource CustomAcrylicBrush}">
 
 
         <cc:ImageCropper x:Name="ImageCropper"
@@ -41,7 +41,7 @@
                 Padding="8,4,8,4"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                Background="{ThemeResource CustomAcrylicBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="4">

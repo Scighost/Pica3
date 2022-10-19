@@ -31,6 +31,11 @@
             <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
 
 
+            <AcrylicBrush x:Key="CustomAcrylicBrush"
+                          FallbackColor="{ThemeResource ControlOnImageFillColorDefault}"
+                          TintColor="{ThemeResource ControlOnImageFillColorDefault}"
+                          TintOpacity="0.6" />
+
 
         </ResourceDictionary>
     </Application.Resources>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml;
-using Scighost.WinUILib.Helpers;
 
 namespace Pica3.Helpers;
 
@@ -13,12 +12,18 @@ public class SystemBackdropHelper
 
     private readonly SystemBackdrop backdrop;
 
+    private readonly SystemBackdropProperty micaAltBackdropProperty;
+
+    private readonly SystemBackdropProperty acrylicBackdropProperty;
+
 
     public SystemBackdropHelper(Window window)
     {
         ArgumentNullException.ThrowIfNull(window);
         this.window = window;
         backdrop = new(window);
+        micaAltBackdropProperty = SystemBackdropProperty.MicaAltDefault with { TintColorDark = 0xFF141414, TintOpacityLight = 0 };
+        acrylicBackdropProperty = SystemBackdropProperty.AcrylicDefault with { TintColorLight = 0xFFFCFCFC, TintColorDark = 0xFF2C2C2C };
     }
 
 
@@ -32,13 +37,19 @@ public class SystemBackdropHelper
         if (AppSetting.TryGetValue(SettingKeys.WindowBackdrop, out uint value))
         {
             var alwaysActive = (value & 0x80000000) > 0;
-            return (value & 0xF) switch
+            switch (value & 0xF)
             {
-                1 => backdrop.TrySetMica(alwaysActive: alwaysActive),
-                2 => backdrop.TrySetAcrylic(alwaysActive: alwaysActive),
-                3 => backdrop.TrySetMica(useMicaAlt: true, alwaysActive: alwaysActive),
-                _ => false,
-            };
+                case 1:
+                    return backdrop.TrySetMica(alwaysActive: alwaysActive);
+                case 2:
+                    backdrop.SetBackdropProperty(acrylicBackdropProperty);
+                    return backdrop.TrySetAcrylic(alwaysActive: alwaysActive);
+                case 3:
+                    backdrop.SetBackdropProperty(micaAltBackdropProperty);
+                    return backdrop.TrySetMica(useMicaAlt: true, alwaysActive: alwaysActive);
+                default:
+                    return false;
+            }
         }
         else
         {
@@ -58,13 +69,20 @@ public class SystemBackdropHelper
     {
         var alwaysActive = (value & 0x80000000) > 0;
         backdropType = value & 0xF;
-        return backdropType switch
+        switch (backdropType)
         {
-            1 => backdrop.TrySetMica(alwaysActive: alwaysActive),
-            2 => backdrop.TrySetAcrylic(alwaysActive: alwaysActive),
-            3 => backdrop.TrySetMica(useMicaAlt: true, alwaysActive: alwaysActive),
-            _ => backdrop.Reset(),
-        };
+            case 1:
+                return backdrop.TrySetMica(alwaysActive: alwaysActive);
+            case 2:
+                backdrop.SetBackdropProperty(acrylicBackdropProperty);
+                return backdrop.TrySetAcrylic(alwaysActive: alwaysActive);
+            case 3:
+                backdrop.SetBackdropProperty(micaAltBackdropProperty);
+                return backdrop.TrySetMica(useMicaAlt: true, alwaysActive: alwaysActive);
+            default:
+                backdrop.ResetBackdrop();
+                return true;
+        }
     }
 
 

@@ -47,7 +47,7 @@
                             <ToolTipService.ToolTip>
                                 <ToolTip MaxHeight="320"
                                          Padding="0"
-                                         Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                                         Background="{ThemeResource CustomAcrylicBrush}"
                                          BorderThickness="0"
                                          CornerRadius="{ThemeResource OverlayCornerRadius}">
                                     <pc:PicaImage CornerRadius="8"

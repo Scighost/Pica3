@@ -56,15 +56,13 @@ public class PicaClient
 
     private static string TimeStamp => DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
-    private Uri baseAddress;
+    private Uri? overrideBaseAddress;
 
     private IWebProxy? proxy;
 
     private string authorization;
 
     private HttpClient _httpClient;
-
-    private List<string> ipList;
 
 
     #endregion
@@ -100,15 +98,8 @@ public class PicaClient
     /// <param name="address">分流 IP，通过 <see cref="GetIpListAsync"/> 获取，参数模板 new Uri("https://0.0.0.0")，http 也可以</param>
     public void ChangeProxyAndBaseAddress(IWebProxy? proxy = null, Uri? address = null)
     {
-        if (address is null)
-        {
-            baseAddress = new Uri(BaseUrl);
-        }
-        else
-        {
-            baseAddress = address;
-        }
         this.proxy = proxy;
+        overrideBaseAddress = address;
         CreateHttpClient();
     }
 
@@ -121,18 +112,8 @@ public class PicaClient
             Proxy = proxy,
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true
         });
-        _httpClient.BaseAddress = baseAddress;
+        _httpClient.BaseAddress = overrideBaseAddress ?? new Uri(BaseUrl);
         _httpClient.Timeout = TimeSpan.FromSeconds(10);
-        _httpClient.DefaultRequestHeaders.Add("api-key", ApiKey);
-        _httpClient.DefaultRequestHeaders.Add("accept", Accept);
-        _httpClient.DefaultRequestHeaders.Add("app-channel", AppChannel);
-        _httpClient.DefaultRequestHeaders.Add("app-version", AppVersion);
-        _httpClient.DefaultRequestHeaders.Add("app-build-version", AppBuildVersion);
-        _httpClient.DefaultRequestHeaders.Add("nonce", Nonce);
-        _httpClient.DefaultRequestHeaders.Add("app-platform", AppPlatform);
-        _httpClient.DefaultRequestHeaders.Add("app-uuid", AppUuid);
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-        _httpClient.DefaultRequestHeaders.Add("Host", "picaapi.picacomic.com");
     }
 
 
@@ -157,6 +138,16 @@ public class PicaClient
         request.Headers.Add("time", TimeStamp);
         request.Headers.Add("signature", GetSignature(request));
         request.Headers.Add("image-quality", ImageQuality.ToString().ToLower());
+        request.Headers.Add("api-key", ApiKey);
+        request.Headers.Add("accept", Accept);
+        request.Headers.Add("app-channel", AppChannel);
+        request.Headers.Add("app-version", AppVersion);
+        request.Headers.Add("app-build-version", AppBuildVersion);
+        request.Headers.Add("nonce", Nonce);
+        request.Headers.Add("app-platform", AppPlatform);
+        request.Headers.Add("app-uuid", AppUuid);
+        request.Headers.Add("User-Agent", UserAgent);
+        request.Headers.Add("Host", "picaapi.picacomic.com");
 
         var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
         ResponseBase<T>? wrapper = null;
@@ -233,6 +224,41 @@ public class PicaClient
 
 
 
+    /// <summary>
+    /// 通过代理或分流获取图片内容，访问图片不需要鉴权，此方法发出的请求不会携带账号信息
+    /// </summary>
+    /// <param name="url">图片链接 <see cref="PicaFile.Url"/></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns><see cref="HttpResponseMessage"/></returns>
+    public async Task<HttpResponseMessage> GetImageResponseAsync(string url, CancellationToken? cancellationToken = null)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        if (overrideBaseAddress != null)
+        {
+            var uri = new Uri(url);
+            if (url.Contains("tobeimg"))
+            {
+                request.RequestUri = new Uri(overrideBaseAddress, uri.PathAndQuery.Replace("/static/tobeimg", ""));
+                request.Headers.Add("Host", "img.picacomic.com");
+            }
+            else if (url.Contains("tobs"))
+            {
+                request.RequestUri = new Uri(overrideBaseAddress, uri.PathAndQuery.Replace("/tobs", ""));
+                request.Headers.Add("Host", uri.Host);
+            }
+            else
+            {
+                request.RequestUri = new Uri(overrideBaseAddress, uri.PathAndQuery);
+                request.Headers.Add("Host", uri.Host);
+            }
+        }
+        var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken ?? CancellationToken.None).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        return response;
+    }
+
+
+
     #endregion
 
 
@@ -242,24 +268,17 @@ public class PicaClient
 
 
     /// <summary>
-    /// 获取分流 IP
+    /// 获取分流 IP，返回值只有 IP，不包含 https:// 前缀
     /// </summary>
     /// <returns></returns>
     public async Task<List<string>> GetIpListAsync()
     {
-        if (ipList is null)
+        Debug.WriteLine(InitUrl);
+        var node = await _httpClient.GetFromJsonAsync<JsonNode>(InitUrl).ConfigureAwait(false);
+        Debug.WriteLine(node);
+        if (node?["addresses"] is JsonArray array)
         {
-            Debug.WriteLine(InitUrl);
-            var node = await _httpClient.GetFromJsonAsync<JsonNode>(InitUrl).ConfigureAwait(false);
-            Debug.WriteLine(node);
-            if (node?["addresses"] is JsonArray array)
-            {
-                ipList = array.Select(x => x!.ToString()).ToList();
-            }
-        }
-        if (ipList?.Any() ?? false)
-        {
-            return ipList;
+            return array.Select(x => x!.ToString()).Prepend("172.67.7.24").ToList();
         }
         else
         {

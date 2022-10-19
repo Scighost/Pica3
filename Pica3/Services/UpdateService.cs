@@ -244,6 +244,7 @@ internal static class UpdateService
                     if (!addClosedHandle)
                     {
                         new ToastContentBuilder().AddText("下载完成").AddText("关闭应用后开始更新").Show();
+                        MainWindow.Current.Closed -= Current_Closed;
                         MainWindow.Current.Closed += Current_Closed;
                         addClosedHandle = true;
                     }

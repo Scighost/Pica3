@@ -10,6 +10,7 @@ using Scighost.WinUILib.Cache;
 using Scighost.WinUILib.Helpers;
 using System.IO;
 using System.Threading;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -496,6 +497,34 @@ public sealed partial class PicaImage : UserControl
             if (Source is string { Length: > 0 } url)
             {
                 ClipboardHelper.SetText(url);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+    /// <summary>
+    /// 复制文件
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task CopyFileAsync()
+    {
+        try
+        {
+            if (Source is string url)
+            {
+                if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+                {
+                    var file = await PicaFileCache.Instance.GetFileFromCacheAsync(uri);
+                    if (file != null)
+                    {
+                        ClipboardHelper.SetStorageItems(DataPackageOperation.Copy, file);
+                    }
+                }
             }
         }
         catch (Exception ex)

@@ -22,7 +22,7 @@
 
             <StaticResource x:Key="WindowCaptionBackground" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="WindowCaptionBackgroundDisabled" ResourceKey="ControlFillColorTransparentBrush" />
-            <StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="ControlFillColorTransparentBrush" />
+            <!--<StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="ControlFillColorTransparentBrush" />-->
             <StaticResource x:Key="AppBarButtonSubItemChevronForeground" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="AppBarButtonSubItemChevronForegroundPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
             <StaticResource x:Key="AppBarButtonSubItemChevronForegroundPressed" ResourceKey="ControlFillColorTransparentBrush" />

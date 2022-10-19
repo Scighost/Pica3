@@ -35,21 +35,22 @@ internal class PicaFileCache : CacheBase<StorageFile>
 
     protected override HttpRequestMessage GetHttpRequestMessage(Uri uri)
     {
-        HttpRequestMessage request;
-        if (overrideBaseAddress is null)
-        {
-            request = new HttpRequestMessage(HttpMethod.Get, uri);
-        }
-        else
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
+        if (overrideBaseAddress != null)
         {
             if (uri.ToString().Contains("tobeimg"))
             {
-                request = new HttpRequestMessage(HttpMethod.Get, new Uri(overrideBaseAddress, uri.PathAndQuery.Replace("/static/tobeimg", "")));
+                request.RequestUri = new Uri(overrideBaseAddress, uri.PathAndQuery.Replace("/static/tobeimg", ""));
                 request.Headers.Add("Host", "img.picacomic.com");
+            }
+            else if (uri.ToString().Contains("tobs"))
+            {
+                request.RequestUri = new Uri(overrideBaseAddress, uri.PathAndQuery.Replace("/tobs", ""));
+                request.Headers.Add("Host", uri.Host);
             }
             else
             {
-                request = new HttpRequestMessage(HttpMethod.Get, new Uri(overrideBaseAddress, uri.PathAndQuery));
+                request.RequestUri = new Uri(overrideBaseAddress, uri.PathAndQuery);
                 request.Headers.Add("Host", uri.Host);
             }
         }

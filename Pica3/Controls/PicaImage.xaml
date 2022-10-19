@@ -10,21 +10,31 @@
     <Grid Background="Transparent" CornerRadius="{x:Bind CornerRadius}">
         <Grid.ContextFlyout>
             <MenuFlyout Placement="RightEdgeAlignedTop">
+                <!--  图片信息  -->
                 <MenuFlyoutItem IsEnabled="False" Text="{x:Bind PixelInfoString}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Glyph="&#xE91B;" />
+                        <FontIcon Glyph="&#xE946;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Command="{x:Bind RefreshCommand}"
                                 Icon="Refresh"
                                 Text="刷新" />
-                <MenuFlyoutItem Command="{x:Bind CopyImageCommand}"
-                                Icon="Copy"
-                                Text="复制图片" />
-                <MenuFlyoutItem Command="{x:Bind CopyLinkCommand}"
-                                Icon="Link"
-                                Text="复制链接" />
+                <MenuFlyoutSubItem Icon="Copy" Text="复制">
+                    <MenuFlyoutItem Command="{x:Bind CopyImageCommand}" Text="图片">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE91B;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Command="{x:Bind CopyLinkCommand}"
+                                    Icon="Link"
+                                    Text="链接" />
+                    <MenuFlyoutItem Command="{x:Bind CopyFileCommand}" Text="文件">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xEC50;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyoutSubItem>
                 <MenuFlyoutItem Command="{x:Bind SaveAsCommand}"
                                 Icon="Save"
                                 Text="另存为" />
@@ -156,4 +166,5 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>
+
 </UserControl>

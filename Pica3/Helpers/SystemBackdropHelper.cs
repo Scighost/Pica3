@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using Scighost.WinUILib.Helpers;
 
 namespace Pica3.Helpers;
 
@@ -40,6 +41,7 @@ public class SystemBackdropHelper
             switch (value & 0xF)
             {
                 case 1:
+                    backdrop.SetBackdropProperty();
                     return backdrop.TrySetMica(alwaysActive: alwaysActive);
                 case 2:
                     backdrop.SetBackdropProperty(acrylicBackdropProperty);
@@ -72,6 +74,7 @@ public class SystemBackdropHelper
         switch (backdropType)
         {
             case 1:
+                backdrop.SetBackdropProperty();
                 return backdrop.TrySetMica(alwaysActive: alwaysActive);
             case 2:
                 backdrop.SetBackdropProperty(acrylicBackdropProperty);

@@ -29,14 +29,14 @@
 		<PackageReference Include="Markdig" Version="0.30.4" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.1" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221116.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
 		<PackageReference Include="NuGet.Versioning" Version="6.4.0" />
-		<PackageReference Include="Octokit" Version="4.0.1" />
+		<PackageReference Include="Octokit" Version="4.0.3" />
 		<PackageReference Include="Scighost.WinUILib" Version="0.1.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.10" />
+		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.11" />
 	</ItemGroup>
 
 	<ItemGroup>

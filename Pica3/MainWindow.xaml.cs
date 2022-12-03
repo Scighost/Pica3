@@ -77,8 +77,23 @@ public sealed partial class MainWindow : Window
         appWindow.Title = "哔咔 3";
         appWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "logo.ico"));
 
-        ExtendsContentIntoTitleBar = true;
-        SetTitleBar(WindowTitleBar);
+        if (AppWindowTitleBar.IsCustomizationSupported())
+        {
+            var scale = (double)User32.GetDpiForWindow(HWND) / 96;
+            var titleBar = appWindow.TitleBar;
+            titleBar.ExtendsContentIntoTitleBar = true;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            titleBar.SetDragRectangles(new RectInt32[] { new RectInt32((int)(48 * scale), 0, 10000, (int)(48 * scale)) });
+            // 解决 Windows 10 上标题栏无法拖动的问题
+            // https://github.com/microsoft/WindowsAppSDK/issues/2976
+            appWindow.ResizeClient(appWindow.ClientSize);
+        }
+        else
+        {
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(WindowTitleBar);
+        }
 
         NotificationProvider.Initialize(InfoBarContainer);
 
